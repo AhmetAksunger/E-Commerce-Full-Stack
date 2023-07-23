@@ -16,7 +16,7 @@ public class Cart {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long cartId;
+    private long id;
 
     @OneToOne
     private Customer customer;

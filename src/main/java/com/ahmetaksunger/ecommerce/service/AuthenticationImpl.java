@@ -42,10 +42,10 @@ public class AuthenticationImpl implements AuthenticationService{
         var user = userRepository.findByEmail(authenticationRequest.getEmail()).orElseThrow();
         Claims claims = null;
         if(user.isCustomer()){
-            Customer customer = customerRepository.findById(user.getUserId()).orElseThrow(()->new RuntimeException("handle this"));
+            Customer customer = customerRepository.findById(user.getId()).orElseThrow(()->new RuntimeException("handle this"));
             claims = generateClaims(customer);
         }else{
-            Seller seller = sellerRepository.findById(user.getUserId()).orElseThrow(()->new RuntimeException("handle this"));
+            Seller seller = sellerRepository.findById(user.getId()).orElseThrow(()->new RuntimeException("handle this"));
             claims = generateClaims(seller);
         }
         var jwt = jwtService.generateToken(claims,user);

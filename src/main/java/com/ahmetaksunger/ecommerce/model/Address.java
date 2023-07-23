@@ -17,7 +17,7 @@ public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "address_id")
-    private long addressId;
+    private long id;
     @Column(name = "address",nullable = false)
     private String address;
     @Column(name = "city",nullable = false)
@@ -30,9 +30,7 @@ public class Address {
     @ManyToOne()
     private Customer customer;
 
-    @OneToOne
+    @ManyToOne()
     private Seller seller;
 
-    @OneToOne(mappedBy = "address")
-    private PaymentDetail paymentDetail;
 }

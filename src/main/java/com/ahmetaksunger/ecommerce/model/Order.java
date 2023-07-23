@@ -17,7 +17,7 @@ public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long orderId;
+    private long id;
 
     @Column(name = "total",nullable = false)
     private BigDecimal total;
