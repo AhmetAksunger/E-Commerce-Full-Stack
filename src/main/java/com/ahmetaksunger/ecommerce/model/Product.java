@@ -33,6 +33,9 @@ public class Product {
     @Column(name = "quantity", nullable = false)
     private int quantity;
 
+    @Column(name = "logo",nullable = false)
+    private String logo;
+
     @Column(name = "created_at", nullable = false)
     private Date createdAt;
 

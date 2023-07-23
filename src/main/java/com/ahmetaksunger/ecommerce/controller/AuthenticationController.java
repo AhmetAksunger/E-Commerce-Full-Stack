@@ -7,6 +7,7 @@ import com.ahmetaksunger.ecommerce.dto.response.AuthenticationResponse;
 import com.ahmetaksunger.ecommerce.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,17 +18,17 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request){
+    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody @Validated AuthenticationRequest request){
         return ResponseEntity.ok(authenticationService.authenticate(request));
     }
 
     @PostMapping("/register/customer")
-    public ResponseEntity<AuthenticationResponse> registerCustomer(@RequestBody RegisterCustomerRequest request){
+    public ResponseEntity<AuthenticationResponse> registerCustomer(@RequestBody @Validated RegisterCustomerRequest request){
         return ResponseEntity.ok(authenticationService.register(request));
     }
 
     @PostMapping("/register/seller")
-    public ResponseEntity<AuthenticationResponse> registerSeller(@RequestBody RegisterSellerRequest request){
+    public ResponseEntity<AuthenticationResponse> registerSeller(@RequestBody @Validated RegisterSellerRequest request){
         return ResponseEntity.ok(authenticationService.register(request));
     }
 
