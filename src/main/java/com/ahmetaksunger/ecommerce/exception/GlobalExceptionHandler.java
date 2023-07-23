@@ -35,4 +35,16 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler({AccountDeletionNotAllowedException.class})
+    public ResponseEntity<DefaultExceptionResponse> handle(AccountDeletionNotAllowedException exception, HttpServletRequest request){
+
+        return new ResponseEntity<>(DefaultExceptionResponse.builder()
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .error(HttpStatus.UNAUTHORIZED.getReasonPhrase())
+                .message(exception.getMessage())
+                .timeStamp(System.currentTimeMillis())
+                .path(request.getRequestURI())
+                .build(), HttpStatus.UNAUTHORIZED);
+    }
 }

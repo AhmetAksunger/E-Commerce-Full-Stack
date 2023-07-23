@@ -1,8 +1,8 @@
 package com.ahmetaksunger.ecommerce.exception;
 
 public enum ExceptionMessages {
-    EMAIL_ALREADY_EXISTS("Email already exists"),
-    ;
+
+    ACCOUNT_DELETION_NOT_ALLOWED("User is not allowed to delete this account.");
 
     private String message;
 
