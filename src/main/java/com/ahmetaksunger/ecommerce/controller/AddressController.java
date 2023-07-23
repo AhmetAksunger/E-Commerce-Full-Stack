@@ -8,6 +8,7 @@ import com.ahmetaksunger.ecommerce.service.AddressService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public class AddressController {
     private final AddressService addressService;
 
     @PostMapping()
-    public ResponseEntity<AddressVM> createAddress(@RequestBody CreateAddressRequest createAddressRequest,
+    public ResponseEntity<AddressVM> createAddress(@Validated @RequestBody CreateAddressRequest createAddressRequest,
                                                    @CurrentUser User loggedInUser){
         return ResponseEntity.ok(addressService.create(createAddressRequest,loggedInUser));
     }

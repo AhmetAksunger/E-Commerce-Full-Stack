@@ -7,15 +7,12 @@ import com.ahmetaksunger.ecommerce.dto.request.RegisterSellerRequest;
 import com.ahmetaksunger.ecommerce.dto.response.AuthenticationResponse;
 import com.ahmetaksunger.ecommerce.model.Customer;
 import com.ahmetaksunger.ecommerce.model.Seller;
-import com.ahmetaksunger.ecommerce.model.User;
 import com.ahmetaksunger.ecommerce.repository.CustomerRepository;
 import com.ahmetaksunger.ecommerce.repository.SellerRepository;
 import com.ahmetaksunger.ecommerce.repository.UserRepository;
 import com.ahmetaksunger.ecommerce.security.JwtService;
-import com.ahmetaksunger.ecommerce.service.rules.AuthenticationRules;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,7 +31,6 @@ public class AuthenticationImpl implements AuthenticationService{
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-    private final AuthenticationRules authenticationRules;
 
     @Override
     public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
