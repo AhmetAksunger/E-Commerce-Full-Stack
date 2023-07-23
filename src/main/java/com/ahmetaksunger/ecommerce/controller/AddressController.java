@@ -8,10 +8,9 @@ import com.ahmetaksunger.ecommerce.service.AddressService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/addresses")
@@ -25,5 +24,10 @@ public class AddressController {
     public ResponseEntity<AddressVM> createAddress(@RequestBody CreateAddressRequest createAddressRequest,
                                                    @CurrentUser User loggedInUser){
         return ResponseEntity.ok(addressService.create(createAddressRequest,loggedInUser));
+    }
+
+    @GetMapping()
+    public ResponseEntity<List<AddressVM>> getAddressesByUser(@RequestParam(name = "userId") long id , @CurrentUser User loggedInUser){
+        return ResponseEntity.ok(addressService.getAddressesByUserId(id,loggedInUser));
     }
 }

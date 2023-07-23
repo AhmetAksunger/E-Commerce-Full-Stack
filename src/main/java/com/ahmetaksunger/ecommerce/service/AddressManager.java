@@ -11,6 +11,9 @@ import com.ahmetaksunger.ecommerce.repository.AddressRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class AddressManager implements AddressService{
@@ -32,5 +35,22 @@ public class AddressManager implements AddressService{
         }
 
         return mapperService.forResponse().map(addressRepository.save(address),AddressVM.class);
+    }
+
+    @Override
+    public List<AddressVM> getAddressesByUserId(long id,User user) {
+        List<Address> addresses = null;
+        List<AddressVM> responses = new ArrayList<>();
+        if(user.isCustomer()){
+            addresses = addressRepository.getByCustomerId(id);
+        }else{
+            addresses = addressRepository.getBySellerId(id);
+        }
+
+        for (Address address:addresses) {
+            AddressVM response = mapperService.forResponse().map(address,AddressVM.class);
+            responses.add(response);
+        }
+        return responses;
     }
 }

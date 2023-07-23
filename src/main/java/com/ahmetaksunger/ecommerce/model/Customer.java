@@ -22,7 +22,7 @@ public class Customer extends User{
     private String phoneNumber;
 
     @OneToMany(mappedBy = "customer")
-    private List<Address> address;
+    private List<Address> addresses;
 
     @OneToMany(mappedBy = "customer")
     private List<Order> orders;
