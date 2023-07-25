@@ -27,11 +27,7 @@ public class Address extends BaseEntity{
     private Country country;
     @Column(name = "zip_code",nullable = true)
     private String zipCode;
-
+    
     @ManyToOne()
-    private Customer customer;
-
-    @ManyToOne()
-    private Seller seller;
-
+    private User user;
 }

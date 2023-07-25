@@ -3,7 +3,9 @@ package com.ahmetaksunger.ecommerce.exception;
 public enum ExceptionMessages {
 
     ACCOUNT_DELETION_NOT_ALLOWED("User is not allowed to delete this account."),
-    UNAUTHORIZED("Unauthorized");
+    ADDRESS_UPDATE_NOT_ALLOWED("User is not allowed to update this address"),
+    UNAUTHORIZED("Unauthorized"),
+    ADDRESS_NOT_FOUND("Address not found");
 
     private String message;
 

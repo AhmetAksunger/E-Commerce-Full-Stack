@@ -1,18 +1,24 @@
 package com.ahmetaksunger.ecommerce.service;
 
-import com.ahmetaksunger.ecommerce.dto.request.CreateAddressRequest;
-import com.ahmetaksunger.ecommerce.dto.response.AddressVM;
-import com.ahmetaksunger.ecommerce.mapper.MapperService;
-import com.ahmetaksunger.ecommerce.model.*;
-import com.ahmetaksunger.ecommerce.repository.AddressRepository;
-import com.ahmetaksunger.ecommerce.service.rules.AddressRules;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import org.springframework.stereotype.Service;
+
+import com.ahmetaksunger.ecommerce.dto.request.address.CreateAddressRequest;
+import com.ahmetaksunger.ecommerce.dto.request.address.UpdateAddressRequest;
+import com.ahmetaksunger.ecommerce.dto.response.AddressVM;
+import com.ahmetaksunger.ecommerce.exception.AddressNotFoundException;
+import com.ahmetaksunger.ecommerce.mapper.MapperService;
+import com.ahmetaksunger.ecommerce.model.Address;
+import com.ahmetaksunger.ecommerce.model.Country;
+import com.ahmetaksunger.ecommerce.model.User;
+import com.ahmetaksunger.ecommerce.repository.AddressRepository;
+import com.ahmetaksunger.ecommerce.service.rules.AddressRules;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -28,31 +34,45 @@ public class AddressManager implements AddressService{
         Address address = mapperService.forRequest().map(createAddressRequest,Address.class);
         address.setCountry(Country.valueOf(createAddressRequest.getCountry().toUpperCase(Locale.ENGLISH)));
         address.setCreatedAt(new Date());
-        
-        if(user.isCustomer()){
-            Customer customer = (Customer) user;
-            address.setCustomer(customer);
-        }else{
-            Seller seller = (Seller) user;
-            address.setSeller(seller);
-        }
+        address.setUser(user);
 
         return mapperService.forResponse().map(addressRepository.save(address),AddressVM.class);
     }
 
+	@Override
+	public AddressVM update(long addressId, UpdateAddressRequest updateAddressRequest, User user) {
+		
+		//Rules
+		addressRules.checkIfCanUpdate(addressId, user);
+		
+		Address address = addressRepository.findById(addressId).orElseThrow(()-> new AddressNotFoundException());
+					
+	   if (updateAddressRequest.getAddress() != null) {
+	        address.setAddress(updateAddressRequest.getAddress());
+	    }
+	    if (updateAddressRequest.getCity() != null) {
+	        address.setCity(updateAddressRequest.getCity());
+	    }
+	    if (updateAddressRequest.getCountry() != null) {
+	        address.setCountry(Country.valueOf(updateAddressRequest.getCountry().toUpperCase(Locale.ENGLISH)));
+	    }
+	    if (updateAddressRequest.getZipCode() != null) {
+	        address.setZipCode(updateAddressRequest.getZipCode());
+	    }
+		
+		address.setUpdatedAt(new Date());
+
+		return mapperService.forResponse().map(addressRepository.save(address), AddressVM.class);
+	}
+    
     @Override
     public List<AddressVM> getAddressesByUserId(long id,User user) {
 
         //Rules
-        addressRules.checkAuthorization(id,user);
+        addressRules.checkIfIdsMatch(id,user);
 
-        List<Address> addresses = null;
+        List<Address> addresses = addressRepository.getByUserId(id);
         List<AddressVM> responses = new ArrayList<>();
-        if(user.isCustomer()){
-            addresses = addressRepository.getByCustomerId(id);
-        }else{
-            addresses = addressRepository.getBySellerId(id);
-        }
 
         for (Address address:addresses) {
             AddressVM response = mapperService.forResponse().map(address,AddressVM.class);

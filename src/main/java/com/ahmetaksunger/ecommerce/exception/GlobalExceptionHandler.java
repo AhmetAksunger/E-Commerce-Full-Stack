@@ -47,4 +47,15 @@ public class GlobalExceptionHandler {
                 .path(request.getRequestURI())
                 .build(), HttpStatus.UNAUTHORIZED);
     }
+    
+    @ExceptionHandler({NotFoundException.class})
+    public ResponseEntity<DefaultExceptionResponse> handle(NotFoundException exception, HttpServletRequest request){
+    	return new ResponseEntity<>(DefaultExceptionResponse.builder()
+                .status(HttpStatus.NOT_FOUND.value())
+                .error(HttpStatus.NOT_FOUND.getReasonPhrase())
+                .message(exception.getMessage())
+                .timeStamp(System.currentTimeMillis())
+                .path(request.getRequestURI())
+                .build(), HttpStatus.NOT_FOUND);
+    }
 }

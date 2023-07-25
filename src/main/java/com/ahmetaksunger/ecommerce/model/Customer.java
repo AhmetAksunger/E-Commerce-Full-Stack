@@ -22,10 +22,8 @@ public class Customer extends User{
     private String phoneNumber;
 
     @OneToMany(mappedBy = "customer")
-    private List<Address> addresses;
-
-    @OneToMany(mappedBy = "customer")
     private List<Order> orders;
+    
     public Customer(String email, String password,
                     Date createdAt, Date updatedAt,
                     String fullName, String phoneNumber){

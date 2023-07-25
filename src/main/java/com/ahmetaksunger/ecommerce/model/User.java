@@ -40,6 +40,9 @@ public class User extends BaseEntity implements UserDetails {
     private boolean isCustomer;
 
     @OneToMany(mappedBy = "user")
+    private List<Address> addresses;
+    
+    @OneToMany(mappedBy = "user")
     private List<PaymentDetail> paymentDetails;
 
     // TODO: remove the constructor, use builder instead

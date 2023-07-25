@@ -1,6 +1,7 @@
 package com.ahmetaksunger.ecommerce.controller;
 
-import com.ahmetaksunger.ecommerce.dto.request.CreateAddressRequest;
+import com.ahmetaksunger.ecommerce.dto.request.address.CreateAddressRequest;
+import com.ahmetaksunger.ecommerce.dto.request.address.UpdateAddressRequest;
 import com.ahmetaksunger.ecommerce.dto.response.AddressVM;
 import com.ahmetaksunger.ecommerce.model.User;
 import com.ahmetaksunger.ecommerce.security.CurrentUser;
@@ -26,7 +27,14 @@ public class AddressController {
                                                    @CurrentUser User loggedInUser){
         return ResponseEntity.ok(addressService.create(createAddressRequest,loggedInUser));
     }
-
+    
+    @PutMapping("/{addressId}")
+    public ResponseEntity<AddressVM> updateAddress(@PathVariable long addressId,
+    		@Validated @RequestBody UpdateAddressRequest updateAddressRequest,
+    		@CurrentUser User user){
+    	return ResponseEntity.ok(addressService.update(addressId,updateAddressRequest,user));
+    }
+    
     @GetMapping()
     public ResponseEntity<List<AddressVM>> getAddressesByUser(@RequestParam(name = "userId") long id , @CurrentUser User loggedInUser){
         return ResponseEntity.ok(addressService.getAddressesByUserId(id,loggedInUser));

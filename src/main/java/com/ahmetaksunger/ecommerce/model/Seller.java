@@ -24,8 +24,6 @@ public class Seller extends User{
     @OneToMany(mappedBy = "seller")
     private List<Product> products;
 
-    @OneToMany(mappedBy = "seller")
-    private List<Address> addresses;
     public Seller(String email, String password,
                     Date createdAt, Date updatedAt,
                     String companyName, String contactNumber, String logo){
