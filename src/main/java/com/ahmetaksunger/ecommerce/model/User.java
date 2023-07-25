@@ -1,25 +1,32 @@
 package com.ahmetaksunger.ecommerce.model;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @Inheritance(strategy = InheritanceType.JOINED)
 @Entity
 @Table(name = "users")
-public class User implements UserDetails {
+public class User extends BaseEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -29,21 +36,19 @@ public class User implements UserDetails {
     private String email;
     @Column(name = "password",nullable = false)
     private String password;
-    @Column(name = "created_at",nullable = false)
-    private Date createdAt;
-    @Column(name = "updated_at",nullable = true)
-    private Date updatedAt;
     @Column(name = "isCustomer")
     private boolean isCustomer;
 
     @OneToMany(mappedBy = "user")
     private List<PaymentDetail> paymentDetails;
+
+    // TODO: remove the constructor, use builder instead
     public User(String email, String password, Date createdAt, Date updatedAt,boolean isCustomer) {
         this.email = email;
         this.password = password;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
         this.isCustomer = isCustomer;
+        setCreatedAt(createdAt);
+        setUpdatedAt(updatedAt);
     }
 
     @Override

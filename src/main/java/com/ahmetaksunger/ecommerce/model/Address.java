@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Address {
+public class Address extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

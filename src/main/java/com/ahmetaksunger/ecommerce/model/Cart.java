@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class Cart {
+public class Cart extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

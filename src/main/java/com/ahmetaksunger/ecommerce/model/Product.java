@@ -14,7 +14,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Product {
+public class Product extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -35,12 +35,6 @@ public class Product {
 
     @Column(name = "logo",nullable = false)
     private String logo;
-
-    @Column(name = "created_at", nullable = false)
-    private Date createdAt;
-
-    @Column(name = "updated_at", nullable = false)
-    private Date updatedAt;
 
     @ManyToOne
     private Seller seller;

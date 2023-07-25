@@ -13,7 +13,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Order {
+public class Order extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -21,8 +21,6 @@ public class Order {
 
     @Column(name = "total",nullable = false)
     private BigDecimal total;
-    @Column(name = "created_at",nullable = false)
-    private Date createdAt;
 
     @ManyToOne
     private Customer customer;

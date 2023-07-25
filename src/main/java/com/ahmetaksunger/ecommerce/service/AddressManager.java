@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -26,7 +27,8 @@ public class AddressManager implements AddressService{
 
         Address address = mapperService.forRequest().map(createAddressRequest,Address.class);
         address.setCountry(Country.valueOf(createAddressRequest.getCountry().toUpperCase(Locale.ENGLISH)));
-
+        address.setCreatedAt(new Date());
+        
         if(user.isCustomer()){
             Customer customer = (Customer) user;
             address.setCustomer(customer);

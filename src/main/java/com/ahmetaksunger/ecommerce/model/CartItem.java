@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class CartItem {
+public class CartItem extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
