@@ -1,7 +1,6 @@
-package com.ahmetaksunger.ecommerce.dto.request;
+package com.ahmetaksunger.ecommerce.dto.response;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,11 +9,11 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Builder
-public class CreatePaymentDetailRequest {
+public class PaymentDetailVM {
 
+    private long paymentId;
     private String creditCardNumber;
     private String cvv;
-    private Date expirationDate;
-    private long addressId;
+    private String expirationDate;
+    private AddressVM address;
 }

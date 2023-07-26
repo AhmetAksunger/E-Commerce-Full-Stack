@@ -1,11 +1,10 @@
-package com.ahmetaksunger.ecommerce.dto.request;
+package com.ahmetaksunger.ecommerce.dto.request.authentication;
 
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,7 +12,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Data
-public class RegisterCustomerRequest extends RegisterRequest{
+public class RegisterCustomerRequest extends RegisterRequest {
 
     @NotNull(message = "Full name cannot be null")
     @NotBlank(message = "Full name cannot be blank")

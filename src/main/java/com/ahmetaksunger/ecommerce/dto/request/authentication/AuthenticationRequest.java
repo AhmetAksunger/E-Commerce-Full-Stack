@@ -1,4 +1,4 @@
-package com.ahmetaksunger.ecommerce.dto.request;
+package com.ahmetaksunger.ecommerce.dto.request.authentication;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

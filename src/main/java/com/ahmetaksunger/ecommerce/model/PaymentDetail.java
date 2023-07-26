@@ -26,7 +26,7 @@ public class PaymentDetail {
     private String cvv;
 
     @Column(name = "expiration_date",nullable = false)
-    private Date expirationDate;
+    private String expirationDate;
 
     @ManyToOne()
     private User user;

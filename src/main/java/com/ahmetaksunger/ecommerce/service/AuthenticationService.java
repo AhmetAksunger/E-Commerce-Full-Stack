@@ -1,9 +1,7 @@
 package com.ahmetaksunger.ecommerce.service;
 
-import com.ahmetaksunger.ecommerce.dto.request.AuthenticationRequest;
-import com.ahmetaksunger.ecommerce.dto.request.RegisterCustomerRequest;
-import com.ahmetaksunger.ecommerce.dto.request.RegisterRequest;
-import com.ahmetaksunger.ecommerce.dto.request.RegisterSellerRequest;
+import com.ahmetaksunger.ecommerce.dto.request.authentication.AuthenticationRequest;
+import com.ahmetaksunger.ecommerce.dto.request.authentication.RegisterRequest;
 import com.ahmetaksunger.ecommerce.dto.response.AuthenticationResponse;
 
 public interface AuthenticationService {

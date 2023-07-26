@@ -1,6 +1,6 @@
 package com.ahmetaksunger.ecommerce.service;
 
-import com.ahmetaksunger.ecommerce.dto.request.CreatePaymentDetailRequest;
+import com.ahmetaksunger.ecommerce.dto.request.payment.CreatePaymentDetailRequest;
 import com.ahmetaksunger.ecommerce.dto.response.PaymentDetailVM;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.AddressNotFoundException;
 import com.ahmetaksunger.ecommerce.mapper.MapperService;

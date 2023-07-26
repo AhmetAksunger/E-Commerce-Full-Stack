@@ -1,8 +1,8 @@
 package com.ahmetaksunger.ecommerce.controller;
 
-import com.ahmetaksunger.ecommerce.dto.request.AuthenticationRequest;
-import com.ahmetaksunger.ecommerce.dto.request.RegisterCustomerRequest;
-import com.ahmetaksunger.ecommerce.dto.request.RegisterSellerRequest;
+import com.ahmetaksunger.ecommerce.dto.request.authentication.AuthenticationRequest;
+import com.ahmetaksunger.ecommerce.dto.request.authentication.RegisterCustomerRequest;
+import com.ahmetaksunger.ecommerce.dto.request.authentication.RegisterSellerRequest;
 import com.ahmetaksunger.ecommerce.dto.response.AuthenticationResponse;
 import com.ahmetaksunger.ecommerce.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;

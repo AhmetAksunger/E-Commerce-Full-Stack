@@ -1,4 +1,4 @@
-package com.ahmetaksunger.ecommerce.dto.request;
+package com.ahmetaksunger.ecommerce.dto.request.authentication;
 
 import com.ahmetaksunger.ecommerce.exception.customValidation.UniqueEmail;
 import jakarta.validation.constraints.NotBlank;

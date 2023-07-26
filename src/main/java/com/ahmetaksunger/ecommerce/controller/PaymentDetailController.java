@@ -1,14 +1,14 @@
 package com.ahmetaksunger.ecommerce.controller;
 
-import com.ahmetaksunger.ecommerce.dto.request.CreatePaymentDetailRequest;
+import com.ahmetaksunger.ecommerce.dto.request.payment.CreatePaymentDetailRequest;
 import com.ahmetaksunger.ecommerce.dto.response.PaymentDetailVM;
 import com.ahmetaksunger.ecommerce.model.User;
 import com.ahmetaksunger.ecommerce.security.CurrentUser;
 import com.ahmetaksunger.ecommerce.service.PaymentDetailService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +23,7 @@ public class PaymentDetailController {
     private final PaymentDetailService paymentDetailService;
 
     @PostMapping
-    public ResponseEntity<PaymentDetailVM> create(@RequestBody CreatePaymentDetailRequest createPaymentDetailRequest, @CurrentUser User user){
+    public ResponseEntity<PaymentDetailVM> create(@RequestBody @Validated CreatePaymentDetailRequest createPaymentDetailRequest, @CurrentUser User user){
         return ResponseEntity.ok(paymentDetailService.create(createPaymentDetailRequest,user));
     }
 }
