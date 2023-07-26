@@ -6,6 +6,7 @@ import java.util.List;
 
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import lombok.AllArgsConstructor;
@@ -37,8 +38,6 @@ public class User extends BaseEntity implements UserDetails {
     
     @OneToMany(mappedBy = "user")
     private List<PaymentDetail> paymentDetails;
-
-    // TODO: remove the constructor, use builder instead
     public User(String email, String password, Date createdAt, Date updatedAt,UserType userType) {
         this.email = email;
         this.password = password;
@@ -49,7 +48,7 @@ public class User extends BaseEntity implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return List.of(new SimpleGrantedAuthority(userType.name()));
     }
 
     @Override
