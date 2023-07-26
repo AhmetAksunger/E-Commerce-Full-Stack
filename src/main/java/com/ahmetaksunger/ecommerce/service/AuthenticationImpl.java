@@ -7,6 +7,7 @@ import com.ahmetaksunger.ecommerce.dto.request.RegisterSellerRequest;
 import com.ahmetaksunger.ecommerce.dto.response.AuthenticationResponse;
 import com.ahmetaksunger.ecommerce.model.Customer;
 import com.ahmetaksunger.ecommerce.model.Seller;
+import com.ahmetaksunger.ecommerce.model.UserType;
 import com.ahmetaksunger.ecommerce.repository.CustomerRepository;
 import com.ahmetaksunger.ecommerce.repository.SellerRepository;
 import com.ahmetaksunger.ecommerce.repository.UserRepository;
@@ -37,10 +38,10 @@ public class AuthenticationImpl implements AuthenticationService{
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(),authenticationRequest.getPassword()));
         var user = userRepository.findByEmail(authenticationRequest.getEmail()).orElseThrow();
         Claims claims = null;
-        if(user.isCustomer()){
+        if(user.getUserType().equals(UserType.CUSTOMER)){
             Customer customer = customerRepository.findById(user.getId()).orElseThrow(()->new RuntimeException("handle this"));
             claims = generateClaims(customer);
-        }else{
+        }else if(user.getUserType().equals(UserType.SELLER)){
             Seller seller = sellerRepository.findById(user.getId()).orElseThrow(()->new RuntimeException("handle this"));
             claims = generateClaims(seller);
         }
@@ -87,7 +88,7 @@ public class AuthenticationImpl implements AuthenticationService{
 
     private Claims generateClaims(Customer customer){
         Claims claims = Jwts.claims();
-        claims.put("isCustomer",customer.isCustomer());
+        claims.put("userType",customer.getUserType().name());
         claims.put("email",customer.getEmail());
         claims.put("fullName",customer.getFullName());
 
@@ -96,7 +97,7 @@ public class AuthenticationImpl implements AuthenticationService{
 
     private Claims generateClaims(Seller seller){
         Claims claims = Jwts.claims();
-        claims.put("isCustomer",seller.isCustomer());
+        claims.put("userType",seller.getUserType().name());
         claims.put("email",seller.getEmail());
         claims.put("companyName",seller.getCompanyName());
 

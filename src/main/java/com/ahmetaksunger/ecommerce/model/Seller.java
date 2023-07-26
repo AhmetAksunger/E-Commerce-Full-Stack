@@ -27,7 +27,7 @@ public class Seller extends User{
     public Seller(String email, String password,
                     Date createdAt, Date updatedAt,
                     String companyName, String contactNumber, String logo){
-        super(email,password,createdAt,updatedAt,false);
+        super(email,password,createdAt,updatedAt,UserType.SELLER);
         this.companyName = companyName;
         this.contactNumber = contactNumber;
         this.logo = logo;

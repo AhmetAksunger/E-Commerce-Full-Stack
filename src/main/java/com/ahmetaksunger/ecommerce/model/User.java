@@ -4,18 +4,10 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -36,8 +28,9 @@ public class User extends BaseEntity implements UserDetails {
     private String email;
     @Column(name = "password",nullable = false)
     private String password;
-    @Column(name = "isCustomer")
-    private boolean isCustomer;
+    @Column(name = "userType")
+    @Enumerated(EnumType.STRING)
+    private UserType userType;
 
     @OneToMany(mappedBy = "user")
     private List<Address> addresses;
@@ -46,10 +39,10 @@ public class User extends BaseEntity implements UserDetails {
     private List<PaymentDetail> paymentDetails;
 
     // TODO: remove the constructor, use builder instead
-    public User(String email, String password, Date createdAt, Date updatedAt,boolean isCustomer) {
+    public User(String email, String password, Date createdAt, Date updatedAt,UserType userType) {
         this.email = email;
         this.password = password;
-        this.isCustomer = isCustomer;
+        this.userType = userType;
         setCreatedAt(createdAt);
         setUpdatedAt(updatedAt);
     }
