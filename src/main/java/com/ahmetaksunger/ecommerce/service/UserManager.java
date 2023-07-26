@@ -16,7 +16,7 @@ public class UserManager implements UserService {
     public void delete(long userIdToBeDeleted, User user) {
 
         //Rules
-        userRules.canDeleteAccount(userIdToBeDeleted,user);
+        userRules.checkIfCanDelete(userIdToBeDeleted,user);
 
         userRepository.deleteById(userIdToBeDeleted);
     }

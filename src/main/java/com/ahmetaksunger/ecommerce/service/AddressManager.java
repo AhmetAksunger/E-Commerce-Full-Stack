@@ -65,7 +65,15 @@ public class AddressManager implements AddressService{
 
 		return mapperService.forResponse().map(addressRepository.save(address), AddressVM.class);
 	}
-    
+
+    @Override
+    public void delete(long addressId, User loggedInUser) {
+        //Rules
+        addressRules.checkIfCanDelete(addressId,loggedInUser);
+
+        addressRepository.deleteById(addressId);
+    }
+
     @Override
     public List<AddressVM> getAddressesByUserId(long id,User user) {
 

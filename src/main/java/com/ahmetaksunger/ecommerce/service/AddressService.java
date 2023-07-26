@@ -13,4 +13,6 @@ public interface AddressService {
     List<AddressVM> getAddressesByUserId(long id,User user);
 
 	AddressVM update(long addressId, UpdateAddressRequest updateAddressRequest, User user);
+
+    void delete(long addressId, User loggedInUser);
 }

@@ -1,5 +1,6 @@
-package com.ahmetaksunger.ecommerce.exception;
+package com.ahmetaksunger.ecommerce.exception.NotFoundException;
 
+import com.ahmetaksunger.ecommerce.exception.ExceptionMessages;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.NotFoundException;
 
 public class PaymentDetailNotFoundExcepition extends NotFoundException {

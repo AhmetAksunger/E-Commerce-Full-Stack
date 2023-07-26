@@ -30,11 +30,16 @@ public class AddressController {
     
     @PutMapping("/{addressId}")
     public ResponseEntity<AddressVM> updateAddress(@PathVariable long addressId,
-    		@Validated @RequestBody UpdateAddressRequest updateAddressRequest,
-    		@CurrentUser User user){
-    	return ResponseEntity.ok(addressService.update(addressId,updateAddressRequest,user));
+                                                   @Validated @RequestBody UpdateAddressRequest updateAddressRequest,
+                                                   @CurrentUser User user){
+        return ResponseEntity.ok(addressService.update(addressId,updateAddressRequest,user));
     }
-    
+
+    @DeleteMapping("/{addressId}")
+    public void deleteAddress(@PathVariable long addressId, @CurrentUser User loggedInUser){
+        addressService.delete(addressId,loggedInUser);
+    }
+
     @GetMapping()
     public ResponseEntity<List<AddressVM>> getAddressesByUserId(@RequestParam(name = "userId",required = true) long id , @CurrentUser User loggedInUser){
         return ResponseEntity.ok(addressService.getAddressesByUserId(id,loggedInUser));

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserRules {
 
-    public void canDeleteAccount(long userIdToBeDeleted, User user){
+    public void checkIfCanDelete(long userIdToBeDeleted, User user){
         if(userIdToBeDeleted != user.getId()){
             throw new AccountDeletionNotAllowedException();
         }

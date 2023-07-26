@@ -39,7 +39,7 @@ public class PaymentDetailManager implements PaymentDetailService{
     @Override
     public void delete(long paymentDetailId,User user) {
         // Rules
-        paymentDetailRules.canDeleteAccount(paymentDetailId,user);
+        paymentDetailRules.checkIfCanDelete(paymentDetailId,user);
 
         paymentDetailRepository.deleteById(paymentDetailId);
     }

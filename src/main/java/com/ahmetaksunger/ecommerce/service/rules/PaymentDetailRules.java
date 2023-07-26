@@ -2,8 +2,8 @@ package com.ahmetaksunger.ecommerce.service.rules;
 
 import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.AddressNotFoundException;
-import com.ahmetaksunger.ecommerce.exception.PaymentDetailDeletionNotAllowedException;
-import com.ahmetaksunger.ecommerce.exception.PaymentDetailNotFoundExcepition;
+import com.ahmetaksunger.ecommerce.exception.NotAllowedException.PaymentDetailDeletionNotAllowedException;
+import com.ahmetaksunger.ecommerce.exception.NotFoundException.PaymentDetailNotFoundExcepition;
 import com.ahmetaksunger.ecommerce.model.User;
 import com.ahmetaksunger.ecommerce.repository.AddressRepository;
 import com.ahmetaksunger.ecommerce.repository.PaymentDetailRepository;
@@ -23,7 +23,7 @@ public class PaymentDetailRules {
         }
     }
 
-    public void canDeleteAccount(long paymentDetailId,User user) {
+    public void checkIfCanDelete(long paymentDetailId,User user) {
         var paymentDetail = paymentDetailRepository.findById(paymentDetailId).orElseThrow(()->new PaymentDetailNotFoundExcepition());
         if(paymentDetail.getUser().getId() != user.getId()){
             throw new PaymentDetailDeletionNotAllowedException();

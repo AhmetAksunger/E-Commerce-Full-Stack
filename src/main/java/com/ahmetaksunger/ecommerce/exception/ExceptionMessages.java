@@ -4,6 +4,7 @@ public enum ExceptionMessages {
 
     ACCOUNT_DELETION_NOT_ALLOWED("User is not allowed to delete this account."),
     ADDRESS_UPDATE_NOT_ALLOWED("User is not allowed to update this address"),
+    ADDRESS_DELETION_NOT_ALLOWED("User is not allowed to delete this address"),
     PAYMENT_CREATION_NOT_ALLOWED("User is not allowed to create a payment detail"),
     PAYMENT_DETAIL_DELETION_NOT_ALLOWED("User is not allowed to delete this payment detail"),
     UNAUTHORIZED("Unauthorized"),
