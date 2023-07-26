@@ -17,12 +17,6 @@ import lombok.RequiredArgsConstructor;
 public class AddressRules {
 
 	private final AddressRepository addressRepository;
-	
-    public void checkIfIdsMatch(long id, User user){
-        if(id != user.getId()){
-            throw new UnauthorizedException(ExceptionMessages.UNAUTHORIZED.message());
-        }
-    }
         
     public void checkIfCanUpdate(long addressId,User user) {
     	

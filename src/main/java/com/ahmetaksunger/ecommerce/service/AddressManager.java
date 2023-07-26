@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Locale;
 
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.AddressNotFoundException;
+import com.ahmetaksunger.ecommerce.service.rules.GeneralRules;
 import org.springframework.stereotype.Service;
 
 import com.ahmetaksunger.ecommerce.dto.request.address.CreateAddressRequest;
@@ -69,7 +70,7 @@ public class AddressManager implements AddressService{
     public List<AddressVM> getAddressesByUserId(long id,User user) {
 
         //Rules
-        addressRules.checkIfIdsMatch(id,user);
+        GeneralRules.checkIfIdsMatch(id,user);
 
         List<Address> addresses = addressRepository.getByUserId(id);
         List<AddressVM> responses = new ArrayList<>();

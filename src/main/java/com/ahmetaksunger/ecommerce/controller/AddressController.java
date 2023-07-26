@@ -36,7 +36,7 @@ public class AddressController {
     }
     
     @GetMapping()
-    public ResponseEntity<List<AddressVM>> getAddressesByUser(@RequestParam(name = "userId") long id , @CurrentUser User loggedInUser){
+    public ResponseEntity<List<AddressVM>> getAddressesByUserId(@RequestParam(name = "userId",required = true) long id , @CurrentUser User loggedInUser){
         return ResponseEntity.ok(addressService.getAddressesByUserId(id,loggedInUser));
     }
 }

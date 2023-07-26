@@ -9,10 +9,9 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -26,4 +25,16 @@ public class PaymentDetailController {
     public ResponseEntity<PaymentDetailVM> create(@RequestBody @Validated CreatePaymentDetailRequest createPaymentDetailRequest, @CurrentUser User user){
         return ResponseEntity.ok(paymentDetailService.create(createPaymentDetailRequest,user));
     }
+
+    @DeleteMapping("/{paymentDetailId}")
+    public void delete(@PathVariable long paymentDetailId, @CurrentUser User user){
+        paymentDetailService.delete(paymentDetailId,user);
+    }
+
+    @GetMapping()
+    public ResponseEntity<List<PaymentDetailVM>> getPaymentDetailsByUserId(@RequestParam(name = "userId",required = true) long userId,
+                                                         @CurrentUser User loggedInUser){
+        return ResponseEntity.ok(paymentDetailService.getPaymentDetailsByUserId(userId,loggedInUser));
+    }
+
 }
