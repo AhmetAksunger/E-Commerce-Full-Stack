@@ -5,12 +5,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import com.ahmetaksunger.ecommerce.exception.NotFoundException.AddressNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.ahmetaksunger.ecommerce.dto.request.address.CreateAddressRequest;
 import com.ahmetaksunger.ecommerce.dto.request.address.UpdateAddressRequest;
 import com.ahmetaksunger.ecommerce.dto.response.AddressVM;
-import com.ahmetaksunger.ecommerce.exception.AddressNotFoundException;
 import com.ahmetaksunger.ecommerce.mapper.MapperService;
 import com.ahmetaksunger.ecommerce.model.Address;
 import com.ahmetaksunger.ecommerce.model.Country;

@@ -1,5 +1,7 @@
 package com.ahmetaksunger.ecommerce.exception;
 
+import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
+import com.ahmetaksunger.ecommerce.exception.NotFoundException.NotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

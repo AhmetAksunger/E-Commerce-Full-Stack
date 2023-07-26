@@ -1,4 +1,6 @@
-package com.ahmetaksunger.ecommerce.exception;
+package com.ahmetaksunger.ecommerce.exception.NotAllowedException;
+
+import com.ahmetaksunger.ecommerce.exception.ExceptionMessages;
 
 public class AddressUpdateNotAllowedException extends UnauthorizedException {
 	public AddressUpdateNotAllowedException() {

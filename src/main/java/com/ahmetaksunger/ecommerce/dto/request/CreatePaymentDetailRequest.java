@@ -16,4 +16,5 @@ public class CreatePaymentDetailRequest {
     private String creditCardNumber;
     private String cvv;
     private Date expirationDate;
+    private long addressId;
 }

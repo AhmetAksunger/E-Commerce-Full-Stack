@@ -1,11 +1,11 @@
 package com.ahmetaksunger.ecommerce.service.rules;
 
+import com.ahmetaksunger.ecommerce.exception.NotFoundException.AddressNotFoundException;
 import org.springframework.stereotype.Component;
 
-import com.ahmetaksunger.ecommerce.exception.AddressNotFoundException;
-import com.ahmetaksunger.ecommerce.exception.AddressUpdateNotAllowedException;
+import com.ahmetaksunger.ecommerce.exception.NotAllowedException.AddressUpdateNotAllowedException;
 import com.ahmetaksunger.ecommerce.exception.ExceptionMessages;
-import com.ahmetaksunger.ecommerce.exception.UnauthorizedException;
+import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
 import com.ahmetaksunger.ecommerce.model.Address;
 import com.ahmetaksunger.ecommerce.model.User;
 import com.ahmetaksunger.ecommerce.repository.AddressRepository;

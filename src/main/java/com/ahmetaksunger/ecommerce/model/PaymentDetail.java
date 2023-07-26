@@ -17,7 +17,7 @@ public class PaymentDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "payment_id")
-    private long paymentId;
+    private long id;
 
     @Column(name = "credit_cart_number",nullable = false)
     private String creditCardNumber;
