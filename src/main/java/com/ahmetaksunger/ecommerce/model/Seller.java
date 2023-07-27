@@ -21,7 +21,7 @@ public class Seller extends User{
     @Column(name = "logo",nullable = true)
     private String logo;
 
-    @OneToMany(mappedBy = "seller")
+    @OneToMany(mappedBy = "seller",cascade = CascadeType.REMOVE)
     private List<Product> products;
 
     public Seller(String email, String password,
