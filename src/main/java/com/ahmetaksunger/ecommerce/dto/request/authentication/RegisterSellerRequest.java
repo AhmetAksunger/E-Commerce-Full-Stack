@@ -21,7 +21,6 @@ public class RegisterSellerRequest extends RegisterRequest {
 
         @NotNull(message = "Contact number cannot be null")
         @NotBlank(message = "Contact number cannot be blank")
-        @Size(min = 11,max = 11,message = "Contact number length must be 11")
         @Digits(integer = 11,fraction = 0,message = "Contact number must contain only digits")
         private String contactNumber;
 

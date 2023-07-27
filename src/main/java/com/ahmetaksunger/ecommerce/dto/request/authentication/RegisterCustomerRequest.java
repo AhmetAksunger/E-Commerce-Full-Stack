@@ -21,7 +21,6 @@ public class RegisterCustomerRequest extends RegisterRequest {
 
     @NotNull(message = "Phone number cannot be null")
     @NotBlank(message = "Phone number cannot be blank")
-    @Size(min = 11, max = 11, message = "Phone number length must be 11")
     @Digits(integer = 11,fraction = 0,message = "Phone number must contain only digits")
     private String phoneNumber;
 
