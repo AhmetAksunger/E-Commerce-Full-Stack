@@ -36,7 +36,7 @@ public class Product extends BaseEntity{
     @Column(name = "logo",nullable = false)
     private String logo;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.DETACH)
     private Seller seller;
 
     @ManyToMany
