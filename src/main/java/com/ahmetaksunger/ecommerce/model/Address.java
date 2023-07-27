@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Table(name = "addresses")
 @Entity
 @Data
@@ -27,7 +29,9 @@ public class Address extends BaseEntity{
     private Country country;
     @Column(name = "zip_code",nullable = true)
     private String zipCode;
-    
+
+    @OneToMany(mappedBy = "address",cascade = CascadeType.REMOVE)
+    private List<PaymentDetail> paymentDetails;
     @ManyToOne()
     private User user;
 }

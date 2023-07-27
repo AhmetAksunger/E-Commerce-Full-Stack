@@ -1,10 +1,7 @@
 package com.ahmetaksunger.ecommerce.dto.request.authentication;
 
 import com.ahmetaksunger.ecommerce.exception.customValidation.UniqueEmail;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,6 +15,7 @@ public class RegisterRequest {
 
     @NotNull(message = "Email cannot be null")
     @NotBlank(message = "Email cannot be blank")
+    @Email(message = "Invalid email format")
     @UniqueEmail
     private String email;
 
