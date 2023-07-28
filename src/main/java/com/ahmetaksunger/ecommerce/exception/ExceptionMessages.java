@@ -9,7 +9,8 @@ public enum ExceptionMessages {
     PAYMENT_DETAIL_DELETION_NOT_ALLOWED("User is not allowed to delete this payment detail"),
     UNAUTHORIZED("Unauthorized"),
     ADDRESS_NOT_FOUND("Address not found"),
-    PAYMENT_DETAIL_NOT_FOUND("Payment detail not found");
+    PAYMENT_DETAIL_NOT_FOUND("Payment detail not found"),
+    CATEGORY_NOT_FOUND("Category not found");
 
     private String message;
 

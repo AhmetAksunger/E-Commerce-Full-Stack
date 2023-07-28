@@ -44,6 +44,10 @@ public class AuthenticationImpl implements AuthenticationService{
         }else if(user.getUserType().equals(UserType.SELLER)){
             Seller seller = sellerRepository.findById(user.getId()).orElseThrow(()->new RuntimeException("handle this"));
             claims = generateClaims(seller);
+        }else if(user.getUserType().equals(UserType.ADMIN)){
+            claims = Jwts.claims();
+            claims.put("email",user.getEmail());
+            claims.put("userType",user.getUserType().name());
         }
         var jwt = jwtService.generateToken(claims,user);
         return AuthenticationResponse.builder().jwt(jwt).build();
@@ -103,4 +107,5 @@ public class AuthenticationImpl implements AuthenticationService{
 
         return claims;
     }
+
 }
