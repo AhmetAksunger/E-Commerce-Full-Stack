@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -17,6 +18,7 @@ public class ProductVM {
     private BigDecimal price;
     private int quantity;
     private String logo;
-    private SellerVM sellerVM;
+    private SellerVM seller;
+    private List<CategoryVM> categories;
 
 }

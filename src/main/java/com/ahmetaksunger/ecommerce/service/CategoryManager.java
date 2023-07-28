@@ -10,7 +10,9 @@ import com.ahmetaksunger.ecommerce.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +40,16 @@ public class CategoryManager implements CategoryService{
             category.setDescription(updateCategoryRequest.getDescription());
         }
         return mapperService.forResponse().map(categoryRepository.save(category),CategoryVM.class);
+    }
+
+    @Override
+    public List<Category> getCategoriesByIds(List<Long> categoryIds) {
+        List<Category> categories = new ArrayList<>();
+        for (long categoryId:categoryIds) {
+            Category category = categoryRepository.findById(categoryId).orElseThrow(()->new CategoryNotFoundException());
+            categories.add(category);
+        }
+        return categories;
     }
 
 }

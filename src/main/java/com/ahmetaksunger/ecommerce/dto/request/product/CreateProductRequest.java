@@ -31,6 +31,6 @@ public class CreateProductRequest {
     @URL(message = "Logo must be a valid URL")
     private String logo;
 
-    private List<Integer> categoryIds;
+    private List<Long> categoryIds;
 
 }
