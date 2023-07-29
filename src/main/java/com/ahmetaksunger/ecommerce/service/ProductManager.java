@@ -54,6 +54,7 @@ public class ProductManager implements ProductService{
                         .toList()
         );
         product.setCategories(dbCategories);
+        product.setUpdatedAt(new Date());
         return mapperService.forResponse().map(productRepository.save(product),ProductVM.class);
     }
 
@@ -72,6 +73,7 @@ public class ProductManager implements ProductService{
                         toList()
         );
         product.setCategories(dbCategories);
+        product.setUpdatedAt(new Date());
         return mapperService.forResponse().map(productRepository.save(product),ProductVM.class);
     }
 

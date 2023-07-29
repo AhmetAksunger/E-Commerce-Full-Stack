@@ -39,6 +39,8 @@ public class CategoryManager implements CategoryService{
         if(updateCategoryRequest.getDescription() != null){
             category.setDescription(updateCategoryRequest.getDescription());
         }
+
+        category.setUpdatedAt(new Date());
         return mapperService.forResponse().map(categoryRepository.save(category),CategoryVM.class);
     }
 
