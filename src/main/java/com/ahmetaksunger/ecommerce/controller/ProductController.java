@@ -10,10 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/products")
@@ -28,5 +27,14 @@ public class ProductController {
     public ResponseEntity<ProductVM> createProduct(@RequestBody @Validated CreateProductRequest createProductRequest,
                                                    @CurrentUser User loggedInUser){
         return ResponseEntity.ok(productService.create(createProductRequest,loggedInUser));
+    }
+
+    @PutMapping("/{productId}")
+    @PreAuthorize("hasAuthority('SELLER')")
+    public ResponseEntity<ProductVM> addCategoriesByIdsToProduct(@PathVariable long productId,
+                                                                 @RequestParam(name = "categoryIds",required = true)
+                                                                 List<Long> categoryIds,
+                                                                 @CurrentUser User loggedInUser){
+        return ResponseEntity.ok(productService.addCategoriesByIdsToProduct(productId,categoryIds,loggedInUser));
     }
 }

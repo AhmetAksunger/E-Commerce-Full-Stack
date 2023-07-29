@@ -1,21 +1,22 @@
 package com.ahmetaksunger.ecommerce.service;
 
-import com.ahmetaksunger.ecommerce.dto.request.authentication.RegisterSellerRequest;
 import com.ahmetaksunger.ecommerce.dto.request.product.CreateProductRequest;
-import com.ahmetaksunger.ecommerce.dto.response.CategoryVM;
 import com.ahmetaksunger.ecommerce.dto.response.ProductVM;
 import com.ahmetaksunger.ecommerce.dto.response.SellerVM;
+import com.ahmetaksunger.ecommerce.exception.NotFoundException.ProductNotFoundException;
 import com.ahmetaksunger.ecommerce.mapper.MapperService;
 import com.ahmetaksunger.ecommerce.model.Category;
 import com.ahmetaksunger.ecommerce.model.Product;
 import com.ahmetaksunger.ecommerce.model.Seller;
 import com.ahmetaksunger.ecommerce.model.User;
 import com.ahmetaksunger.ecommerce.repository.ProductRepository;
+import com.ahmetaksunger.ecommerce.service.rules.ProductRules;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +25,7 @@ public class ProductManager implements ProductService{
     private final ProductRepository productRepository;
     private final MapperService mapperService;
     private final CategoryService categoryService;
+    private final ProductRules productRules;
     @Override
     public ProductVM create(CreateProductRequest createProductRequest, User loggedInUser) {
 
@@ -35,6 +37,24 @@ public class ProductManager implements ProductService{
         var response = mapperService.forResponse().map(productRepository.save(product),ProductVM.class);
         response.setSeller(mapperService.forResponse().map(product.getSeller(), SellerVM.class));
         return response;
+    }
+
+    @Override
+    public ProductVM addCategoriesByIdsToProduct(long productId, List<Long> categoryIds, User loggedInUser) {
+
+        //Rules
+        productRules.checkIfCanUpdate(productId,loggedInUser);
+
+        Product product = productRepository.findById(productId).orElseThrow(()->new ProductNotFoundException());
+        List<Category> existingCategories = product.getCategories();
+        List<Category> categoriesToBeAdded = categoryService.getCategoriesByIds(categoryIds);
+        existingCategories.addAll(
+                categoriesToBeAdded.stream()
+                        .filter(category -> !existingCategories.contains(category))
+                        .toList()
+        );
+        product.setCategories(existingCategories);
+        return mapperService.forResponse().map(productRepository.save(product),ProductVM.class);
     }
 
 }
