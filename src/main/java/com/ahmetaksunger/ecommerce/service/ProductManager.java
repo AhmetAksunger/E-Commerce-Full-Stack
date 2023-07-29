@@ -46,14 +46,32 @@ public class ProductManager implements ProductService{
         productRules.checkIfCanUpdate(productId,loggedInUser);
 
         Product product = productRepository.findById(productId).orElseThrow(()->new ProductNotFoundException());
-        List<Category> existingCategories = product.getCategories();
+        List<Category> dbCategories = product.getCategories();
         List<Category> categoriesToBeAdded = categoryService.getCategoriesByIds(categoryIds);
-        existingCategories.addAll(
+        dbCategories.addAll(
                 categoriesToBeAdded.stream()
-                        .filter(category -> !existingCategories.contains(category))
+                        .filter(category -> !dbCategories.contains(category))
                         .toList()
         );
-        product.setCategories(existingCategories);
+        product.setCategories(dbCategories);
+        return mapperService.forResponse().map(productRepository.save(product),ProductVM.class);
+    }
+
+    @Override
+    public ProductVM removeCategoriesByIdsFromProduct(long productId, List<Long> categoryIds, User loggedInUser) {
+
+        //Rules
+        productRules.checkIfCanUpdate(productId,loggedInUser);
+
+        Product product = productRepository.findById(productId).orElseThrow(()->new ProductNotFoundException());
+        List<Category> dbCategories = product.getCategories();
+        List<Category> categoriesToBeRemoved = categoryService.getCategoriesByIds(categoryIds);
+        dbCategories.removeAll(
+                categoriesToBeRemoved.stream()
+                        .filter(category -> dbCategories.contains(category)).
+                        toList()
+        );
+        product.setCategories(dbCategories);
         return mapperService.forResponse().map(productRepository.save(product),ProductVM.class);
     }
 

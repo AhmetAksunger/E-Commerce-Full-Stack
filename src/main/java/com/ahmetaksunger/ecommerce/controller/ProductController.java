@@ -29,7 +29,7 @@ public class ProductController {
         return ResponseEntity.ok(productService.create(createProductRequest,loggedInUser));
     }
 
-    @PutMapping("/{productId}")
+    @PutMapping("/{productId}/add")
     @PreAuthorize("hasAuthority('SELLER')")
     public ResponseEntity<ProductVM> addCategoriesByIdsToProduct(@PathVariable long productId,
                                                                  @RequestParam(name = "categoryIds",required = true)
@@ -37,4 +37,14 @@ public class ProductController {
                                                                  @CurrentUser User loggedInUser){
         return ResponseEntity.ok(productService.addCategoriesByIdsToProduct(productId,categoryIds,loggedInUser));
     }
+
+    @PutMapping("/{productId}/remove")
+    @PreAuthorize("hasAuthority('SELLER')")
+    public ResponseEntity<ProductVM> removeCategoriesByIdsFromProduct(@PathVariable long productId,
+                                                                      @RequestParam(name = "categoryIds",required = true)
+                                                                      List<Long> categoryIds,
+                                                                      @CurrentUser User loggedInUser){
+        return ResponseEntity.ok(productService.removeCategoriesByIdsFromProduct(productId,categoryIds,loggedInUser));
+    }
+
 }

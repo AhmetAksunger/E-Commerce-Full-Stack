@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface ProductService {
     ProductVM create(CreateProductRequest createProductRequest, User loggedInUser);
-
     ProductVM addCategoriesByIdsToProduct(long productId, List<Long> categoryIds, User loggedInUser);
+    ProductVM removeCategoriesByIdsFromProduct(long productId, List<Long> categoryIds,User loggedInUser);
 }
