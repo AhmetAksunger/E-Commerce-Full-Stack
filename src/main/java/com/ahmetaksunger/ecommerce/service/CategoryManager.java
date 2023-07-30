@@ -10,7 +10,6 @@ import com.ahmetaksunger.ecommerce.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -46,12 +45,12 @@ public class CategoryManager implements CategoryService{
 
     @Override
     public List<Category> getCategoriesByIds(List<Long> categoryIds) {
-        List<Category> categories = new ArrayList<>();
-        for (long categoryId:categoryIds) {
-            Category category = categoryRepository.findById(categoryId).orElseThrow(()->new CategoryNotFoundException());
-            categories.add(category);
-        }
-        return categories;
+
+        return categoryIds
+                .stream()
+                .map(categoryId -> categoryRepository.findById(categoryId)
+                        .orElseThrow(CategoryNotFoundException::new))
+                .toList();
     }
 
 }

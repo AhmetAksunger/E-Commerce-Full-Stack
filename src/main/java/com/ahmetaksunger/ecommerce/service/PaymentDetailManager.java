@@ -50,11 +50,10 @@ public class PaymentDetailManager implements PaymentDetailService{
         GeneralRules.checkIfIdsMatch(userId,loggedInUser);
 
         List<PaymentDetail> paymentDetails = paymentDetailRepository.getByUserId(userId);
-        List<PaymentDetailVM> responses = new ArrayList<>();
-        for (PaymentDetail paymentDetail:paymentDetails) {
-            PaymentDetailVM response = mapperService.forResponse().map(paymentDetail,PaymentDetailVM.class);
-            responses.add(response);
-        }
-        return responses;
+
+        return paymentDetails.stream()
+                .map(paymentDetail -> mapperService.forResponse()
+                        .map(paymentDetail,PaymentDetailVM.class))
+                .toList();
     }
 }

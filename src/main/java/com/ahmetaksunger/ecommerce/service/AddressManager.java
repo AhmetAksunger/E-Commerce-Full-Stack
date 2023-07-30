@@ -81,12 +81,8 @@ public class AddressManager implements AddressService{
         GeneralRules.checkIfIdsMatch(id,user);
 
         List<Address> addresses = addressRepository.getByUserId(id);
-        List<AddressVM> responses = new ArrayList<>();
-
-        for (Address address:addresses) {
-            AddressVM response = mapperService.forResponse().map(address,AddressVM.class);
-            responses.add(response);
-        }
-        return responses;
+        return addresses.stream()
+                .map(address -> mapperService.forResponse().map(address,AddressVM.class))
+                .toList();
     }
 }
