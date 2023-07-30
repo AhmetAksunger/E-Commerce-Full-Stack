@@ -29,7 +29,7 @@ public class AddressRules {
 		Address address = addressRepository.findById(addressId).orElseThrow(()-> new AddressNotFoundException());
 		this.verifyAddressBelongsToUser(address,user, AddressDeletionNotAllowedException.class);
 	}
-
+	// TODO: One user can have at most 3 addresses
 	private void verifyAddressBelongsToUser(Address address, User user,
 											Class<? extends UnauthorizedException> exceptionClass){
 		if(address.getUser().getId() != user.getId()) {

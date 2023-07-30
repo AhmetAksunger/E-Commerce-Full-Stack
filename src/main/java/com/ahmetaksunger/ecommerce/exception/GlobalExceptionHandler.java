@@ -52,12 +52,23 @@ public class GlobalExceptionHandler {
     
     @ExceptionHandler({NotFoundException.class})
     public ResponseEntity<DefaultExceptionResponse> handle(NotFoundException exception, HttpServletRequest request){
-    	return new ResponseEntity<>(DefaultExceptionResponse.builder()
+        return new ResponseEntity<>(DefaultExceptionResponse.builder()
                 .status(HttpStatus.NOT_FOUND.value())
                 .error(HttpStatus.NOT_FOUND.getReasonPhrase())
                 .message(exception.getMessage())
                 .timeStamp(System.currentTimeMillis())
                 .path(request.getRequestURI())
                 .build(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler({InvalidRequestParamException.class})
+    public ResponseEntity<DefaultExceptionResponse> handle(InvalidRequestParamException exception, HttpServletRequest request){
+        return new ResponseEntity<>(DefaultExceptionResponse.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                .message(exception.getMessage())
+                .timeStamp(System.currentTimeMillis())
+                .path(request.getRequestURI())
+                .build(),HttpStatus.BAD_REQUEST);
     }
 }

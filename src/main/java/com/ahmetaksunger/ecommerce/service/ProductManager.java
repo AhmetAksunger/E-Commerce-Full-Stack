@@ -12,11 +12,15 @@ import com.ahmetaksunger.ecommerce.model.User;
 import com.ahmetaksunger.ecommerce.repository.ProductRepository;
 import com.ahmetaksunger.ecommerce.service.rules.ProductRules;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -75,6 +79,20 @@ public class ProductManager implements ProductService{
         product.setCategories(dbCategories);
         product.setUpdatedAt(new Date());
         return mapperService.forResponse().map(productRepository.save(product),ProductVM.class);
+    }
+
+    @Override
+    public Page<ProductVM> getProducts(String sort, String order,
+                                       List<Long> categoryIds, BigDecimal minPrice,
+                                       BigDecimal maxPrice, int page, int size) {
+
+        //Rules
+        productRules.checkIfSortParamIsValid(sort);
+        productRules.checkIfOrderParamIsValid(order);
+
+        Pageable pageable = PageRequest.of(page,size,Sort.by(Sort.Direction.valueOf(sort.toUpperCase()),order));
+        Page<Product> products = productRepository.findByCategories_IdInAndPriceBetween(categoryIds,minPrice,maxPrice,pageable);
+        return products.map(product -> mapperService.forResponse().map(product,ProductVM.class));
     }
 
 }
