@@ -7,6 +7,7 @@ import com.ahmetaksunger.ecommerce.security.CurrentUser;
 import com.ahmetaksunger.ecommerce.service.PaymentDetailService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -24,12 +25,12 @@ public class PaymentDetailController {
     private final PaymentDetailService paymentDetailService;
 
     @PostMapping
-    public ResponseEntity<PaymentDetailVM> create(@RequestBody @Validated CreatePaymentDetailRequest createPaymentDetailRequest, @CurrentUser User user){
-        return ResponseEntity.ok(paymentDetailService.create(createPaymentDetailRequest,user));
+    public ResponseEntity<PaymentDetailVM> createPaymentDetail(@RequestBody @Validated CreatePaymentDetailRequest createPaymentDetailRequest, @CurrentUser User user){
+        return new ResponseEntity<>(paymentDetailService.create(createPaymentDetailRequest,user), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{paymentDetailId}")
-    public void delete(@PathVariable long paymentDetailId, @CurrentUser User user){
+    public void deletePaymentDetail(@PathVariable long paymentDetailId, @CurrentUser User user){
         paymentDetailService.delete(paymentDetailId,user);
     }
 
