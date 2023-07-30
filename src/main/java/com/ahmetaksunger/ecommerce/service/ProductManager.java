@@ -90,8 +90,15 @@ public class ProductManager implements ProductService{
         productRules.checkIfSortParamIsValid(sort);
         productRules.checkIfOrderParamIsValid(order);
 
+        Page<Product> products = null;
         Pageable pageable = PageRequest.of(page,size,Sort.by(Sort.Direction.valueOf(sort.toUpperCase()),order));
-        Page<Product> products = productRepository.findByCategories_IdInAndPriceBetween(categoryIds,minPrice,maxPrice,pageable);
+
+        if(categoryIds == null || categoryIds.size() == 0){
+            products = productRepository.findByPriceBetween(minPrice,maxPrice,pageable);
+        }else{
+            products = productRepository.findByCategories_IdInAndPriceBetween(categoryIds,minPrice,maxPrice,pageable);
+        }
+
         return products.map(product -> mapperService.forResponse().map(product,ProductVM.class));
     }
 
