@@ -1,6 +1,7 @@
 package com.ahmetaksunger.ecommerce.service.rules;
 
 import com.ahmetaksunger.ecommerce.exception.InvalidRequestParamException;
+import com.ahmetaksunger.ecommerce.exception.NotAllowedException.ProductDeletionNotAllowedException;
 import com.ahmetaksunger.ecommerce.exception.NotAllowedException.ProductUpdateNotAllowedException;
 import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.ProductNotFoundException;
@@ -22,8 +23,13 @@ public class ProductRules {
     private final List<String> validOrderParams = List.of("name","price","createdAt","updatedAt");
 
     public void checkIfCanUpdate(long productId, User loggedInUser){
-        Product product = productRepository.findById(productId).orElseThrow(()->new ProductNotFoundException());
+        Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
         this.verifyProductBelongsToUser(product,loggedInUser, ProductUpdateNotAllowedException.class);
+    }
+
+    public void checkIfCanDelete(long productId, User loggedInUser){
+        Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
+        this.verifyProductBelongsToUser(product,loggedInUser, ProductDeletionNotAllowedException.class);
     }
 
     public void checkIfSortParamIsValid(String sort){

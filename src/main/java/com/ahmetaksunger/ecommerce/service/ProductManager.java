@@ -102,4 +102,13 @@ public class ProductManager implements ProductService{
         return products.map(product -> mapperService.forResponse().map(product,ProductVM.class));
     }
 
+    @Override
+    public void delete(long productId, User loggedInUser) {
+
+        //Rules
+        productRules.checkIfCanDelete(productId,loggedInUser);
+
+        productRepository.deleteById(productId);
+    }
+
 }

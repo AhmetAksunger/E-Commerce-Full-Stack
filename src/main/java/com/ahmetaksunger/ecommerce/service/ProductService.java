@@ -16,4 +16,6 @@ public interface ProductService {
     Page<ProductVM> getProducts(String sort, String order, List<Long> category, BigDecimal minPrice,
                                 BigDecimal maxPrice,
                                 int page, int size);
+
+    void delete(long productId, User loggedInUser);
 }

@@ -71,4 +71,10 @@ public class ProductController {
 
         return ResponseEntity.ok(productService.getProducts(sort,order,categoryIds,minPrice,maxPrice,page,size));
     }
+
+    @DeleteMapping("/{productId}")
+    @PreAuthorize("hasAnyAuthority('SELLER')")
+    public void deleteProduct(@PathVariable long productId, @CurrentUser User loggedInUser){
+        productService.delete(productId,loggedInUser);
+    }
 }
