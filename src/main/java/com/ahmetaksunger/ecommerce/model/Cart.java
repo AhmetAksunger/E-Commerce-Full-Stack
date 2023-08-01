@@ -1,9 +1,8 @@
 package com.ahmetaksunger.ecommerce.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 
@@ -11,7 +10,8 @@ import java.util.List;
 @Table(name = "carts")
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter @Setter
+@SuperBuilder
 public class Cart extends BaseEntity{
 
     @Id

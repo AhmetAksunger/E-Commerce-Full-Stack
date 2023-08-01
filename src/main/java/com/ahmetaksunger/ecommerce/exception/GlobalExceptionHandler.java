@@ -4,6 +4,7 @@ import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedExc
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.NotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -70,5 +71,16 @@ public class GlobalExceptionHandler {
                 .timeStamp(System.currentTimeMillis())
                 .path(request.getRequestURI())
                 .build(),HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({UserAlreadyHasCartException.class})
+    public ResponseEntity<DefaultExceptionResponse> handle(UserAlreadyHasCartException exception, HttpServletRequest request){
+        return new ResponseEntity<>(DefaultExceptionResponse.builder()
+                .status(HttpStatus.CONFLICT.value())
+                .error(HttpStatus.CONFLICT.getReasonPhrase())
+                .message(exception.getMessage())
+                .timeStamp(System.currentTimeMillis())
+                .path(request.getRequestURI())
+                .build(),HttpStatus.CONFLICT);
     }
 }

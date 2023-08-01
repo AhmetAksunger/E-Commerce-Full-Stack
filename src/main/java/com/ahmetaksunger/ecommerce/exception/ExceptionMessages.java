@@ -13,7 +13,8 @@ public enum ExceptionMessages {
     ADDRESS_NOT_FOUND("Address not found"),
     PAYMENT_DETAIL_NOT_FOUND("Payment detail not found"),
     CATEGORY_NOT_FOUND("Category not found"),
-    PRODUCT_NOT_FOUND("Product not found");
+    PRODUCT_NOT_FOUND("Product not found"),
+    USER_ALREADY_HAS_CART("User already has cart");
 
     private String message;
 
