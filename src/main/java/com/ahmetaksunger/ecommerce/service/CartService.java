@@ -5,4 +5,6 @@ import com.ahmetaksunger.ecommerce.model.User;
 
 public interface CartService {
     CartVM create(User user);
+
+    void delete(long cartId, User loggedInUser);
 }

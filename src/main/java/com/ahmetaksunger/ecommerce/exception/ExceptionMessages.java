@@ -9,11 +9,13 @@ public enum ExceptionMessages {
     PAYMENT_DETAIL_DELETION_NOT_ALLOWED("User is not allowed to delete this payment detail"),
     PRODUCT_UPDATE_NOT_ALLOWED("User is not allowed to update this product"),
     PRODUCT_DELETION_NOT_ALLOWED("User is not allowed to delete this product"),
+    CART_DELETION_NOT_ALLOWED("User is not allowed to delete this cart"),
     UNAUTHORIZED("Unauthorized"),
     ADDRESS_NOT_FOUND("Address not found"),
     PAYMENT_DETAIL_NOT_FOUND("Payment detail not found"),
     CATEGORY_NOT_FOUND("Category not found"),
     PRODUCT_NOT_FOUND("Product not found"),
+    CART_NOT_FOUND("Cart not found"),
     USER_ALREADY_HAS_CART("User already has cart");
 
     private String message;

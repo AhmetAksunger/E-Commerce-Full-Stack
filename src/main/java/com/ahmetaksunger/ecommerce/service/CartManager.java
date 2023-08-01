@@ -32,4 +32,13 @@ public class CartManager implements CartService{
 
         return mapperService.forResponse().map(cartRepository.save(cart),CartVM.class);
     }
+
+    @Override
+    public void delete(long cartId, User loggedInUser) {
+
+        //Rules
+        cartRules.checkIfCanDelete(cartId,loggedInUser);
+
+        cartRepository.deleteById(cartId);
+    }
 }

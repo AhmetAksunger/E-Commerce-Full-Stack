@@ -9,9 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/carts")
@@ -24,8 +22,12 @@ public class CartController {
     @PostMapping
     @PreAuthorize("hasAuthority('CUSTOMER')")
     public ResponseEntity<CartVM> createCart(@CurrentUser User loggedInUser){
-        var c = cartService.create(loggedInUser);
-        System.err.println(c.toString());
-        return new ResponseEntity<>(c, HttpStatus.CREATED);
+        return new ResponseEntity<>(cartService.create(loggedInUser), HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/{cartId}")
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    public void deleteCart(@PathVariable long cartId, @CurrentUser User loggedInUser){
+        cartService.delete(cartId,loggedInUser);
     }
 }
