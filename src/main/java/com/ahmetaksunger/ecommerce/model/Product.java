@@ -1,9 +1,7 @@
 package com.ahmetaksunger.ecommerce.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -11,7 +9,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "products")
-@Data
+@Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Product extends BaseEntity{
