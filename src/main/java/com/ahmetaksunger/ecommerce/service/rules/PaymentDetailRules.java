@@ -4,6 +4,8 @@ import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedExc
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.AddressNotFoundException;
 import com.ahmetaksunger.ecommerce.exception.NotAllowedException.PaymentDetailDeletionNotAllowedException;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.PaymentDetailNotFoundExcepition;
+import com.ahmetaksunger.ecommerce.model.Cart;
+import com.ahmetaksunger.ecommerce.model.PaymentDetail;
 import com.ahmetaksunger.ecommerce.model.User;
 import com.ahmetaksunger.ecommerce.repository.AddressRepository;
 import com.ahmetaksunger.ecommerce.repository.PaymentDetailRepository;
@@ -25,8 +27,17 @@ public class PaymentDetailRules {
 
     public void checkIfCanDelete(long paymentDetailId,User user) {
         var paymentDetail = paymentDetailRepository.findById(paymentDetailId).orElseThrow(()->new PaymentDetailNotFoundExcepition());
-        if(paymentDetail.getUser().getId() != user.getId()){
-            throw new PaymentDetailDeletionNotAllowedException();
+        this.verifyPaymentDetailBelongsToUser(paymentDetail,user,PaymentDetailDeletionNotAllowedException.class);
+    }
+
+    public void verifyPaymentDetailBelongsToUser(PaymentDetail paymentDetail, User user,
+                                                 Class<? extends UnauthorizedException> exceptionClass){
+        if(paymentDetail.getUser().getId() != user.getId()) {
+            try {
+                throw exceptionClass.getDeclaredConstructor().newInstance();
+            } catch (Exception e) {
+                throw new UnauthorizedException(e.getMessage());
+            }
         }
     }
 

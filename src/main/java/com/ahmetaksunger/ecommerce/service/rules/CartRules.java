@@ -41,7 +41,7 @@ public class CartRules {
 
     public void checkIfQuantityIsValid(int quantity, Product product){
         if(quantity > product.getQuantity()){
-            throw new InsufficientProductQuantityException();
+            throw new InsufficientProductQuantityException(product);
         }
     }
 }

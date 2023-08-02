@@ -1,8 +1,15 @@
 package com.ahmetaksunger.ecommerce.controller;
 
+import com.ahmetaksunger.ecommerce.dto.response.OrderCompletedResponse;
+import com.ahmetaksunger.ecommerce.model.User;
+import com.ahmetaksunger.ecommerce.security.CurrentUser;
+import com.ahmetaksunger.ecommerce.service.OrderService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -11,4 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class OrderController {
 
+    private final OrderService orderService;
+
+    public ResponseEntity<OrderCompletedResponse> createOrder(@RequestParam(name = "cartId",required = true)
+                                                              long cartId,
+                                                              @RequestParam(name = "paymentDetailId")
+                                                              long paymentDetailId,
+                                                              @CurrentUser User loggedInUser){
+        return new ResponseEntity<>(orderService.create(cartId,paymentDetailId,loggedInUser), HttpStatus.CREATED);
+    }
 }
