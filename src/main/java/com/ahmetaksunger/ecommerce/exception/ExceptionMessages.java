@@ -16,6 +16,7 @@ public enum ExceptionMessages {
     CATEGORY_NOT_FOUND("Category not found"),
     PRODUCT_NOT_FOUND("Product not found"),
     CART_NOT_FOUND("Cart not found"),
+    CART_ITEM_NOT_FOUND("Cart item not found"),
     USER_ALREADY_HAS_CART("User already has cart"),
     INSUFF_PRODUCT_QUANTITY("Insufficient product quantity");
 

@@ -1,6 +1,5 @@
 package com.ahmetaksunger.ecommerce.controller;
 
-import com.ahmetaksunger.ecommerce.dto.response.CartItemVM;
 import com.ahmetaksunger.ecommerce.dto.response.CartVM;
 import com.ahmetaksunger.ecommerce.model.User;
 import com.ahmetaksunger.ecommerce.security.CurrentUser;
@@ -22,11 +21,16 @@ public class CartItemController {
     private final CartItemService cartItemService;
 
     @PostMapping()
-    public ResponseEntity<CartVM> addCartItemToCart(@RequestParam(name = "cartId",required = true) long cartId,
+    public ResponseEntity<CartVM> createCartItem(@RequestParam(name = "cartId",required = true) long cartId,
                                                     @RequestParam(name = "productId", required = true) long productId,
                                                     @RequestParam(name = "quantity",required = false,defaultValue = "0") int quantity,
                                                     @CurrentUser User loggedInUser){
         return new ResponseEntity<>(cartItemService.create(cartId,productId,quantity,loggedInUser),
                 HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/{cartItemId}")
+    public ResponseEntity<CartVM> deleteCartItem(@PathVariable long cartItemId, @CurrentUser User loggedInUser){
+        return ResponseEntity.ok(cartItemService.delete(cartItemId,loggedInUser));
     }
 }

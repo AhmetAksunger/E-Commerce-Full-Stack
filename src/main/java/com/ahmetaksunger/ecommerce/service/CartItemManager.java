@@ -1,7 +1,9 @@
 package com.ahmetaksunger.ecommerce.service;
 
 import com.ahmetaksunger.ecommerce.dto.response.CartVM;
+import com.ahmetaksunger.ecommerce.exception.NotAllowedException.CartDeletionNotAllowedException;
 import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
+import com.ahmetaksunger.ecommerce.exception.NotFoundException.CartItemNotFound;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.CartNotFoundException;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.ProductNotFoundException;
 import com.ahmetaksunger.ecommerce.mapper.MapperService;
@@ -43,6 +45,18 @@ public class CartItemManager implements CartItemService{
                 .build();
         CartItem dbCartItem = cartItemRepository.save(cartItem);
         return mapperService.forResponse().map(dbCartItem.getCart(), CartVM.class);
+    }
+
+    @Override
+    public CartVM delete(long cartItemId, User loggedInUser) {
+
+        CartItem cartItem = cartItemRepository.findById(cartItemId).orElseThrow(CartItemNotFound::new);
+
+        //Rules
+        cartRules.verifyCartBelongsToUser(cartItem.getCart(),loggedInUser, CartDeletionNotAllowedException.class);
+
+        cartItemRepository.deleteById(cartItemId);
+        return mapperService.forResponse().map(cartItem.getCart(),CartVM.class);
     }
 
 }
