@@ -21,6 +21,6 @@ public class Cart extends BaseEntity{
     @OneToOne
     private Customer customer;
 
-    @OneToMany(mappedBy = "cart")
+    @OneToMany(mappedBy = "cart",cascade = CascadeType.REMOVE)
     private List<CartItem> cartItems;
 }

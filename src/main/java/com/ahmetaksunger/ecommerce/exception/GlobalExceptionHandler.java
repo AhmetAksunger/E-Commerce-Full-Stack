@@ -62,8 +62,8 @@ public class GlobalExceptionHandler {
                 .build(), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler({InvalidRequestParamException.class})
-    public ResponseEntity<DefaultExceptionResponse> handle(InvalidRequestParamException exception, HttpServletRequest request){
+    @ExceptionHandler({InvalidRequestParamException.class, InsufficientProductQuantityException.class})
+    public ResponseEntity<DefaultExceptionResponse> handleBadRequest(Exception exception, HttpServletRequest request){
         return new ResponseEntity<>(DefaultExceptionResponse.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
                 .error(HttpStatus.BAD_REQUEST.getReasonPhrase())

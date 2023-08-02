@@ -1,9 +1,12 @@
 package com.ahmetaksunger.ecommerce.service.rules;
 
+import com.ahmetaksunger.ecommerce.exception.InsufficientProductQuantityException;
 import com.ahmetaksunger.ecommerce.exception.NotAllowedException.CartDeletionNotAllowedException;
+import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.CartNotFoundException;
 import com.ahmetaksunger.ecommerce.exception.UserAlreadyHasCartException;
 import com.ahmetaksunger.ecommerce.model.Cart;
+import com.ahmetaksunger.ecommerce.model.Product;
 import com.ahmetaksunger.ecommerce.model.User;
 import com.ahmetaksunger.ecommerce.repository.CartRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +25,23 @@ public class CartRules {
 
     public void checkIfCanDelete(long cartId,User user){
         Cart cart = cartRepository.findById(cartId).orElseThrow(CartNotFoundException::new);
-        if(cart.getCustomer().getId() != user.getId()){
-            throw new CartDeletionNotAllowedException();
+        this.verifyCartBelongsToUser(cart,user,CartDeletionNotAllowedException.class);
+    }
+
+    public void verifyCartBelongsToUser(Cart cart, User user,
+                                            Class<? extends UnauthorizedException> exceptionClass){
+        if(cart.getCustomer().getId() != user.getId()) {
+            try {
+                throw exceptionClass.getDeclaredConstructor().newInstance();
+            } catch (Exception e) {
+                throw new UnauthorizedException(e.getMessage());
+            }
+        }
+    }
+
+    public void checkIfQuantityIsValid(int quantity, Product product){
+        if(quantity > product.getQuantity()){
+            throw new InsufficientProductQuantityException();
         }
     }
 }
