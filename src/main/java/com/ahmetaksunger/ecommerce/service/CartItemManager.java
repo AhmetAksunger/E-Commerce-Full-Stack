@@ -1,6 +1,6 @@
 package com.ahmetaksunger.ecommerce.service;
 
-import com.ahmetaksunger.ecommerce.dto.response.CartItemVM;
+import com.ahmetaksunger.ecommerce.dto.response.CartVM;
 import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.CartNotFoundException;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.ProductNotFoundException;
@@ -25,7 +25,7 @@ public class CartItemManager implements CartItemService{
     private final CartRules cartRules;
     private final MapperService mapperService;
     @Override
-    public CartItemVM create(long cartId, long productId, int quantity, User loggedInUser) {
+    public CartVM create(long cartId, long productId, int quantity, User loggedInUser) {
 
         Cart cart = cartRepository.findById(cartId).orElseThrow(CartNotFoundException::new);
         Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
@@ -41,7 +41,8 @@ public class CartItemManager implements CartItemService{
                 .quantity(quantity)
                 .createdAt(new Date())
                 .build();
-        return mapperService.forResponse().map(cartItemRepository.save(cartItem),CartItemVM.class);
+        CartItem dbCartItem = cartItemRepository.save(cartItem);
+        return mapperService.forResponse().map(dbCartItem.getCart(), CartVM.class);
     }
 
 }

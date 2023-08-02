@@ -7,7 +7,6 @@ import lombok.Setter;
 public class CartItemVM {
 
     private long id;
-    private CartVM cart;
     private long productId;
     private String productName;
     private int quantity;
