@@ -2,6 +2,7 @@ package com.ahmetaksunger.ecommerce.service;
 
 import com.ahmetaksunger.ecommerce.dto.request.product.CreateProductRequest;
 import com.ahmetaksunger.ecommerce.dto.response.ProductVM;
+import com.ahmetaksunger.ecommerce.model.Product;
 import com.ahmetaksunger.ecommerce.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,4 +19,6 @@ public interface ProductService {
                                 int page, int size);
 
     void delete(long productId, User loggedInUser);
+
+    void reduceQuantityForBoughtProducts(List<Product> boughtProducts);
 }

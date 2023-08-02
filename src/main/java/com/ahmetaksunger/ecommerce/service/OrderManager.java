@@ -4,9 +4,7 @@ import com.ahmetaksunger.ecommerce.dto.response.OrderCompletedResponse;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.CartNotFoundException;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.PaymentDetailNotFoundExcepition;
 import com.ahmetaksunger.ecommerce.mapper.MapperService;
-import com.ahmetaksunger.ecommerce.model.Cart;
-import com.ahmetaksunger.ecommerce.model.PaymentDetail;
-import com.ahmetaksunger.ecommerce.model.User;
+import com.ahmetaksunger.ecommerce.model.*;
 import com.ahmetaksunger.ecommerce.repository.CartRepository;
 import com.ahmetaksunger.ecommerce.repository.OrderRepository;
 import com.ahmetaksunger.ecommerce.repository.PaymentDetailRepository;
@@ -15,6 +13,9 @@ import com.ahmetaksunger.ecommerce.service.rules.OrderRules;
 import com.ahmetaksunger.ecommerce.service.rules.PaymentDetailRules;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +26,7 @@ public class OrderManager implements OrderService{
     private final PaymentDetailRepository paymentDetailRepository;
     private final OrderRules orderRules;
     private final MapperService mapperService;
+    private final ProductService productService;
 
     @Override
     public OrderCompletedResponse create(long cartId, long paymentDetailId, User loggedInUser) {
@@ -36,7 +38,27 @@ public class OrderManager implements OrderService{
         orderRules.verifyCartAndPaymentDetailBelongsToUser(cart,paymentDetail,loggedInUser);
         orderRules.checkInsufficientStock(cart);
 
-        return null;
+        Order order = Order.builder()
+                .total(this.calculateTotal(cart))
+                .cart(cart)
+                .customer((Customer) loggedInUser)
+                .paymentDetail(paymentDetail)
+                .createdAt(new Date())
+                .build();
+
+        Order dbOrder = orderRepository.save(order);
+        productService.reduceQuantityForBoughtProducts(cart.getCartItems()
+                .stream().
+                map(CartItem::getProduct)
+                .toList());
+
+        return mapperService.forResponse().map(dbOrder,OrderCompletedResponse.class);
     }
 
+    private BigDecimal calculateTotal(Cart cart){
+        return cart.getCartItems()
+                .stream()
+                .map(cartItem -> cartItem.getProduct().getPrice())
+                .reduce(BigDecimal.ZERO,BigDecimal::add);
+    }
 }

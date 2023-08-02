@@ -10,7 +10,6 @@ public class OrderCompletedResponse {
 
     private long id;
     private BigDecimal total;
-    private CustomerVM customer;
     private CartVM cart;
     private PaymentDetailVM paymentDetail;
 

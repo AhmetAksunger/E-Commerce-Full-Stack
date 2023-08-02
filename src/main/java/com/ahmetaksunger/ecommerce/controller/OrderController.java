@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,6 +21,7 @@ public class OrderController {
 
     private final OrderService orderService;
 
+    @PostMapping
     public ResponseEntity<OrderCompletedResponse> createOrder(@RequestParam(name = "cartId",required = true)
                                                               long cartId,
                                                               @RequestParam(name = "paymentDetailId")

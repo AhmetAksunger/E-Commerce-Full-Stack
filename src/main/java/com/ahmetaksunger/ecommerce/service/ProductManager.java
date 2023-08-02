@@ -111,4 +111,12 @@ public class ProductManager implements ProductService{
         productRepository.deleteById(productId);
     }
 
+    @Override
+    public void reduceQuantityForBoughtProducts(List<Product> boughtProducts){
+        boughtProducts.forEach(product -> {
+            product.setQuantity(product.getQuantity()-1);
+            productRepository.save(product);
+        });
+    }
+
 }
