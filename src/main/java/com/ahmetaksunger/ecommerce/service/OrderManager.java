@@ -51,7 +51,7 @@ public class OrderManager implements OrderService{
                 .stream().
                 map(CartItem::getProduct)
                 .toList());
-
+        // TODO: Different implementation for carts cartRepository.deleteById(cartId);
         return mapperService.forResponse().map(dbOrder,OrderCompletedResponse.class);
     }
 

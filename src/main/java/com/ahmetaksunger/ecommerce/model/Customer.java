@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.Date;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
 @Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@SuperBuilder
 public class Customer extends User{
 
     @Column(name = "full_name",nullable = false)
@@ -23,12 +25,5 @@ public class Customer extends User{
 
     @OneToMany(mappedBy = "customer")
     private List<Order> orders;
-    
-    public Customer(String email, String password,
-                    Date createdAt, Date updatedAt,
-                    String fullName, String phoneNumber){
-        super(email,password,createdAt,updatedAt,UserType.CUSTOMER);
-        this.fullName = fullName;
-        this.phoneNumber = phoneNumber;
-    }
+
 }

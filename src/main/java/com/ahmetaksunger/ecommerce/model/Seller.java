@@ -2,16 +2,17 @@ package com.ahmetaksunger.ecommerce.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.Date;
 import java.util.List;
 
 @Table(name = "sellers")
 @Entity
-@Getter
-@Setter
+@Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@SuperBuilder
 public class Seller extends User{
 
     @Column(name = "company_name",nullable = false)
@@ -24,13 +25,5 @@ public class Seller extends User{
     @OneToMany(mappedBy = "seller",cascade = CascadeType.REMOVE)
     private List<Product> products;
 
-    public Seller(String email, String password,
-                    Date createdAt, Date updatedAt,
-                    String companyName, String contactNumber, String logo){
-        super(email,password,createdAt,updatedAt,UserType.SELLER);
-        this.companyName = companyName;
-        this.contactNumber = contactNumber;
-        this.logo = logo;
-    }
 
 }

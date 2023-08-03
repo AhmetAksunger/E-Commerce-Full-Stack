@@ -68,22 +68,30 @@ public class AuthenticationImpl implements AuthenticationService{
     }
 
     private String registerSeller(RegisterSellerRequest registerSellerRequest) {
-        Seller seller = new Seller(registerSellerRequest.getEmail(),
-                passwordEncoder.encode(registerSellerRequest.getPassword()),
-                new Date(),null, registerSellerRequest.getCompanyName(),
-                registerSellerRequest.getContactNumber(),registerSellerRequest.getLogo());
-
+        Seller seller = Seller.builder()
+                        .email(registerSellerRequest.getEmail())
+                                .password(passwordEncoder.encode(registerSellerRequest.getPassword()))
+                                        .createdAt(new Date())
+                                                .companyName(registerSellerRequest.getCompanyName())
+                                                        .contactNumber(registerSellerRequest.getContactNumber())
+                                                                .logo(registerSellerRequest.getLogo())
+                                                                        .userType(UserType.SELLER)
+                                                                                .build();
         sellerRepository.save(seller);
 
         return jwtService.generateToken(generateClaims(seller),seller);
     }
 
     private String registerCustomer(RegisterCustomerRequest registerCustomerRequest){
-        Customer customer = new Customer(registerCustomerRequest.getEmail(),
-                passwordEncoder.encode(registerCustomerRequest.getPassword()),
-                new Date(),null, registerCustomerRequest.getFullName(),
-                registerCustomerRequest.getPhoneNumber());
 
+        Customer customer = Customer.builder()
+                        .email(registerCustomerRequest.getEmail())
+                                .password(passwordEncoder.encode(registerCustomerRequest.getPassword()))
+                                        .createdAt(new Date())
+                                                .fullName(registerCustomerRequest.getFullName())
+                                                        .phoneNumber(registerCustomerRequest.getPhoneNumber())
+                                                                .userType(UserType.CUSTOMER)
+                                                                        .build();
         customerRepository.save(customer);
 
 
