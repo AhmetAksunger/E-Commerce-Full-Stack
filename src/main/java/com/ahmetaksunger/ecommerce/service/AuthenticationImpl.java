@@ -5,7 +5,6 @@ import com.ahmetaksunger.ecommerce.dto.request.authentication.RegisterCustomerRe
 import com.ahmetaksunger.ecommerce.dto.request.authentication.RegisterRequest;
 import com.ahmetaksunger.ecommerce.dto.request.authentication.RegisterSellerRequest;
 import com.ahmetaksunger.ecommerce.dto.response.AuthenticationResponse;
-import com.ahmetaksunger.ecommerce.exception.NotFoundException.CartNotFoundException;
 import com.ahmetaksunger.ecommerce.model.Cart;
 import com.ahmetaksunger.ecommerce.model.Customer;
 import com.ahmetaksunger.ecommerce.model.Seller;
@@ -40,20 +39,11 @@ public class AuthenticationImpl implements AuthenticationService{
     public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(),authenticationRequest.getPassword()));
         var user = userRepository.findByEmail(authenticationRequest.getEmail()).orElseThrow();
-        Claims claims = null;
-        if(user.getUserType().equals(UserType.CUSTOMER)){
-            Customer customer = customerRepository.findById(user.getId()).orElseThrow(()->new RuntimeException("handle this"));
-            claims = generateClaims(customer);
-        }else if(user.getUserType().equals(UserType.SELLER)){
-            Seller seller = sellerRepository.findById(user.getId()).orElseThrow(()->new RuntimeException("handle this"));
-            claims = generateClaims(seller);
-        }else if(user.getUserType().equals(UserType.ADMIN)){
-            claims = Jwts.claims();
-            claims.put("email",user.getEmail());
-            claims.put("userType",user.getUserType().name());
-        }
-        var jwt = jwtService.generateToken(claims,user);
-        return AuthenticationResponse.builder().jwt(jwt).build();
+        var jwt = jwtService.generateToken(user);
+        return AuthenticationResponse
+                .builder()
+                .jwt(jwt)
+                .build();
     }
 
     @Override
@@ -67,7 +57,9 @@ public class AuthenticationImpl implements AuthenticationService{
         if(registerRequest instanceof RegisterSellerRequest){
             jwt = this.registerSeller((RegisterSellerRequest) registerRequest);
         }
-        return AuthenticationResponse.builder().jwt(jwt).build();
+        return AuthenticationResponse.builder()
+                .jwt(jwt)
+                .build();
     }
 
     private String registerSeller(RegisterSellerRequest registerSellerRequest) {
@@ -82,7 +74,7 @@ public class AuthenticationImpl implements AuthenticationService{
                                                                                 .build();
         sellerRepository.save(seller);
 
-        return jwtService.generateToken(generateClaims(seller),seller);
+        return jwtService.generateToken(seller);
     }
 
     private String registerCustomer(RegisterCustomerRequest registerCustomerRequest){
@@ -101,26 +93,7 @@ public class AuthenticationImpl implements AuthenticationService{
                                         .build();
         customer.setCart(cart);
         customerRepository.save(customer);
-        return jwtService.generateToken(generateClaims(customer),customer);
-    }
-
-    private Claims generateClaims(Customer customer){
-        Claims claims = Jwts.claims();
-        claims.put("userType",customer.getUserType().name());
-        claims.put("email",customer.getEmail());
-        claims.put("fullName",customer.getFullName());
-        claims.put("cartId",customer.getCart().getId());
-
-        return claims;
-    }
-
-    private Claims generateClaims(Seller seller){
-        Claims claims = Jwts.claims();
-        claims.put("userType",seller.getUserType().name());
-        claims.put("email",seller.getEmail());
-        claims.put("companyName",seller.getCompanyName());
-
-        return claims;
+        return jwtService.generateToken(customer);
     }
 
 }
