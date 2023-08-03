@@ -43,8 +43,7 @@ public class AuthenticationImpl implements AuthenticationService{
         Claims claims = null;
         if(user.getUserType().equals(UserType.CUSTOMER)){
             Customer customer = customerRepository.findById(user.getId()).orElseThrow(()->new RuntimeException("handle this"));
-            Cart cart = cartService.findByCustomerId(user.getId());
-            claims = generateClaims(customer,cart);
+            claims = generateClaims(customer);
         }else if(user.getUserType().equals(UserType.SELLER)){
             Seller seller = sellerRepository.findById(user.getId()).orElseThrow(()->new RuntimeException("handle this"));
             claims = generateClaims(seller);
@@ -96,17 +95,21 @@ public class AuthenticationImpl implements AuthenticationService{
                                                         .phoneNumber(registerCustomerRequest.getPhoneNumber())
                                                                 .userType(UserType.CUSTOMER)
                                                                         .build();
+        Cart cart = Cart.builder()
+                        .createdAt(new Date())
+                                .customer(customer)
+                                        .build();
+        customer.setCart(cart);
         customerRepository.save(customer);
-        Cart cart = cartService.create(customer);
-        return jwtService.generateToken(generateClaims(customer,cart),customer);
+        return jwtService.generateToken(generateClaims(customer),customer);
     }
 
-    private Claims generateClaims(Customer customer,Cart cart){
+    private Claims generateClaims(Customer customer){
         Claims claims = Jwts.claims();
         claims.put("userType",customer.getUserType().name());
         claims.put("email",customer.getEmail());
         claims.put("fullName",customer.getFullName());
-        claims.put("cartId",cart.getId());
+        claims.put("cartId",customer.getCart().getId());
 
         return claims;
     }

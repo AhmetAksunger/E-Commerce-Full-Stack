@@ -19,6 +19,12 @@ public class Customer extends User{
     @Column(name = "phone_number",nullable = false)
     private String phoneNumber;
 
+    @OneToOne(
+            mappedBy = "customer",
+            cascade = CascadeType.PERSIST
+    )
+    private Cart cart;
+
     @OneToMany(mappedBy = "customer")
     private List<Order> orders;
 

@@ -43,8 +43,8 @@ public class AddressController {
         addressService.delete(addressId,loggedInUser);
     }
 
-    @GetMapping()
-    public ResponseEntity<List<AddressVM>> getAddressesByUserId(@RequestParam(name = "userId",required = true) long id , @CurrentUser User loggedInUser){
-        return ResponseEntity.ok(addressService.getAddressesByUserId(id,loggedInUser));
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<AddressVM>> getAddressesByUserId(@PathVariable long userId , @CurrentUser User loggedInUser){
+        return ResponseEntity.ok(addressService.getAddressesByUserId(userId,loggedInUser));
     }
 }

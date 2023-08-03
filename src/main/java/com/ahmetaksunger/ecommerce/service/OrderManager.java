@@ -5,6 +5,7 @@ import com.ahmetaksunger.ecommerce.exception.NotFoundException.CartNotFoundExcep
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.PaymentDetailNotFoundExcepition;
 import com.ahmetaksunger.ecommerce.mapper.MapperService;
 import com.ahmetaksunger.ecommerce.model.*;
+import com.ahmetaksunger.ecommerce.repository.CartItemRepository;
 import com.ahmetaksunger.ecommerce.repository.CartRepository;
 import com.ahmetaksunger.ecommerce.repository.OrderRepository;
 import com.ahmetaksunger.ecommerce.repository.PaymentDetailRepository;
@@ -13,8 +14,10 @@ import com.ahmetaksunger.ecommerce.service.rules.OrderRules;
 import com.ahmetaksunger.ecommerce.service.rules.PaymentDetailRules;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 
 @Service
@@ -23,12 +26,14 @@ public class OrderManager implements OrderService{
 
     private final OrderRepository orderRepository;
     private final CartRepository cartRepository;
+    private final CartItemRepository cartItemRepository;
     private final PaymentDetailRepository paymentDetailRepository;
     private final OrderRules orderRules;
     private final MapperService mapperService;
     private final ProductService productService;
 
     @Override
+    @Transactional
     public OrderCompletedResponse create(long cartId, long paymentDetailId, User loggedInUser) {
 
         Cart cart = cartRepository.findById(cartId).orElseThrow(CartNotFoundException::new);
@@ -36,7 +41,7 @@ public class OrderManager implements OrderService{
 
         //Rules
         orderRules.verifyCartAndPaymentDetailBelongsToUser(cart,paymentDetail,loggedInUser);
-        orderRules.checkInsufficientStock(cart);
+        orderRules.checkInsufficientStock(cart); // TODO: Optimistic - Pessimistic lock
 
         Order order = Order.builder()
                 .total(this.calculateTotal(cart))
@@ -47,18 +52,21 @@ public class OrderManager implements OrderService{
                 .build();
 
         Order dbOrder = orderRepository.save(order);
+
+        //TODO: How to link different transactions
         productService.reduceQuantityForBoughtProducts(cart.getCartItems()
-                .stream().
-                map(CartItem::getProduct)
+                .stream()
+                .map(CartItem::getProduct)
                 .toList());
-        // TODO: Different implementation for carts cartRepository.deleteById(cartId);
+        cartItemRepository.deleteAllByCartId(cartId);
         return mapperService.forResponse().map(dbOrder,OrderCompletedResponse.class);
     }
 
     private BigDecimal calculateTotal(Cart cart){
-        return cart.getCartItems()
+        BigDecimal total = cart.getCartItems()
                 .stream()
                 .map(cartItem -> cartItem.getProduct().getPrice())
                 .reduce(BigDecimal.ZERO,BigDecimal::add);
+        return total.setScale(2, RoundingMode.HALF_UP);
     }
 }
