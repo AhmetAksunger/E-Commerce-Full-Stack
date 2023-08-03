@@ -5,6 +5,8 @@ import com.ahmetaksunger.ecommerce.dto.request.authentication.RegisterCustomerRe
 import com.ahmetaksunger.ecommerce.dto.request.authentication.RegisterRequest;
 import com.ahmetaksunger.ecommerce.dto.request.authentication.RegisterSellerRequest;
 import com.ahmetaksunger.ecommerce.dto.response.AuthenticationResponse;
+import com.ahmetaksunger.ecommerce.exception.NotFoundException.CartNotFoundException;
+import com.ahmetaksunger.ecommerce.model.Cart;
 import com.ahmetaksunger.ecommerce.model.Customer;
 import com.ahmetaksunger.ecommerce.model.Seller;
 import com.ahmetaksunger.ecommerce.model.UserType;
@@ -30,6 +32,7 @@ public class AuthenticationImpl implements AuthenticationService{
     private final CustomerRepository customerRepository;
     private final SellerRepository sellerRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CartService cartService;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
@@ -40,7 +43,8 @@ public class AuthenticationImpl implements AuthenticationService{
         Claims claims = null;
         if(user.getUserType().equals(UserType.CUSTOMER)){
             Customer customer = customerRepository.findById(user.getId()).orElseThrow(()->new RuntimeException("handle this"));
-            claims = generateClaims(customer);
+            Cart cart = cartService.findByCustomerId(user.getId());
+            claims = generateClaims(customer,cart);
         }else if(user.getUserType().equals(UserType.SELLER)){
             Seller seller = sellerRepository.findById(user.getId()).orElseThrow(()->new RuntimeException("handle this"));
             claims = generateClaims(seller);
@@ -93,16 +97,16 @@ public class AuthenticationImpl implements AuthenticationService{
                                                                 .userType(UserType.CUSTOMER)
                                                                         .build();
         customerRepository.save(customer);
-
-
-        return jwtService.generateToken(generateClaims(customer),customer);
+        Cart cart = cartService.create(customer);
+        return jwtService.generateToken(generateClaims(customer,cart),customer);
     }
 
-    private Claims generateClaims(Customer customer){
+    private Claims generateClaims(Customer customer,Cart cart){
         Claims claims = Jwts.claims();
         claims.put("userType",customer.getUserType().name());
         claims.put("email",customer.getEmail());
         claims.put("fullName",customer.getFullName());
+        claims.put("cartId",cart.getId());
 
         return claims;
     }
