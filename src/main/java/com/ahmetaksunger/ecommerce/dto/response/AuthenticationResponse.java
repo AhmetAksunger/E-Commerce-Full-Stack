@@ -12,5 +12,5 @@ import lombok.experimental.SuperBuilder;
 public class AuthenticationResponse {
 
     private String jwt;
-
+    private String userType;
 }

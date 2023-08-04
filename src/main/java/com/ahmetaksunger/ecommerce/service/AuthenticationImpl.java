@@ -52,11 +52,12 @@ public class AuthenticationImpl implements AuthenticationService{
             Seller seller = sellerRepository.findById(user.getId()).orElseThrow();
             return SellerAuthenticationResponse
                     .builder()
-                            .companyName(seller.getCompanyName())
-                                    .contactNumber(seller.getContactNumber())
-                                            .logo(seller.getLogo())
-                                                    .jwt(jwt)
-                                                            .build();
+                    .companyName(seller.getCompanyName())
+                    .contactNumber(seller.getContactNumber())
+                    .logo(seller.getLogo())
+                    .userType(seller.getUserType().name())
+                    .jwt(jwt)
+                    .build();
         }
         return AuthenticationResponse.builder().jwt(jwt).build();
     }
