@@ -58,7 +58,9 @@ public class CartManager implements CartService{
         //Rules
         cartRules.verifyCartBelongsToUser(cart,loggedInUser, UnauthorizedException.class);
 
-        return mapperService.forResponse().map(cart,CartVM.class);
+        var response = mapperService.forResponse().map(cart,CartVM.class);
+        response.setTotal(PriceCalculator.calculateTotal(cart));
+        return response;
     }
 
 }

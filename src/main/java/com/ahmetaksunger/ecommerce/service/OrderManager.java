@@ -44,7 +44,7 @@ public class OrderManager implements OrderService{
         orderRules.checkInsufficientStock(cart); // TODO: Optimistic - Pessimistic lock
 
         Order order = Order.builder()
-                .total(this.calculateTotal(cart))
+                .total(PriceCalculator.calculateTotal(cart))
                 .cart(cart)
                 .customer((Customer) loggedInUser)
                 .paymentDetail(paymentDetail)
@@ -62,11 +62,5 @@ public class OrderManager implements OrderService{
         return mapperService.forResponse().map(dbOrder,OrderCompletedResponse.class);
     }
 
-    private BigDecimal calculateTotal(Cart cart){
-        BigDecimal total = cart.getCartItems()
-                .stream()
-                .map(cartItem -> cartItem.getProduct().getPrice())
-                .reduce(BigDecimal.ZERO,BigDecimal::add);
-        return total.setScale(2, RoundingMode.HALF_UP);
-    }
+
 }

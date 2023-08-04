@@ -15,6 +15,8 @@ import com.ahmetaksunger.ecommerce.service.rules.CartRules;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 
 @Service
@@ -44,7 +46,9 @@ public class CartItemManager implements CartItemService{
                 .createdAt(new Date())
                 .build();
         CartItem dbCartItem = cartItemRepository.save(cartItem);
-        return mapperService.forResponse().map(dbCartItem.getCart(), CartVM.class);
+        var response = mapperService.forResponse().map(dbCartItem.getCart(), CartVM.class);
+        response.setTotal(PriceCalculator.calculateTotal(cart));
+        return response;
     }
 
     @Override
@@ -58,5 +62,4 @@ public class CartItemManager implements CartItemService{
         cartItemRepository.deleteById(cartItemId);
         return mapperService.forResponse().map(cartItem.getCart(),CartVM.class);
     }
-
 }
