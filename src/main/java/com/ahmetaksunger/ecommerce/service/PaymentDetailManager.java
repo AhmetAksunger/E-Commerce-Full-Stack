@@ -6,6 +6,7 @@ import com.ahmetaksunger.ecommerce.exception.NotFoundException.AddressNotFoundEx
 import com.ahmetaksunger.ecommerce.mapper.MapperService;
 import com.ahmetaksunger.ecommerce.model.PaymentDetail;
 import com.ahmetaksunger.ecommerce.model.User;
+import com.ahmetaksunger.ecommerce.model.UserType;
 import com.ahmetaksunger.ecommerce.repository.AddressRepository;
 import com.ahmetaksunger.ecommerce.repository.PaymentDetailRepository;
 import com.ahmetaksunger.ecommerce.service.rules.GeneralRules;
@@ -27,12 +28,15 @@ public class PaymentDetailManager implements PaymentDetailService{
     @Override
     public PaymentDetailVM create(CreatePaymentDetailRequest createPaymentDetailRequest, User user) {
 
-        //Rules
-        paymentDetailRules.checkIfAddressBelongsToUser(createPaymentDetailRequest.getAddressId(),user);
-
         PaymentDetail paymentDetail = mapperService.forRequest().map(createPaymentDetailRequest, PaymentDetail.class);
-        paymentDetail.setUser(user);
-        paymentDetail.setAddress(addressRepository.findById(createPaymentDetailRequest.getAddressId()).orElseThrow(()->new AddressNotFoundException()));
+        if(user.getUserType().equals(UserType.SELLER)){
+            //Rules
+            paymentDetailRules.checkIfAddressBelongsToUser(createPaymentDetailRequest.getBillingAddressId(),user);
+            paymentDetail.setAddress(addressRepository.findById(createPaymentDetailRequest.getBillingAddressId()).orElseThrow(AddressNotFoundException::new));
+        }else{
+            paymentDetail.setAddress(null);
+            paymentDetail.setUser(user);
+        }
         return mapperService.forResponse().map(paymentDetailRepository.save(paymentDetail),PaymentDetailVM.class);
     }
 

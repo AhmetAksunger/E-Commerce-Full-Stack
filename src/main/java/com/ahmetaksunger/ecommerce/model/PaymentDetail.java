@@ -31,7 +31,7 @@ public class PaymentDetail {
     @ManyToOne()
     private User user;
 
-    @ManyToOne(cascade = CascadeType.DETACH)
+    @ManyToOne(cascade = CascadeType.DETACH,optional = true)
     private Address address;
 
 }
