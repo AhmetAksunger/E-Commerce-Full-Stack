@@ -5,6 +5,9 @@ import com.ahmetaksunger.ecommerce.dto.request.authentication.RegisterCustomerRe
 import com.ahmetaksunger.ecommerce.dto.request.authentication.RegisterRequest;
 import com.ahmetaksunger.ecommerce.dto.request.authentication.RegisterSellerRequest;
 import com.ahmetaksunger.ecommerce.dto.response.AuthenticationResponse;
+import com.ahmetaksunger.ecommerce.dto.response.CustomerAuthenticationResponse;
+import com.ahmetaksunger.ecommerce.dto.response.SellerAuthenticationResponse;
+import com.ahmetaksunger.ecommerce.mapper.MapperService;
 import com.ahmetaksunger.ecommerce.model.Cart;
 import com.ahmetaksunger.ecommerce.model.Customer;
 import com.ahmetaksunger.ecommerce.model.Seller;
@@ -31,19 +34,31 @@ public class AuthenticationImpl implements AuthenticationService{
     private final CustomerRepository customerRepository;
     private final SellerRepository sellerRepository;
     private final PasswordEncoder passwordEncoder;
-    private final CartService cartService;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final MapperService mapperService;
 
     @Override
     public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(),authenticationRequest.getPassword()));
         var user = userRepository.findByEmail(authenticationRequest.getEmail()).orElseThrow();
         var jwt = jwtService.generateToken(user);
-        return AuthenticationResponse
-                .builder()
-                .jwt(jwt)
-                .build();
+        if(user.getUserType().equals(UserType.CUSTOMER)){
+            Customer customer = customerRepository.findById(user.getId()).orElseThrow();
+            var response = mapperService.forResponse().map(customer,CustomerAuthenticationResponse.class);
+            response.setJwt(jwt);
+            return response;
+        }else if(user.getUserType().equals(UserType.SELLER)){
+            Seller seller = sellerRepository.findById(user.getId()).orElseThrow();
+            return SellerAuthenticationResponse
+                    .builder()
+                            .companyName(seller.getCompanyName())
+                                    .contactNumber(seller.getContactNumber())
+                                            .logo(seller.getLogo())
+                                                    .jwt(jwt)
+                                                            .build();
+        }
+        return AuthenticationResponse.builder().jwt(jwt).build();
     }
 
     @Override
