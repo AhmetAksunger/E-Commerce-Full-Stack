@@ -1,6 +1,7 @@
 package com.ahmetaksunger.ecommerce.service;
 
 import com.ahmetaksunger.ecommerce.dto.response.CartVM;
+import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.CartNotFoundException;
 import com.ahmetaksunger.ecommerce.mapper.MapperService;
 import com.ahmetaksunger.ecommerce.model.Cart;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -47,4 +49,16 @@ public class CartManager implements CartService{
     public Cart findByCustomerId(long id) {
         return cartRepository.findByCustomerId(id).orElseThrow(CartNotFoundException::new);
     }
+
+    @Override
+    public CartVM getCartByCustomerId(long customerId,User loggedInUser) {
+
+        Cart cart = cartRepository.findByCustomerId(customerId).orElseThrow(CartNotFoundException::new);
+
+        //Rules
+        cartRules.verifyCartBelongsToUser(cart,loggedInUser, UnauthorizedException.class);
+
+        return mapperService.forResponse().map(cart,CartVM.class);
+    }
+
 }

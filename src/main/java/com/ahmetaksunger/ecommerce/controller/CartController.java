@@ -41,5 +41,10 @@ public class CartController {
         cartService.delete(cartId,loggedInUser);
     }
     
+    @GetMapping("/users/{customerId}")
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    public ResponseEntity<CartVM> getCartByCustomerId(@PathVariable long customerId, @CurrentUser User loggedInUser){
+        return ResponseEntity.ok(cartService.getCartByCustomerId(customerId,loggedInUser));
+    }
 
 }

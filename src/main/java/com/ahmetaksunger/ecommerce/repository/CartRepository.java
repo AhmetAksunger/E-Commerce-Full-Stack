@@ -9,4 +9,5 @@ public interface CartRepository extends JpaRepository<Cart,Long> {
 
     Integer countByCustomerId(long customerId);
     Optional<Cart> findByCustomerId(long customerId);
+
 }
