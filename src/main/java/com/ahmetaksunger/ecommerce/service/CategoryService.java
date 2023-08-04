@@ -10,6 +10,6 @@ import java.util.List;
 public interface CategoryService {
     CategoryVM create(CreateCategoryRequest createCategoryRequest);
     CategoryVM update(long categoryId,UpdateCategoryRequest updateCategoryRequest);
-
+    List<CategoryVM> getAllCategories();
     List<Category> getCategoriesByIds(List<Long> categoryIds);
 }

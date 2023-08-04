@@ -44,6 +44,14 @@ public class CategoryManager implements CategoryService{
     }
 
     @Override
+    public List<CategoryVM> getAllCategories() {
+        List<Category> categories = categoryRepository.findAll();
+        return categories
+                .stream()
+                .map(category -> mapperService.forResponse().map(category,CategoryVM.class)).toList();
+    }
+
+    @Override
     public List<Category> getCategoriesByIds(List<Long> categoryIds) {
 
         return categoryIds

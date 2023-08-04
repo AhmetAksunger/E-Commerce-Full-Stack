@@ -12,6 +12,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/categories")
 @RequiredArgsConstructor
@@ -31,6 +33,12 @@ public class CategoryController {
     public ResponseEntity<CategoryVM> updateCategory(@RequestBody @Validated UpdateCategoryRequest updateCategoryRequest,
                                                      @PathVariable long categoryId){
         return ResponseEntity.ok(categoryService.update(categoryId,updateCategoryRequest));
+    }
+
+    @GetMapping()
+    @PreAuthorize("hasAnyAuthority('CUSTOMER','SELLER','ADMIN')")
+    public ResponseEntity<List<CategoryVM>> getAllCategories(){
+        return ResponseEntity.ok(categoryService.getAllCategories());
     }
 
 }
