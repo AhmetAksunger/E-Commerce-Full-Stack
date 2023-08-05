@@ -65,20 +65,18 @@ public class AuthenticationImpl implements AuthenticationService{
     @Override
     public AuthenticationResponse register(RegisterRequest registerRequest) {
 
-        String jwt= null;
         if(registerRequest instanceof RegisterCustomerRequest){
-            jwt = this.registerCustomer((RegisterCustomerRequest) registerRequest);
+            return this.registerCustomer((RegisterCustomerRequest) registerRequest);
         }
 
         if(registerRequest instanceof RegisterSellerRequest){
-            jwt = this.registerSeller((RegisterSellerRequest) registerRequest);
+            return this.registerSeller((RegisterSellerRequest) registerRequest);
         }
         return AuthenticationResponse.builder()
-                .jwt(jwt)
                 .build();
     }
 
-    private String registerSeller(RegisterSellerRequest registerSellerRequest) {
+    private SellerAuthenticationResponse registerSeller(RegisterSellerRequest registerSellerRequest) {
         Seller seller = Seller.builder()
                         .email(registerSellerRequest.getEmail())
                                 .password(passwordEncoder.encode(registerSellerRequest.getPassword()))
@@ -90,10 +88,17 @@ public class AuthenticationImpl implements AuthenticationService{
                                                                                 .build();
         sellerRepository.save(seller);
 
-        return jwtService.generateToken(seller);
+        return SellerAuthenticationResponse
+                .builder()
+                .companyName(seller.getCompanyName())
+                .contactNumber(seller.getContactNumber())
+                .logo(seller.getLogo())
+                .userType(seller.getUserType().name())
+                .jwt(jwtService.generateToken(seller))
+                .build();
     }
 
-    private String registerCustomer(RegisterCustomerRequest registerCustomerRequest){
+    private CustomerAuthenticationResponse registerCustomer(RegisterCustomerRequest registerCustomerRequest){
 
         Customer customer = Customer.builder()
                         .email(registerCustomerRequest.getEmail())
@@ -108,8 +113,9 @@ public class AuthenticationImpl implements AuthenticationService{
                                 .customer(customer)
                                         .build();
         customer.setCart(cart);
-        customerRepository.save(customer);
-        return jwtService.generateToken(customer);
+        var response = mapperService.forResponse().map(customerRepository.save(customer),CustomerAuthenticationResponse.class);
+        response.setJwt(jwtService.generateToken(customer));
+        return response;
     }
 
 }
