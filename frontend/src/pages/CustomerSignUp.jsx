@@ -3,8 +3,19 @@ import React from "react";
 import { Button, Icon, Label, Segment } from "semantic-ui-react";
 import * as Yup from "yup";
 import FormInput from "../utils/FormInput";
+import AuthenticationService from "../services/authenticationService";
 
 const CustomerSignUp = () => {
+
+  const handleSignUp = (creds) => {
+    let authService = new AuthenticationService();
+    try {
+      authService.registerCustomer(creds);
+    } catch (error) {
+      
+    }
+  }
+
   var phoneRegEx =
     /(^[0\s]?[\s]?)([(]?)([5])([0-9]{2})([)]?)([\s]?)([0-9]{3})([\s]?)([0-9]{2})([\s]?)([0-9]{2})$/g;
 
@@ -46,7 +57,7 @@ const CustomerSignUp = () => {
         <Formik
           initialValues={initialValues}
           validationSchema={schema}
-          onSubmit={(values) => console.log(values)}
+          onSubmit={(values) => handleSignUp(values)}
         >
           <Form className="ui form">
             <FormInput
