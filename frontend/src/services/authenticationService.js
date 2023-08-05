@@ -1,5 +1,4 @@
 import axios from "axios";
-import {BASE_URL} from "../services/constants";
 
 export default class AuthenticationService{
     
@@ -13,7 +12,7 @@ export default class AuthenticationService{
      * @returns {Promise}
      */
     authenticate(authState){
-        return axios.post(`${BASE_URL}/api/v1/auth/authenticate`,authState);
+        return axios.post(`/api/v1/auth/authenticate`,authState);
     }
 
     /**
@@ -27,7 +26,7 @@ export default class AuthenticationService{
      * @returns {Promise}
      */
     registerCustomer(customerInfo){
-        return axios.post(`${BASE_URL}/api/v1/auth/register/customer`,customerInfo);
+        return axios.post(`/api/v1/auth/register/customer`,customerInfo);
     }
     
     /**
@@ -42,6 +41,6 @@ export default class AuthenticationService{
      * @returns {Promise}
      */
     registerSeller(sellerInfo){
-        return axios.post(`${BASE_URL}/api/v1/auth/register/seller`,sellerInfo);
+        return axios.post(`/api/v1/auth/register/seller`,sellerInfo);
     }
 }
