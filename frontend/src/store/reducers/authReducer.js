@@ -6,7 +6,8 @@ export default function authReducer(state = defaultAuthState, {type,payload}){
     switch (type) {
         case LOGIN_SUCCESS:
             return {
-                ...payload
+                ...payload,
+                isLoggedIn: true
             };
         default:
             return state;

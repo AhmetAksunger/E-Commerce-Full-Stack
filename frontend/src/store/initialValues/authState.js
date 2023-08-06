@@ -5,5 +5,6 @@ export const defaultAuthState = {
     phoneNumber:"",
     cartId:0,
     companyName:"",
-    logo:""
+    logo:"",
+    isLoggedIn:false
 }

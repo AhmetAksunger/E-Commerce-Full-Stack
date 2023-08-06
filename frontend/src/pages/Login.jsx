@@ -8,8 +8,7 @@ import { useDispatch } from "react-redux";
 import { loginSuccess } from "../store/actions/authActions";
 
 const Login = () => {
-
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
   const handleLogin = async (creds) => {
     let authService = new AuthenticationService();
@@ -58,7 +57,9 @@ const Login = () => {
               placeholder="Password"
               fieldName="password"
             />
-            <Button color="green" type="submit">Login</Button>
+            <Button color="green" type="submit">
+              Login
+            </Button>
           </Form>
         </Formik>
       </Segment>
