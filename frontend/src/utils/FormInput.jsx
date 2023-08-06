@@ -5,7 +5,7 @@ import { Label } from "semantic-ui-react";
 const FormInput = ({ label, placeHolder, fieldName }) => {
   return (
     <div>
-      <Label size="large">{label}</Label>
+      <Label size="large" style={{marginTop:"2rem"}}>{label}</Label>
       <Field name={fieldName} placeholder={placeHolder}/>
       <ErrorMessage
         name={fieldName}
