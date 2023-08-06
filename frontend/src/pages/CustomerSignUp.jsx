@@ -4,13 +4,18 @@ import { Button, Icon, Label, Segment } from "semantic-ui-react";
 import * as Yup from "yup";
 import FormInput from "../utils/FormInput";
 import AuthenticationService from "../services/authenticationService";
-
+import {useDispatch} from "react-redux"; 
+import { customerLoginSuccess } from "../store/actions/authActions";
 const CustomerSignUp = () => {
 
-  const handleSignUp = (creds) => {
+  const dispatch = useDispatch();
+
+  const handleSignUp = async (creds) => {
     let authService = new AuthenticationService();
     try {
-      authService.registerCustomer(creds);
+      const response = await authService.registerCustomer(creds);
+      console.log(response);
+      dispatch(customerLoginSuccess(response.data));
     } catch (error) {
       
     }
