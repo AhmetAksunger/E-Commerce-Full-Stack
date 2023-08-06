@@ -1,5 +1,5 @@
 import React from "react";
-import { Input, Menu, Container, Button } from "semantic-ui-react";
+import { Input, Menu, Container, Button, Icon } from "semantic-ui-react";
 import logo from "../logo.png";
 import { Link } from "react-router-dom/";
 import { useSelector } from "react-redux";
@@ -15,7 +15,10 @@ const Navi = () => {
           <Menu.Item>
             <img src={logo} />
           </Menu.Item>
-          <Menu.Item name="home" />
+          <Menu.Item>
+            <Icon name="home" />
+            <Link to="/">Home</Link>
+          </Menu.Item>
           <Menu.Menu position="right">
             <Menu.Item>
               <Input
@@ -25,7 +28,7 @@ const Navi = () => {
               />
             </Menu.Item>
             {!authState.isLoggedIn ? (
-              <NaviAuthButtons/>
+              <NaviAuthButtons />
             ) : (
               <Menu.Item>
                 <MyAccount />
