@@ -5,8 +5,7 @@ import { Form, Formik } from "formik";
 import * as Yup from "yup";
 import AuthenticationService from "../services/authenticationService";
 import { useDispatch } from "react-redux";
-import { CUSTOMER } from "../utils/constants";
-import { customerLoginSuccess } from "../store/actions/authActions";
+import { loginSuccess } from "../store/actions/authActions";
 
 const Login = () => {
 
@@ -16,9 +15,7 @@ const Login = () => {
     let authService = new AuthenticationService();
     try {
       const response = await authService.authenticate(creds);
-        if(response.data.userType === CUSTOMER){
-            dispatch(customerLoginSuccess(response.data));
-        }
+      dispatch(loginSuccess(response.data));
     } catch (error) {}
   };
 
@@ -31,10 +28,6 @@ const Login = () => {
     email: Yup.string()
       .required("Email cannot be null")
       .email("Invalid email format"),
-    password: Yup.string()
-      .required("Password cannot be null")
-      .min(5, "Password must be at least 5 characters long.")
-      .matches(/^(?=.*\d).{5,}$/, "Password must contain at least one digit."),
   });
 
   return (
