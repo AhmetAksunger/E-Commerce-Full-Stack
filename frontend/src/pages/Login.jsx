@@ -1,10 +1,27 @@
 import React from "react";
-import { Button, Form, Icon, Label, Segment } from "semantic-ui-react";
+import { Button, Icon, Label, Segment } from "semantic-ui-react";
 import FormInput from "../utils/FormInput";
-import { Formik } from "formik";
+import { Form, Formik } from "formik";
 import * as Yup from "yup";
+import AuthenticationService from "../services/authenticationService";
+import { useDispatch } from "react-redux";
+import { CUSTOMER } from "../utils/constants";
+import { customerLoginSuccess } from "../store/actions/authActions";
 
 const Login = () => {
+
+    const dispatch = useDispatch();
+
+  const handleLogin = async (creds) => {
+    let authService = new AuthenticationService();
+    try {
+      const response = await authService.authenticate(creds);
+        if(response.data.userType === CUSTOMER){
+            dispatch(customerLoginSuccess(response.data));
+        }
+    } catch (error) {}
+  };
+
   const initialValues = {
     email: "",
     password: "",
@@ -13,13 +30,9 @@ const Login = () => {
   const schema = Yup.object({
     email: Yup.string()
       .required("Email cannot be null")
-      .trim()
-      .strict(true)
       .email("Invalid email format"),
     password: Yup.string()
       .required("Password cannot be null")
-      .trim()
-      .strict(true)
       .min(5, "Password must be at least 5 characters long.")
       .matches(/^(?=.*\d).{5,}$/, "Password must contain at least one digit."),
   });
@@ -39,7 +52,7 @@ const Login = () => {
         <Formik
           initialValues={initialValues}
           validationSchema={schema}
-          onSubmit={(values) => console.log(values)}
+          onSubmit={(values) => handleLogin(values)}
         >
           <Form className="ui form">
             <FormInput
@@ -52,9 +65,7 @@ const Login = () => {
               placeholder="Password"
               fieldName="password"
             />
-            <Button color="green" type="submit" style={{ marginTop: "1.5rem" }}>
-              Login
-            </Button>
+            <Button color="green" type="submit">Login</Button>
           </Form>
         </Formik>
       </Segment>

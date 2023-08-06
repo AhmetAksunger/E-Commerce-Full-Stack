@@ -83,7 +83,7 @@ const CustomerSignUp = () => {
             />
             <FormInput
               label="Phone Number"
-              placeholder="0533 333 33 33"
+              placholder="0533 333 33 33"
               fieldName="phoneNumber"
             />
             <Button color="green" type="submit" style={{ marginTop: "1.5rem" }}>
