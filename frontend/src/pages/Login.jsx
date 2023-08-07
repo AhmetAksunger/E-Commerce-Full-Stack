@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Button, Icon, Label, Segment } from "semantic-ui-react";
 import FormInput from "../utils/FormInput";
 import { Form, Formik } from "formik";
@@ -13,13 +13,17 @@ const Login = () => {
   const dispatch = useDispatch();
   const history = useHistory();
 
+  const [isUnauthorized, setIsUnauthorized] = useState(false);
+
   const handleLogin = async (creds) => {
     let authService = new AuthenticationService();
     try {
       const response = await authService.authenticate(creds);
       dispatch(loginSuccess(response.data));
       history.push("/");
-    } catch (error) {}
+    } catch (error) {
+      setIsUnauthorized(true);
+    }
   };
 
   const initialValues = {
@@ -61,7 +65,8 @@ const Login = () => {
               placeholder="Password"
               fieldName="password"
             />
-            <Button color="green" type="submit">
+            {isUnauthorized && <div style={{marginTop:"1rem"}}><Label basic color="red">Incorrect email or password</Label></div>}
+            <Button color="green" type="submit" style={{marginTop:"1rem"}}>
               Login
             </Button>
           </Form>
