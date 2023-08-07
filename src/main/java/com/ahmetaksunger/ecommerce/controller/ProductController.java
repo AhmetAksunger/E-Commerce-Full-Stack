@@ -22,7 +22,6 @@ import java.util.List;
 @RequestMapping("/api/v1/products")
 @SecurityRequirement(name = "bearerAuth")
 @RequiredArgsConstructor
-@CrossOrigin
 public class ProductController {
 
     private final ProductService productService;
