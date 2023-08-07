@@ -14,7 +14,11 @@ const Home = () => {
     last: false,
   });
 
-  const [splittedProductContents, setSplittedProductContents] = useState([[],[],[]]);
+  const [splittedProductContents, setSplittedProductContents] = useState([
+    [],
+    [],
+    [],
+  ]);
 
   const [categories, setCategories] = useState([
     {
@@ -23,7 +27,7 @@ const Home = () => {
       description: undefined,
     },
   ]);
-  
+
   const { jwt } = useSelector((state) => state.auth);
 
   const getProducts = () => {
@@ -36,19 +40,21 @@ const Home = () => {
       .catch((error) => {
         console.log(error);
       });
+    splitProducts();
   };
 
   const splitProducts = () => {
+    console.log("in");
     const newSplittedProductContents = [[], [], []];
     let j = 0;
     for (let i = 0; i < products.content.length; i++) {
-        if(i !== 0 && i % 3 === 0){
-            j++;
-        }
-        newSplittedProductContents[j].push(products.content[i]);
+      if (i !== 0 && i % 3 === 0) {
+        j++;
+      }
+      newSplittedProductContents[j].push(products.content[i]);
     }
     setSplittedProductContents(newSplittedProductContents);
-  }
+  };
 
   const getCategories = () => {
     let categoryService = new CategoryService();
@@ -60,11 +66,8 @@ const Home = () => {
 
   useEffect(() => {
     getProducts();
-    splitProducts();
     getCategories();
-  }, []);
-
-  console.log(splittedProductContents);
+  }, [products]);
 
   return (
     <>
@@ -84,29 +87,28 @@ const Home = () => {
       </Menu>
       <Segment raised>
         <Grid columns={3}>
-            <Grid.Row>
-                {splittedProductContents[0].map((product,idx) => (
-                    <Grid.Column>
-                        <ProductCard product={product} />
-                    </Grid.Column>
-                ))}
-            </Grid.Row>
-            <Grid.Row>
-                {splittedProductContents[1].map((product,idx) => (
-                    <Grid.Column>
-                        <ProductCard product={product} />
-                    </Grid.Column>
-                ))}
-            </Grid.Row>
-            <Grid.Row>
-                {splittedProductContents[2].map((product,idx) => (
-                    <Grid.Column>
-                        <ProductCard product={product} />
-                    </Grid.Column>
-                ))}
-            </Grid.Row>
+          <Grid.Row>
+            {splittedProductContents[0].map((product, idx) => (
+              <Grid.Column>
+                <ProductCard product={product} />
+              </Grid.Column>
+            ))}
+          </Grid.Row>
+          <Grid.Row>
+            {splittedProductContents[1].map((product, idx) => (
+              <Grid.Column>
+                <ProductCard product={product} />
+              </Grid.Column>
+            ))}
+          </Grid.Row>
+          <Grid.Row>
+            {splittedProductContents[2].map((product, idx) => (
+              <Grid.Column>
+                <ProductCard product={product} />
+              </Grid.Column>
+            ))}
+          </Grid.Row>
         </Grid>
-
       </Segment>
     </>
   );

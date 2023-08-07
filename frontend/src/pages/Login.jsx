@@ -6,15 +6,19 @@ import * as Yup from "yup";
 import AuthenticationService from "../services/authenticationService";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../store/actions/authActions";
+import { useHistory } from 'react-router-dom';
 
 const Login = () => {
+
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const handleLogin = async (creds) => {
     let authService = new AuthenticationService();
     try {
       const response = await authService.authenticate(creds);
       dispatch(loginSuccess(response.data));
+      history.push("/");
     } catch (error) {}
   };
 
