@@ -5,7 +5,7 @@ import * as Yup from "yup";
 import FormInput from "../utils/FormInput";
 import AuthenticationService from "../services/authenticationService";
 import {useDispatch} from "react-redux"; 
-import { customerLoginSuccess } from "../store/actions/authActions";
+import { loginSuccess } from "../store/actions/authActions";
 const CustomerSignUp = () => {
 
   const dispatch = useDispatch();
@@ -14,7 +14,7 @@ const CustomerSignUp = () => {
     let authService = new AuthenticationService();
     try {
       const response = await authService.registerCustomer(creds);
-      dispatch(customerLoginSuccess(response.data));
+      dispatch(loginSuccess(response.data));
     } catch (error) {
       
     }
@@ -83,7 +83,7 @@ const CustomerSignUp = () => {
             />
             <FormInput
               label="Phone Number"
-              placeholder="0533 333 33 33"
+              placholder="0533 333 33 33"
               fieldName="phoneNumber"
             />
             <Button color="green" type="submit" style={{ marginTop: "1.5rem" }}>

@@ -1,8 +1,15 @@
-export const CUSTOMER_LOGIN_SUCCESS = "C_LOGIN_SUCCESS";
+export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
+export const LOGOUT_SUCCESS = "LOGOUT_SUCCESS";
 
-export function customerLoginSuccess(authState){
+export function loginSuccess(authState){
     return {
-        type:CUSTOMER_LOGIN_SUCCESS,
+        type:LOGIN_SUCCESS,
         payload:authState
+    }
+}
+
+export function logoutSuccess(){
+    return {
+        type:LOGOUT_SUCCESS
     }
 }

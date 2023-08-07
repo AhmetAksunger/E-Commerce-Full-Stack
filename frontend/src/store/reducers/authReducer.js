@@ -1,15 +1,17 @@
-import { CUSTOMER_LOGIN_SUCCESS } from "../actions/authActions";
-import { defaultCustomerAuthState } from "../initialValues/authState";
+import { LOGIN_SUCCESS, LOGOUT_SUCCESS } from "../actions/authActions";
+import { defaultAuthState } from "../initialValues/authState";
 
-const  initialState = {
-    defaultCustomerAuthState: defaultCustomerAuthState
-}
 
-export default function authReducer(state = initialState, {type,payload}){
+export default function authReducer(state = defaultAuthState, {type,payload}){
     switch (type) {
-        case CUSTOMER_LOGIN_SUCCESS:
+        case LOGIN_SUCCESS:
             return {
-                ...payload
+                ...payload,
+                isLoggedIn: true
+            };
+        case LOGOUT_SUCCESS:
+            return {
+                ...defaultAuthState
             };
         default:
             return state;
