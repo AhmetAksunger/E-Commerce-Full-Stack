@@ -37,21 +37,39 @@ const Home = () => {
       description: undefined,
     },
   ]);
+  const [categoryOptions, setCategoryOptions] = useState([]);
 
   const [selectedOrder, setSelectedOrder] = useState("createdAt");
   const [selectedSort, setSelectedSort] = useState("desc");
   const [selectedMinPrice, setSelectedMinPrice] = useState(0);
   const [selectedMaxPrice, setSelectedMaxPrice] = useState(2147483647);
+  const [activePage, setActivePage] = useState(0);
 
   const [filterSortError, setFilterSortError] = useState(false);
 
   const { jwt } = useSelector((state) => state.auth);
 
-  const getProducts = (sort, order, minPrice, 
-    maxPrice, page, size) => {
+  const getProducts = (
+    sort,
+    order,
+    categoryIds,
+    minPrice,
+    maxPrice,
+    page,
+    size
+  ) => {
     let productService = new ProductService();
     productService
-      .getProducts(jwt, sort, order, minPrice, maxPrice, page, size)
+      .getProducts(
+        jwt,
+        sort,
+        order,
+        categoryIds,
+        minPrice,
+        maxPrice,
+        page,
+        size
+      )
       .then((response) => {
         setProducts(response.data);
       })
@@ -96,6 +114,29 @@ const Home = () => {
       setFilterSortError(false);
     }
   }, [selectedMinPrice, selectedMaxPrice]);
+
+  useEffect(() => {
+    const cOptions = categories.map((category, idx) => ({
+      key: category.id,
+      text: category.name,
+      value: category.id,
+    }));
+
+    setCategoryOptions(cOptions);
+  }, [categories]);
+
+  const onPageChange = (event, { activePage }) => {
+    getProducts(
+      selectedSort,
+      selectedOrder,
+      undefined,
+      selectedMinPrice,
+      selectedMaxPrice,
+      activePage - 1,
+      undefined
+    );
+    setActivePage(activePage - 1);
+  };
 
   return (
     <>
@@ -168,6 +209,17 @@ const Home = () => {
                   </Label>
                 </div>
               )}
+              <Dropdown.Item>
+                <Dropdown
+                  placeholder="State"
+                  pointing="left"
+                  fluid
+                  multiple
+                  selection
+                  options={categoryOptions}
+                  onChange={(event, data) => console.log(data.value)}
+                />
+              </Dropdown.Item>
               <Dropdown.Divider />
               <div style={{ textAlign: "center", marginBottom: "0.5rem" }}>
                 <Button
@@ -175,7 +227,14 @@ const Home = () => {
                   color="green"
                   disabled={filterSortError}
                   onClick={() =>
-                    getProducts(selectedSort,selectedOrder,selectedMinPrice,selectedMaxPrice)
+                    getProducts(
+                      selectedSort,
+                      selectedOrder,
+                      undefined,
+                      selectedMinPrice,
+                      selectedMaxPrice,
+                      activePage
+                    )
                   }
                 >
                   Apply
@@ -212,7 +271,8 @@ const Home = () => {
             ))}
           </Grid.Row>
         </Grid>
-        <Pagination style={{marginTop:"1rem"}}
+        <Pagination
+          style={{ marginTop: "1rem" }}
           boundaryRange={0}
           defaultActivePage={1}
           ellipsisItem={null}
@@ -220,7 +280,7 @@ const Home = () => {
           lastItem={null}
           siblingRange={1}
           totalPages={products.totalPages}
-          onPageChange={(event,{ activePage }) => getProducts(undefined,undefined,undefined,undefined,activePage - 1,undefined)}
+          onPageChange={onPageChange}
         />
       </Segment>
     </>

@@ -8,6 +8,7 @@ export default class ProductService {
    * @param {string} jwt - JSON Web Token for authentication.
    * @param {string} sort - Sorting order: "asc" or "desc".
    * @param {string} order - Sorting criterion, "createdAt,updatedAt,name,price"
+   * @param {Array<number>} categoryIds - Array of category IDs.
    * @param {number} minPrice - Minimum price for filtering.
    * @param {number} maxPrice - Maximum price for filtering.
    * @param {number} page - Page number.
@@ -18,6 +19,7 @@ export default class ProductService {
     jwt,
     sort = "desc",
     order = "createdAt",
+    categoryIds,
     minPrice = 0,
     maxPrice = 2147483647,
     page = 0,
