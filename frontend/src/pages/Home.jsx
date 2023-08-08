@@ -46,10 +46,10 @@ const Home = () => {
 
   const { jwt } = useSelector((state) => state.auth);
 
-  const getProducts = () => {
+  const getProducts = (sort,order,minPrice,maxPrice,page,size) => {
     let productService = new ProductService();
     productService
-      .getProducts(jwt)
+      .getProducts(jwt,sort,order,minPrice,maxPrice,page,size)
       .then((response) => {
         setProducts(response.data);
       })
@@ -59,6 +59,7 @@ const Home = () => {
   };
 
   const splitProducts = () => {
+    console.log("in");
     const newSplittedProductContents = [[], [], []];
     let j = 0;
     for (let i = 0; i < products.content.length; i++) {
@@ -168,7 +169,7 @@ const Home = () => {
               )}
               <Dropdown.Divider />
               <div style={{ textAlign: "center",marginBottom:"0.5rem" }}>
-                <Button basic color="green" disabled={filterSortError}>
+                <Button basic color="green" disabled={filterSortError} onClick={() => getProducts(selectedSort,selectedOrder,selectedMinPrice,selectedMaxPrice)}>
                   Apply
                 </Button>
               </div>
