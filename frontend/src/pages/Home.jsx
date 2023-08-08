@@ -1,9 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Dropdown, Grid, Menu, Segment } from "semantic-ui-react";
+import {
+  Button,
+  Dropdown,
+  Grid,
+  Input,
+  Label,
+  Menu,
+  Segment,
+} from "semantic-ui-react";
 import ProductService from "../services/productService";
 import CategoryService from "../services/categoryService";
 import { useSelector } from "react-redux";
 import ProductCard from "../utils/ProductCard";
+import { orderOptions, sortOptions } from "../utils/constants";
 
 const Home = () => {
   const [products, setProducts] = useState({
@@ -27,6 +36,13 @@ const Home = () => {
       description: undefined,
     },
   ]);
+
+  const [selectedOrder, setSelectedOrder] = useState("createdAt");
+  const [selectedSort, setSelectedSort] = useState("desc");
+  const [selectedMinPrice, setSelectedMinPrice] = useState(0);
+  const [selectedMaxPrice, setSelectedMaxPrice] = useState(2147483647);
+
+  const [filterSortError, setFilterSortError] = useState(false);
 
   const { jwt } = useSelector((state) => state.auth);
 
@@ -69,7 +85,15 @@ const Home = () => {
 
   useEffect(() => {
     splitProducts();
-  },[products]);
+  }, [products]);
+
+  useEffect(() => {
+    if (isNaN(selectedMaxPrice) || isNaN(selectedMinPrice)) {
+      setFilterSortError(true);
+    } else {
+      setFilterSortError(false);
+    }
+  }, [selectedMinPrice, selectedMaxPrice]);
 
   return (
     <>
@@ -86,6 +110,71 @@ const Home = () => {
             </Dropdown>
           </Menu.Item>
         ))}
+        <Menu.Item position="right">
+          <Dropdown
+            text="Filter & Sort"
+            icon="filter"
+            floating
+            labeled
+            button
+            className="icon"
+          >
+            <Dropdown.Menu style={{ width: "200px" }}>
+              <Dropdown.Header icon="tags" content="Filter and Sort" />
+              <Dropdown.Item>
+                <Dropdown
+                  placeholder="Order"
+                  pointing="left"
+                  selection
+                  fluid
+                  options={orderOptions}
+                  onChange={(event, data) => setSelectedOrder(data.value)}
+                />
+              </Dropdown.Item>
+              <Dropdown.Item>
+                <Dropdown
+                  placeholder="Sort"
+                  pointing="left"
+                  fluid
+                  selection
+                  options={sortOptions}
+                  onChange={(event, data) => setSelectedSort(data.value)}
+                />
+              </Dropdown.Item>
+              <Dropdown.Item>
+                Min Price
+                <Input
+                  placeholder="0"
+                  style={{ width: "100px", marginLeft: "0.5rem" }}
+                  onClick={(event) => event.stopPropagation()}
+                  onChange={(event) => setSelectedMinPrice(event.target.value)}
+                />
+              </Dropdown.Item>
+              <Dropdown.Item>
+                Max Price
+                <Input
+                  placeholder="0"
+                  style={{ width: "100px", marginLeft: "0.5rem" }}
+                  onClick={(event) => event.stopPropagation()}
+                  onChange={(event) => setSelectedMaxPrice(event.target.value)}
+                />
+              </Dropdown.Item>
+              {filterSortError && (
+                <div style={{ textAlign: "center" }}>
+                  <Label pointing="above" color="red" basic>
+                    Enter a numeric value
+                  </Label>
+                </div>
+              )}
+              <Dropdown.Divider />
+              <div style={{ textAlign: "center",marginBottom:"0.5rem" }}>
+                <Button basic color="green" disabled={filterSortError}>
+                  Apply
+                </Button>
+              </div>
+            </Dropdown.Menu>
+          </Dropdown>
+        </Menu.Item>
       </Menu>
       <Segment raised>
         <Grid columns={3}>
