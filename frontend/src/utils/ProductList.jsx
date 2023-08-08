@@ -1,8 +1,32 @@
 import React from "react";
 import { Grid, Pagination, Segment } from "semantic-ui-react";
 import ProductCard from "./ProductCard";
+import { useState } from "react";
+import { useEffect } from "react";
 
-const ProductList = ({products,splittedProductContents,onPageChange}) => {
+const ProductList = ({ products, onPageChange }) => {
+  const [splittedProductContents, setSplittedProductContents] = useState([
+    [],
+    [],
+    [],
+  ]);
+
+  const splitProducts = () => {
+    const newSplittedProductContents = [[], [], []];
+    let j = 0;
+    for (let i = 0; i < products.content.length; i++) {
+      if (i !== 0 && i % 3 === 0) {
+        j++;
+      }
+      newSplittedProductContents[j].push(products.content[i]);
+    }
+    setSplittedProductContents(newSplittedProductContents);
+  };
+
+  useEffect(() => {
+    splitProducts();
+  }, [products]);
+
   return (
     <Segment raised>
       <Grid columns={3}>

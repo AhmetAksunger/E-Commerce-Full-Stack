@@ -25,12 +25,6 @@ const Home = () => {
     last: false,
   });
 
-  const [splittedProductContents, setSplittedProductContents] = useState([
-    [],
-    [],
-    [],
-  ]);
-
   const [categories, setCategories] = useState([
     {
       id: 0,
@@ -45,7 +39,7 @@ const Home = () => {
   const [selectedSort, setSelectedSort] = useState("desc");
   const [selectedMinPrice, setSelectedMinPrice] = useState(0);
   const [selectedMaxPrice, setSelectedMaxPrice] = useState(2147483647);
-  const [selectedCategories,setSelectedCategories] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState([]);
   const [activePage, setActivePage] = useState(0);
   const [filterSortError, setFilterSortError] = useState(false);
 
@@ -80,18 +74,6 @@ const Home = () => {
       });
   };
 
-  const splitProducts = () => {
-    const newSplittedProductContents = [[], [], []];
-    let j = 0;
-    for (let i = 0; i < products.content.length; i++) {
-      if (i !== 0 && i % 3 === 0) {
-        j++;
-      }
-      newSplittedProductContents[j].push(products.content[i]);
-    }
-    setSplittedProductContents(newSplittedProductContents);
-  };
-
   const getCategories = () => {
     let categoryService = new CategoryService();
     categoryService
@@ -104,10 +86,6 @@ const Home = () => {
     getProducts();
     getCategories();
   }, []);
-
-  useEffect(() => {
-    splitProducts();
-  }, [products]);
 
   useEffect(() => {
     if (isNaN(selectedMaxPrice) || isNaN(selectedMinPrice)) {
@@ -249,7 +227,10 @@ const Home = () => {
           </Dropdown>
         </Menu.Item>
       </Menu>
-      <ProductList products={products} splittedProductContents={splittedProductContents} onPageChange={onPageChange}/>
+      <ProductList
+        products={products}
+        onPageChange={onPageChange}
+      />
     </>
   );
 };
