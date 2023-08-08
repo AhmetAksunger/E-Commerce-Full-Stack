@@ -14,6 +14,7 @@ import CategoryService from "../services/categoryService";
 import { useSelector } from "react-redux";
 import ProductCard from "../utils/ProductCard";
 import { orderOptions, sortOptions } from "../utils/constants";
+import ProductList from "../utils/ProductList";
 
 const Home = () => {
   const [products, setProducts] = useState({
@@ -39,12 +40,13 @@ const Home = () => {
   ]);
   const [categoryOptions, setCategoryOptions] = useState([]);
 
+  //Filter & Sorting
   const [selectedOrder, setSelectedOrder] = useState("createdAt");
   const [selectedSort, setSelectedSort] = useState("desc");
   const [selectedMinPrice, setSelectedMinPrice] = useState(0);
   const [selectedMaxPrice, setSelectedMaxPrice] = useState(2147483647);
+  const [selectedCategories,setSelectedCategories] = useState([]);
   const [activePage, setActivePage] = useState(0);
-
   const [filterSortError, setFilterSortError] = useState(false);
 
   const { jwt } = useSelector((state) => state.auth);
@@ -129,7 +131,7 @@ const Home = () => {
     getProducts(
       selectedSort,
       selectedOrder,
-      undefined,
+      selectedCategories,
       selectedMinPrice,
       selectedMaxPrice,
       activePage - 1,
@@ -211,13 +213,13 @@ const Home = () => {
               )}
               <Dropdown.Item>
                 <Dropdown
-                  placeholder="State"
+                  placeholder="Categories"
                   pointing="left"
                   fluid
                   multiple
                   selection
                   options={categoryOptions}
-                  onChange={(event, data) => console.log(data.value)}
+                  onChange={(event, data) => setSelectedCategories(data.value)}
                 />
               </Dropdown.Item>
               <Dropdown.Divider />
@@ -230,7 +232,7 @@ const Home = () => {
                     getProducts(
                       selectedSort,
                       selectedOrder,
-                      undefined,
+                      selectedCategories,
                       selectedMinPrice,
                       selectedMaxPrice,
                       activePage
@@ -247,42 +249,7 @@ const Home = () => {
           </Dropdown>
         </Menu.Item>
       </Menu>
-      <Segment raised>
-        <Grid columns={3}>
-          <Grid.Row>
-            {splittedProductContents[0].map((product, idx) => (
-              <Grid.Column>
-                <ProductCard product={product} />
-              </Grid.Column>
-            ))}
-          </Grid.Row>
-          <Grid.Row>
-            {splittedProductContents[1].map((product, idx) => (
-              <Grid.Column>
-                <ProductCard product={product} />
-              </Grid.Column>
-            ))}
-          </Grid.Row>
-          <Grid.Row>
-            {splittedProductContents[2].map((product, idx) => (
-              <Grid.Column>
-                <ProductCard product={product} />
-              </Grid.Column>
-            ))}
-          </Grid.Row>
-        </Grid>
-        <Pagination
-          style={{ marginTop: "1rem" }}
-          boundaryRange={0}
-          defaultActivePage={1}
-          ellipsisItem={null}
-          firstItem={null}
-          lastItem={null}
-          siblingRange={1}
-          totalPages={products.totalPages}
-          onPageChange={onPageChange}
-        />
-      </Segment>
+      <ProductList products={products} splittedProductContents={splittedProductContents} onPageChange={onPageChange}/>
     </>
   );
 };
