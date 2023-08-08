@@ -6,6 +6,7 @@ import {
   Input,
   Label,
   Menu,
+  Pagination,
   Segment,
 } from "semantic-ui-react";
 import ProductService from "../services/productService";
@@ -46,10 +47,11 @@ const Home = () => {
 
   const { jwt } = useSelector((state) => state.auth);
 
-  const getProducts = (sort,order,minPrice,maxPrice,page,size) => {
+  const getProducts = (sort, order, minPrice, 
+    maxPrice, page, size) => {
     let productService = new ProductService();
     productService
-      .getProducts(jwt,sort,order,minPrice,maxPrice,page,size)
+      .getProducts(jwt, sort, order, minPrice, maxPrice, page, size)
       .then((response) => {
         setProducts(response.data);
       })
@@ -59,7 +61,6 @@ const Home = () => {
   };
 
   const splitProducts = () => {
-    console.log("in");
     const newSplittedProductContents = [[], [], []];
     let j = 0;
     for (let i = 0; i < products.content.length; i++) {
@@ -168,9 +169,19 @@ const Home = () => {
                 </div>
               )}
               <Dropdown.Divider />
-              <div style={{ textAlign: "center",marginBottom:"0.5rem" }}>
-                <Button basic color="green" disabled={filterSortError} onClick={() => getProducts(selectedSort,selectedOrder,selectedMinPrice,selectedMaxPrice)}>
+              <div style={{ textAlign: "center", marginBottom: "0.5rem" }}>
+                <Button
+                  basic
+                  color="green"
+                  disabled={filterSortError}
+                  onClick={() =>
+                    getProducts(selectedSort,selectedOrder,selectedMinPrice,selectedMaxPrice)
+                  }
+                >
                   Apply
+                </Button>
+                <Button basic color="red" onClick={() => getProducts()}>
+                  Reset
                 </Button>
               </div>
             </Dropdown.Menu>
@@ -201,6 +212,16 @@ const Home = () => {
             ))}
           </Grid.Row>
         </Grid>
+        <Pagination style={{marginTop:"1rem"}}
+          boundaryRange={0}
+          defaultActivePage={1}
+          ellipsisItem={null}
+          firstItem={null}
+          lastItem={null}
+          siblingRange={1}
+          totalPages={products.totalPages}
+          onPageChange={(event,{ activePage }) => getProducts(undefined,undefined,undefined,undefined,activePage - 1,undefined)}
+        />
       </Segment>
     </>
   );
