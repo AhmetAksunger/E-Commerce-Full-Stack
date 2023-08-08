@@ -40,11 +40,9 @@ const Home = () => {
       .catch((error) => {
         console.log(error);
       });
-    splitProducts();
   };
 
   const splitProducts = () => {
-    console.log("in");
     const newSplittedProductContents = [[], [], []];
     let j = 0;
     for (let i = 0; i < products.content.length; i++) {
@@ -67,7 +65,11 @@ const Home = () => {
   useEffect(() => {
     getProducts();
     getCategories();
-  }, [products]);
+  }, []);
+
+  useEffect(() => {
+    splitProducts();
+  },[products]);
 
   return (
     <>
