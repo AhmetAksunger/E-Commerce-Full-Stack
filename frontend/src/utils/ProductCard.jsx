@@ -3,7 +3,7 @@ import { Card, Icon, Image, Label } from "semantic-ui-react";
 
 const ProductCard = ({product}) => {
   return (
-    <Card href="/login" style={{width:"300px",height:"300px"}}>
+    <Card href={`/products/${product.id}`} style={{width:"300px",height:"300px"}}>
       <Card.Content>
         <Image size="tiny" src={product.logo} style={{marginBottom:"1rem"}}/>
         <Card.Header style={{ maxWidth: '100%', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{product.name}</Card.Header>
