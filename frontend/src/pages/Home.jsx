@@ -118,6 +118,16 @@ const Home = () => {
     setActivePage(activePage - 1);
   };
 
+  const onClickResetFilter = () => {
+    setSelectedOrder("createdAt");
+    setSelectedSort("desc");
+    setSelectedMinPrice(0);
+    setSelectedMaxPrice(2147483647);
+    setSelectedCategories([]);
+    setFilterSortError(false);
+    getProducts();
+  };
+
   return (
     <>
       <Menu fluid>
@@ -151,6 +161,7 @@ const Home = () => {
                   selection
                   fluid
                   options={orderOptions}
+                  value={selectedOrder}
                   onChange={(event, data) => setSelectedOrder(data.value)}
                 />
               </Dropdown.Item>
@@ -161,6 +172,7 @@ const Home = () => {
                   fluid
                   selection
                   options={sortOptions}
+                  value={selectedSort}
                   onChange={(event, data) => setSelectedSort(data.value)}
                 />
               </Dropdown.Item>
@@ -171,6 +183,7 @@ const Home = () => {
                   style={{ width: "100px", marginLeft: "0.5rem" }}
                   onClick={(event) => event.stopPropagation()}
                   onChange={(event) => setSelectedMinPrice(event.target.value)}
+                  value={selectedMinPrice}
                 />
               </Dropdown.Item>
               <Dropdown.Item>
@@ -180,6 +193,7 @@ const Home = () => {
                   style={{ width: "100px", marginLeft: "0.5rem" }}
                   onClick={(event) => event.stopPropagation()}
                   onChange={(event) => setSelectedMaxPrice(event.target.value)}
+                  value={selectedMaxPrice}
                 />
               </Dropdown.Item>
               {filterSortError && (
@@ -197,6 +211,7 @@ const Home = () => {
                   multiple
                   selection
                   options={categoryOptions}
+                  value={selectedCategories}
                   onChange={(event, data) => setSelectedCategories(data.value)}
                 />
               </Dropdown.Item>
@@ -219,7 +234,7 @@ const Home = () => {
                 >
                   Apply
                 </Button>
-                <Button basic color="red" onClick={() => getProducts()}>
+                <Button basic color="red" onClick={onClickResetFilter}>
                   Reset
                 </Button>
               </div>
@@ -227,10 +242,7 @@ const Home = () => {
           </Dropdown>
         </Menu.Item>
       </Menu>
-      <ProductList
-        products={products}
-        onPageChange={onPageChange}
-      />
+      <ProductList products={products} onPageChange={onPageChange} />
     </>
   );
 };
