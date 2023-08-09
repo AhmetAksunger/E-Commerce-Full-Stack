@@ -1,7 +1,6 @@
 import axios from "./axiosConfig";
 
 export default class ProductService {
-
   /**
    * Fetches a list of products based on provided filters and pagination options.
    *
@@ -19,7 +18,7 @@ export default class ProductService {
     jwt,
     sort = "desc",
     order = "createdAt",
-    categoryIds,
+    categoryIds = [],
     minPrice = 0,
     maxPrice = 2147483647,
     page = 0,
@@ -30,9 +29,18 @@ export default class ProductService {
         Authorization: `Bearer ${jwt}`,
       },
     };
-    return axios.get(
-      `/api/v1/products?sort=${sort}&order=${order}&minPrice=${minPrice}&maxPrice=${maxPrice}&page=${page}&size=${size}`,
-      config
-    );
+
+    if (categoryIds.length === 0) {
+      return axios.get(
+        `/api/v1/products?sort=${sort}&order=${order}&minPrice=${minPrice}&maxPrice=${maxPrice}&page=${page}&size=${size}`,
+        config
+      );
+    }else {
+      const categoryIdsCommaSeperated = categoryIds.join(",");
+      return axios.get(
+        `/api/v1/products?sort=${sort}&order=${order}&categoryIds=${categoryIdsCommaSeperated}&minPrice=${minPrice}&maxPrice=${maxPrice}&page=${page}&size=${size}`,
+        config
+      );
+    }
   }
 }
