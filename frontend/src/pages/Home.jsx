@@ -2,17 +2,13 @@ import React, { useEffect, useState } from "react";
 import {
   Button,
   Dropdown,
-  Grid,
   Input,
   Label,
   Menu,
-  Pagination,
-  Segment,
 } from "semantic-ui-react";
 import ProductService from "../services/productService";
 import CategoryService from "../services/categoryService";
 import { useSelector } from "react-redux";
-import ProductCard from "../utils/ProductCard";
 import { orderOptions, sortOptions } from "../utils/constants";
 import ProductList from "../utils/ProductList";
 
