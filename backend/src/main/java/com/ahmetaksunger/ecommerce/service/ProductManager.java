@@ -11,7 +11,7 @@ import com.ahmetaksunger.ecommerce.model.Seller;
 import com.ahmetaksunger.ecommerce.model.User;
 import com.ahmetaksunger.ecommerce.repository.ProductRepository;
 import com.ahmetaksunger.ecommerce.service.rules.ProductRules;
-import com.ahmetaksunger.ecommerce.spesifications.ProductSpecification;
+import com.ahmetaksunger.ecommerce.spesification.ProductSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -83,6 +83,21 @@ public class ProductManager implements ProductService{
         return mapperService.forResponse().map(productRepository.save(product),ProductVM.class);
     }
 
+    /**
+     *
+     * Retrieves paginated list of products based on the specified filters.
+     *
+     * @param sort A field to sort, valid values are: [asc, desc].
+     *             See {@link ProductRules#checkIfSortParamIsValid(String)}
+     * @param order A field to order, valid values are: [name,price,createdAt,updatedAt]
+     *              See {@link ProductRules#checkIfOrderParamIsValid(String)}
+     * @param categoryIds List of category IDs
+     * @param minPrice
+     * @param maxPrice
+     * @param page Page number
+     * @param size Element amount on each page
+     * @return
+     */
     @Override
     public Page<ProductVM> getProducts(String sort, String order,
                                        List<Long> categoryIds, BigDecimal minPrice,
