@@ -16,7 +16,7 @@ public interface ProductService {
     ProductVM removeCategoriesByIdsFromProduct(long productId, List<Long> categoryIds,User loggedInUser);
     Page<ProductVM> getProducts(String sort, String order, List<Long> category, BigDecimal minPrice,
                                 BigDecimal maxPrice,
-                                int page, int size);
+                                Integer page, Integer size);
 
     void delete(long productId, User loggedInUser);
 

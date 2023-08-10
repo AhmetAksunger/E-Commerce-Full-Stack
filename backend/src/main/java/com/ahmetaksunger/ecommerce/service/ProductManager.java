@@ -11,11 +11,13 @@ import com.ahmetaksunger.ecommerce.model.Seller;
 import com.ahmetaksunger.ecommerce.model.User;
 import com.ahmetaksunger.ecommerce.repository.ProductRepository;
 import com.ahmetaksunger.ecommerce.service.rules.ProductRules;
+import com.ahmetaksunger.ecommerce.spesifications.ProductSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -73,7 +75,7 @@ public class ProductManager implements ProductService{
         List<Category> categoriesToBeRemoved = categoryService.getCategoriesByIds(categoryIds);
         dbCategories.removeAll(
                 categoriesToBeRemoved.stream()
-                        .filter(category -> dbCategories.contains(category)).
+                        .filter(dbCategories::contains).
                         toList()
         );
         product.setCategories(dbCategories);
@@ -84,22 +86,28 @@ public class ProductManager implements ProductService{
     @Override
     public Page<ProductVM> getProducts(String sort, String order,
                                        List<Long> categoryIds, BigDecimal minPrice,
-                                       BigDecimal maxPrice, int page, int size) {
+                                       BigDecimal maxPrice, Integer page, Integer size) {
 
         //Rules
         productRules.checkIfSortParamIsValid(sort);
         productRules.checkIfOrderParamIsValid(order);
 
-        Page<Product> products = null;
+        Specification<Product> specification = Specification.where(null);
+
         Pageable pageable = PageRequest.of(page,size,Sort.by(Sort.Direction.valueOf(sort.toUpperCase()),order));
 
-        if(categoryIds == null || categoryIds.size() == 0){
-            products = productRepository.findByPriceBetween(minPrice,maxPrice,pageable);
-        }else{
-            products = productRepository.findByCategories_IdInAndPriceBetween(categoryIds,minPrice,maxPrice,pageable);
+        if(categoryIds != null && !categoryIds.isEmpty()) {
+            specification = specification.and(ProductSpecification.withCategoryIds(categoryIds));
+        }
+        if(minPrice != null){
+            specification = specification.and(ProductSpecification.withPriceGreaterThanOrEqualTo(minPrice));
+        }
+        if(maxPrice != null){
+            specification = specification.and(ProductSpecification.withPriceLessThanOrEqualTo(maxPrice));
         }
 
-        return products.map(product -> mapperService.forResponse().map(product,ProductVM.class));
+        return productRepository.findAll(specification,pageable)
+                .map(product -> mapperService.forResponse().map(product,ProductVM.class));
     }
 
     @Override

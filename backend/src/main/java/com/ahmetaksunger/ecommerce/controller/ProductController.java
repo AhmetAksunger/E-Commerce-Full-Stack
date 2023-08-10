@@ -60,14 +60,14 @@ public class ProductController {
                                                        String order,
                                                        @RequestParam(name = "categoryIds",required = false)
                                                        List<Long> categoryIds,
-                                                       @RequestParam(name = "minPrice",required = false,defaultValue = "0")
+                                                       @RequestParam(name = "minPrice",required = false)
                                                        BigDecimal minPrice,
-                                                       @RequestParam(name = "maxPrice",required = false,defaultValue = ""+Integer.MAX_VALUE)
+                                                       @RequestParam(name = "maxPrice",required = false)
                                                        BigDecimal maxPrice,
                                                        @RequestParam(name = "page",required = false,defaultValue = "0")
-                                                       int page,
+                                                       Integer page,
                                                        @RequestParam(name = "size",required = false,defaultValue = "5")
-                                                       int size){
+                                                       Integer size){
 
         return ResponseEntity.ok(productService.getProducts(sort,order,categoryIds,minPrice,maxPrice,page,size));
     }
