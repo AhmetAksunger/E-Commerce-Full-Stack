@@ -33,7 +33,7 @@ public class ProductController {
         return new ResponseEntity<>(productService.create(createProductRequest,loggedInUser), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{productId}/add")
+    @PostMapping("/{productId}/categories")
     @PreAuthorize("hasAuthority('SELLER')")
     public ResponseEntity<ProductVM> addCategoriesByIdsToProduct(@PathVariable long productId,
                                                                  @RequestParam(name = "categoryIds",required = true)
@@ -42,7 +42,7 @@ public class ProductController {
         return ResponseEntity.ok(productService.addCategoriesByIdsToProduct(productId,categoryIds,loggedInUser));
     }
 
-    @PutMapping("/{productId}/remove")
+    @DeleteMapping("/{productId}/categories")
     @PreAuthorize("hasAuthority('SELLER')")
     public ResponseEntity<ProductVM> removeCategoriesByIdsFromProduct(@PathVariable long productId,
                                                                       @RequestParam(name = "categoryIds",required = true)
@@ -53,6 +53,7 @@ public class ProductController {
 
     @GetMapping()
     @PreAuthorize("hasAnyAuthority('SELLER','CUSTOMER')")
+
     public ResponseEntity<Page<ProductVM>> getProducts(@RequestParam(name = "sort",required = false,defaultValue = "asc")
                                                        String sort,
                                                        @RequestParam(name = "order",required = false,defaultValue = "createdAt")
