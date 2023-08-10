@@ -6,24 +6,30 @@ import com.ahmetaksunger.ecommerce.exception.NotFoundException.NotFoundException
 import com.ahmetaksunger.ecommerce.mapper.MapperService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.server.MethodNotAllowedException;
 
 import java.util.HashMap;
 import java.util.List;
 
 @ControllerAdvice
 @RequiredArgsConstructor
+@Slf4j
 public class GlobalExceptionHandler {
 
     private final MapperService mapperService;
+
     @ExceptionHandler({MethodArgumentNotValidException.class})
     public ResponseEntity<FieldExceptionResponse> handle(Exception exception, HttpServletRequest request){
+        log.error(exception.getMessage(),exception);
 
         HashMap<String,String> messages = new HashMap<>();
 
@@ -47,6 +53,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({UnauthorizedException.class})
     public ResponseEntity<DefaultExceptionResponse> handle(UnauthorizedException exception, HttpServletRequest request){
+        log.error(exception.getMessage(),exception);
 
         return new ResponseEntity<>(DefaultExceptionResponse.builder()
                 .status(HttpStatus.UNAUTHORIZED.value())
@@ -59,6 +66,8 @@ public class GlobalExceptionHandler {
     
     @ExceptionHandler({NotFoundException.class})
     public ResponseEntity<DefaultExceptionResponse> handle(NotFoundException exception, HttpServletRequest request){
+        log.error(exception.getMessage(),exception);
+
         return new ResponseEntity<>(DefaultExceptionResponse.builder()
                 .status(HttpStatus.NOT_FOUND.value())
                 .error(HttpStatus.NOT_FOUND.getReasonPhrase())
@@ -70,6 +79,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({InvalidRequestParamException.class})
     public ResponseEntity<DefaultExceptionResponse> handle(InvalidRequestParamException exception, HttpServletRequest request){
+        log.error(exception.getMessage(),exception);
+
         return new ResponseEntity<>(DefaultExceptionResponse.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
                 .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
@@ -81,6 +92,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({UserAlreadyHasCartException.class})
     public ResponseEntity<DefaultExceptionResponse> handle(UserAlreadyHasCartException exception, HttpServletRequest request){
+        log.error(exception.getMessage(),exception);
+
         return new ResponseEntity<>(DefaultExceptionResponse.builder()
                 .status(HttpStatus.CONFLICT.value())
                 .error(HttpStatus.CONFLICT.getReasonPhrase())
@@ -92,6 +105,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({InsufficientProductQuantityException.class})
     public ResponseEntity<InsufficientQuantityResponse> handle(InsufficientProductQuantityException exception,HttpServletRequest request){
+        log.error(exception.getMessage(),exception);
 
         List<ProductVM> products = exception.getProductsWithInsufficientStock()
                 .stream()
@@ -107,5 +121,17 @@ public class GlobalExceptionHandler {
                 .path(request.getRequestURI())
                 .productsWithInsufficientStock(products)
                 .build(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({MethodNotAllowedException.class})
+    public ResponseEntity<DefaultExceptionResponse> handle(MethodArgumentNotValidException exception, HttpServletRequest request){
+        log.error(exception.getMessage(),exception);
+        return ResponseEntity.badRequest().body(DefaultExceptionResponse.builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                .message(exception.getMessage())
+                .timeStamp(System.currentTimeMillis())
+                .path(request.getRequestURI())
+                .build());
     }
 }
