@@ -14,9 +14,10 @@ public class ProductSpecification {
 
 
     /**
-     * Creates a specification that filters products based on a search for product name
+     * Creates a specification that filters products based on the search keyword.
+     * It searches for the keyword on product name, category name and company name
      *
-     * @param searchTerm product name
+     * @param searchTerm
      * @return Specification
      */
     public static Specification<Product> searchByKeyword(String searchTerm){

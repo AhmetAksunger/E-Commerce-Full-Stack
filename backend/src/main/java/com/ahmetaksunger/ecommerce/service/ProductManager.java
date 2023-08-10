@@ -90,10 +90,10 @@ public class ProductManager implements ProductService{
      *                    See {@link ProductRules#checkIfSortParamIsValid(String)}
      * @param order       A field to order, valid values are: [name,price,createdAt,updatedAt]
      *                    See {@link ProductRules#checkIfOrderParamIsValid(String)}
-     * @param search      A field to search name,category or seller company name
+     * @param search      A field to search name,category or company name
      * @param categoryIds List of category IDs
-     * @param minPrice
-     * @param maxPrice
+     * @param minPrice Minimum price
+     * @param maxPrice Maximum price
      * @param page        Page number
      * @param size        Element amount on each page
      * @return

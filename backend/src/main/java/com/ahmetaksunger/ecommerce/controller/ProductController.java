@@ -51,6 +51,21 @@ public class ProductController {
         return ResponseEntity.ok(productService.removeCategoriesByIdsFromProduct(productId,categoryIds,loggedInUser));
     }
 
+
+    /**
+     * Returns paginated products based on the specified criteria.
+     * {@link com.ahmetaksunger.ecommerce.service.ProductManager#getProducts(String, String, String, List, BigDecimal, BigDecimal, Integer, Integer)}
+     *
+     * @param sort        sort products-> [asc,desc]
+     * @param order       order products -> [createdAt,updatedAt,name,price]
+     * @param search      search term -> searches by product name, category name and company name
+     * @param categoryIds filter products by category ids
+     * @param minPrice    minimum price for products
+     * @param maxPrice    maximum price for products
+     * @param page        page number
+     * @param size        size number
+     * @return the products
+     */
     @GetMapping()
     @PreAuthorize("hasAnyAuthority('SELLER','CUSTOMER')")
 
