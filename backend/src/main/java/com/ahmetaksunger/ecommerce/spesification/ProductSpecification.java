@@ -1,7 +1,10 @@
 package com.ahmetaksunger.ecommerce.spesification;
 
 
+import com.ahmetaksunger.ecommerce.model.Category;
 import com.ahmetaksunger.ecommerce.model.Product;
+import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Join;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
@@ -13,12 +16,27 @@ public class ProductSpecification {
     /**
      * Creates a specification that filters products based on a search for product name
      *
-     * @param name product name
+     * @param searchTerm product name
      * @return Specification
      */
-    public static Specification<Product> withNameLike(String name){
-        return (root, query, criteriaBuilder) ->
-                criteriaBuilder.like(root.get("name"),"%" + name + "%");
+    public static Specification<Product> searchByKeyword(String searchTerm){
+        return (root, query, criteriaBuilder) -> {
+
+            var categoryJoin = root.join("categories");
+            Expression<String> categoryName = criteriaBuilder.lower(categoryJoin.get("name"));
+
+            var sellerJoin = root.join("seller");
+            Expression<String> companyName = criteriaBuilder.lower(sellerJoin.get("companyName"));
+
+            Expression<String> productName = criteriaBuilder.lower(root.get("name"));
+
+            var searchTermLower = searchTerm.toLowerCase();
+            return criteriaBuilder.or(
+                    criteriaBuilder.like(productName,"%" + searchTermLower + "%"),
+                    criteriaBuilder.like(categoryName,"%" + searchTermLower + "%"),
+                    criteriaBuilder.like(companyName,"%" + searchTermLower + "%")
+            );
+        };
     }
 
     /**

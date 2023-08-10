@@ -84,23 +84,23 @@ public class ProductManager implements ProductService{
     }
 
     /**
-     *
      * Retrieves paginated list of products based on the specified filters.
      *
-     * @param sort A field to sort, valid values are: [asc, desc].
-     *             See {@link ProductRules#checkIfSortParamIsValid(String)}
-     * @param order A field to order, valid values are: [name,price,createdAt,updatedAt]
-     *              See {@link ProductRules#checkIfOrderParamIsValid(String)}
+     * @param sort        A field to sort, valid values are: [asc, desc].
+     *                    See {@link ProductRules#checkIfSortParamIsValid(String)}
+     * @param order       A field to order, valid values are: [name,price,createdAt,updatedAt]
+     *                    See {@link ProductRules#checkIfOrderParamIsValid(String)}
+     * @param search      A field to search name,category or seller company name
      * @param categoryIds List of category IDs
      * @param minPrice
      * @param maxPrice
-     * @param page Page number
-     * @param size Element amount on each page
+     * @param page        Page number
+     * @param size        Element amount on each page
      * @return
      */
     @Override
     public Page<ProductVM> getProducts(String sort, String order,
-                                       List<Long> categoryIds, BigDecimal minPrice,
+                                       String search, List<Long> categoryIds, BigDecimal minPrice,
                                        BigDecimal maxPrice, Integer page, Integer size) {
 
         //Rules
@@ -110,6 +110,10 @@ public class ProductManager implements ProductService{
         Specification<Product> specification = Specification.where(null);
 
         Pageable pageable = PageRequest.of(page,size,Sort.by(Sort.Direction.valueOf(sort.toUpperCase()),order));
+
+        if(search != null && !search.isEmpty()){
+            specification = specification.and(ProductSpecification.searchByKeyword(search));
+        }
 
         if(categoryIds != null && !categoryIds.isEmpty()) {
             specification = specification.and(ProductSpecification.withCategoryIds(categoryIds));

@@ -58,6 +58,8 @@ public class ProductController {
                                                        String sort,
                                                        @RequestParam(name = "order",required = false,defaultValue = "createdAt")
                                                        String order,
+                                                       @RequestParam(name = "search",required = false)
+                                                       String search,
                                                        @RequestParam(name = "categoryIds",required = false)
                                                        List<Long> categoryIds,
                                                        @RequestParam(name = "minPrice",required = false)
@@ -69,7 +71,7 @@ public class ProductController {
                                                        @RequestParam(name = "size",required = false,defaultValue = "5")
                                                        Integer size){
 
-        return ResponseEntity.ok(productService.getProducts(sort,order,categoryIds,minPrice,maxPrice,page,size));
+        return ResponseEntity.ok(productService.getProducts(sort,order,search,categoryIds,minPrice,maxPrice,page,size));
     }
 
     @DeleteMapping("/{productId}")
