@@ -11,11 +11,13 @@ import com.ahmetaksunger.ecommerce.model.Seller;
 import com.ahmetaksunger.ecommerce.model.User;
 import com.ahmetaksunger.ecommerce.repository.ProductRepository;
 import com.ahmetaksunger.ecommerce.service.rules.ProductRules;
+import com.ahmetaksunger.ecommerce.spesification.ProductSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -73,7 +75,7 @@ public class ProductManager implements ProductService{
         List<Category> categoriesToBeRemoved = categoryService.getCategoriesByIds(categoryIds);
         dbCategories.removeAll(
                 categoriesToBeRemoved.stream()
-                        .filter(category -> dbCategories.contains(category)).
+                        .filter(dbCategories::contains).
                         toList()
         );
         product.setCategories(dbCategories);
@@ -81,25 +83,50 @@ public class ProductManager implements ProductService{
         return mapperService.forResponse().map(productRepository.save(product),ProductVM.class);
     }
 
+    /**
+     * Retrieves paginated list of products based on the specified filters.
+     *
+     * @param sort        A field to sort, valid values are: [asc, desc].
+     *                    See {@link ProductRules#checkIfSortParamIsValid(String)}
+     * @param order       A field to order, valid values are: [name,price,createdAt,updatedAt]
+     *                    See {@link ProductRules#checkIfOrderParamIsValid(String)}
+     * @param search      A field to search name,category or company name
+     * @param categoryIds List of category IDs
+     * @param minPrice Minimum price
+     * @param maxPrice Maximum price
+     * @param page        Page number
+     * @param size        Element amount on each page
+     * @return
+     */
     @Override
     public Page<ProductVM> getProducts(String sort, String order,
-                                       List<Long> categoryIds, BigDecimal minPrice,
-                                       BigDecimal maxPrice, int page, int size) {
+                                       String search, List<Long> categoryIds, BigDecimal minPrice,
+                                       BigDecimal maxPrice, Integer page, Integer size) {
 
         //Rules
         productRules.checkIfSortParamIsValid(sort);
         productRules.checkIfOrderParamIsValid(order);
 
-        Page<Product> products = null;
+        Specification<Product> specification = Specification.where(null);
+
         Pageable pageable = PageRequest.of(page,size,Sort.by(Sort.Direction.valueOf(sort.toUpperCase()),order));
 
-        if(categoryIds == null || categoryIds.size() == 0){
-            products = productRepository.findByPriceBetween(minPrice,maxPrice,pageable);
-        }else{
-            products = productRepository.findByCategories_IdInAndPriceBetween(categoryIds,minPrice,maxPrice,pageable);
+        if(search != null && !search.isEmpty()){
+            specification = specification.and(ProductSpecification.searchByKeyword(search));
         }
 
-        return products.map(product -> mapperService.forResponse().map(product,ProductVM.class));
+        if(categoryIds != null && !categoryIds.isEmpty()) {
+            specification = specification.and(ProductSpecification.withCategoryIds(categoryIds));
+        }
+        if(minPrice != null){
+            specification = specification.and(ProductSpecification.withPriceGreaterThanOrEqualTo(minPrice));
+        }
+        if(maxPrice != null){
+            specification = specification.and(ProductSpecification.withPriceLessThanOrEqualTo(maxPrice));
+        }
+
+        return productRepository.findAll(specification,pageable)
+                .map(product -> mapperService.forResponse().map(product,ProductVM.class));
     }
 
     @Override

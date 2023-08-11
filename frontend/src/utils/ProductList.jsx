@@ -3,6 +3,7 @@ import { Grid, Pagination, Segment } from "semantic-ui-react";
 import ProductCard from "./ProductCard";
 import { useState } from "react";
 import { useEffect } from "react";
+import { useSelector } from "react-redux";
 
 const ProductList = ({ products, onPageChange }) => {
   const [splittedProductContents, setSplittedProductContents] = useState([
@@ -10,6 +11,10 @@ const ProductList = ({ products, onPageChange }) => {
     [],
     [],
   ]);
+
+  const filters = useSelector((state) => state.filter);
+
+  const [activePage, setActivePage] = useState(1);
 
   const splitProducts = () => {
     const newSplittedProductContents = [[], [], []];
@@ -26,6 +31,10 @@ const ProductList = ({ products, onPageChange }) => {
   useEffect(() => {
     splitProducts();
   }, [products]);
+
+  useEffect(() => {
+    setActivePage(1);
+  },[filters])
 
   return (
     <Segment raised>
@@ -61,7 +70,8 @@ const ProductList = ({ products, onPageChange }) => {
         lastItem={null}
         siblingRange={1}
         totalPages={products.totalPages}
-        onPageChange={onPageChange}
+        onPageChange={(event, {activePage}) => {setActivePage(activePage); onPageChange(activePage)}}
+        activePage={activePage}
       />
     </Segment>
   );

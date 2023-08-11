@@ -51,6 +51,21 @@ public class ProductController {
         return ResponseEntity.ok(productService.removeCategoriesByIdsFromProduct(productId,categoryIds,loggedInUser));
     }
 
+
+    /**
+     * Returns paginated products based on the specified criteria.
+     * {@link com.ahmetaksunger.ecommerce.service.ProductManager#getProducts(String, String, String, List, BigDecimal, BigDecimal, Integer, Integer)}
+     *
+     * @param sort        sort products-> [asc,desc]
+     * @param order       order products -> [createdAt,updatedAt,name,price]
+     * @param search      search term -> searches by product name, category name and company name
+     * @param categoryIds filter products by category ids
+     * @param minPrice    minimum price for products
+     * @param maxPrice    maximum price for products
+     * @param page        page number
+     * @param size        size number
+     * @return the products
+     */
     @GetMapping()
     @PreAuthorize("hasAnyAuthority('SELLER','CUSTOMER')")
 
@@ -58,18 +73,20 @@ public class ProductController {
                                                        String sort,
                                                        @RequestParam(name = "order",required = false,defaultValue = "createdAt")
                                                        String order,
+                                                       @RequestParam(name = "search",required = false)
+                                                       String search,
                                                        @RequestParam(name = "categoryIds",required = false)
                                                        List<Long> categoryIds,
-                                                       @RequestParam(name = "minPrice",required = false,defaultValue = "0")
+                                                       @RequestParam(name = "minPrice",required = false)
                                                        BigDecimal minPrice,
-                                                       @RequestParam(name = "maxPrice",required = false,defaultValue = ""+Integer.MAX_VALUE)
+                                                       @RequestParam(name = "maxPrice",required = false)
                                                        BigDecimal maxPrice,
                                                        @RequestParam(name = "page",required = false,defaultValue = "0")
-                                                       int page,
+                                                       Integer page,
                                                        @RequestParam(name = "size",required = false,defaultValue = "5")
-                                                       int size){
+                                                       Integer size){
 
-        return ResponseEntity.ok(productService.getProducts(sort,order,categoryIds,minPrice,maxPrice,page,size));
+        return ResponseEntity.ok(productService.getProducts(sort,order,search,categoryIds,minPrice,maxPrice,page,size));
     }
 
     @DeleteMapping("/{productId}")
