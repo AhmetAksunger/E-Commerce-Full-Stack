@@ -53,7 +53,7 @@ public class ProductController {
 
 
     /**
-     * Returns paginated products based on the specified criteria.
+     * Retrieves paginated models of products based on the specified criteria.
      * {@link com.ahmetaksunger.ecommerce.service.ProductManager#getProducts(String, String, String, List, BigDecimal, BigDecimal, Integer, Integer)}
      *
      * @param sort        sort products-> [asc,desc]
@@ -64,7 +64,7 @@ public class ProductController {
      * @param maxPrice    maximum price for products
      * @param page        page number
      * @param size        size number
-     * @return the products
+     * @return Response Entity with paginated ProductVM(Product View Model)
      */
     @GetMapping()
     @PreAuthorize("hasAnyAuthority('SELLER','CUSTOMER')")
@@ -93,5 +93,20 @@ public class ProductController {
     @PreAuthorize("hasAnyAuthority('SELLER')")
     public void deleteProduct(@PathVariable long productId, @CurrentUser User loggedInUser){
         productService.delete(productId,loggedInUser);
+    }
+
+    /**
+     *
+     * Retrieves a model of a product by its id.
+     * This endpoint allows both customers and sellers to retrieve product information based on its id.
+     *{@link com.ahmetaksunger.ecommerce.service.ProductManager#getProductById(Long)}
+     *
+     * @param productId Product id
+     * @return A Response entity with ProductVM (Product View Model) with the 200 Status Code.
+     */
+    @GetMapping("/{productId}")
+    @PreAuthorize("hasAnyAuthority('SELLER','CUSTOMER')")
+    public ResponseEntity<ProductVM> getProductById(@PathVariable Long productId){
+        return ResponseEntity.ok(productService.getProductById(productId));
     }
 }

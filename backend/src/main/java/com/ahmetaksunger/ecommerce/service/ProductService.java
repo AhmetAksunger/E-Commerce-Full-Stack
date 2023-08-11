@@ -20,4 +20,6 @@ public interface ProductService {
     void delete(long productId, User loggedInUser);
 
     void reduceQuantityForBoughtProducts(List<Product> boughtProducts);
+
+    ProductVM getProductById(Long productId);
 }

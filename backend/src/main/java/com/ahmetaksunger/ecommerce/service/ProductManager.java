@@ -146,4 +146,18 @@ public class ProductManager implements ProductService{
         });
     }
 
+    /**
+     * Retrieves a product from the database, based on the id specified.
+     * Maps the product to the dto "ProductVM"
+     *
+     * @param productId Product id.
+     * @return ProductVM
+     */
+    @Override
+    public ProductVM getProductById(Long productId) {
+
+        Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
+        return mapperService.forResponse().map(product,ProductVM.class);
+    }
+
 }
