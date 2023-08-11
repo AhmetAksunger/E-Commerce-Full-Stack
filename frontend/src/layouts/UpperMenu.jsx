@@ -4,6 +4,7 @@ import { orderOptions, sortOptions } from "../utils/constants";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { addProductFilters, resetProductFilters } from "../store/actions/filterActions";
+import { Link } from "react-router-dom/cjs/react-router-dom.min";
 
 const UpperMenu = ({ categories }) => {
 
@@ -59,7 +60,7 @@ const UpperMenu = ({ categories }) => {
   return (
     <Menu fluid>
       {categories.map((category, idx) => (
-        <Menu.Item>
+        <Menu.Item as={Link} to={`/cateogry/${category.id}`}>
           <Dropdown text={category.name} simple>
             <Dropdown.Menu>
               <Dropdown.Item

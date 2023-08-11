@@ -4,9 +4,10 @@ import CategoryService from "../services/categoryService";
 import { useSelector } from "react-redux";
 import ProductList from "../utils/ProductList";
 import UpperMenu from "../layouts/UpperMenu";
+import { act } from "react-dom/test-utils";
 
 const Home = () => {
-
+  
   const [products, setProducts] = useState({
     totalPages: 0,
     size: 0,
@@ -42,7 +43,7 @@ const Home = () => {
       .catch((error) => console.log(error));
   };
 
-  const onPageChange = (event, {activePage}) => {
+  const onPageChange = (activePage) => {
     let activePageIdx = activePage - 1;
     getProducts(filters,activePageIdx);
   }
@@ -50,7 +51,7 @@ const Home = () => {
   useEffect(() => {
     getProducts();
     getCategories();
-  }, []);
+  }, [filters]);
 
   return (
     <>
