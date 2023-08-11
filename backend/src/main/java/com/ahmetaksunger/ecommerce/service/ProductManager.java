@@ -160,4 +160,22 @@ public class ProductManager implements ProductService{
         return mapperService.forResponse().map(product,ProductVM.class);
     }
 
+    /**
+     *
+     * Retrieves products by seller id from the database
+     *
+     * @param sellerId Seller Id
+     * @param page Page number
+     * @param size Element amount on each page
+     * @return Paginated ProductVM
+     */
+    @Override
+    public Page<ProductVM> getProductsBySellerId(Long sellerId, Integer page, Integer size) {
+
+        Pageable pageable = PageRequest.of(page,size,Sort.by(Sort.Direction.DESC,"createdAt"));
+
+        return productRepository.findBySellerId(sellerId,pageable)
+                .map(product -> mapperService.forResponse().map(product,ProductVM.class));
+    }
+
 }

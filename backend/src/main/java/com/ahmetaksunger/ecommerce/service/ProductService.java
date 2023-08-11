@@ -22,4 +22,6 @@ public interface ProductService {
     void reduceQuantityForBoughtProducts(List<Product> boughtProducts);
 
     ProductVM getProductById(Long productId);
+
+    Page<ProductVM> getProductsBySellerId(Long sellerId, Integer page, Integer size);
 }
