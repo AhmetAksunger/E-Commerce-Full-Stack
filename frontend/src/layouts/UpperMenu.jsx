@@ -2,17 +2,20 @@ import React, { useState } from "react";
 import { Button, Dropdown, Input, Label, Menu } from "semantic-ui-react";
 import { orderOptions, sortOptions } from "../utils/constants";
 import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { addProductFilters, resetProductFilters } from "../store/actions/filterActions";
 
 const UpperMenu = ({ categories }) => {
+
+  const dispatch = useDispatch();
+
   const [filters, setFilters] = useState({
-    sort: undefined,
-    order: undefined,
-    searc: undefined,
-    categoryIds: undefined,
-    minPrice: undefined,
-    maxPrice: undefined,
-    page: undefined,
-    size: undefined,
+    sort: "",
+    order: "",
+    search: "",
+    categoryIds: "",
+    minPrice: "",
+    maxPrice: "",
   });
 
   const [categoryOptions, setCategoryOptions] = useState([]);
@@ -40,6 +43,19 @@ const UpperMenu = ({ categories }) => {
       }
     }
   }, [filters.minPrice, filters.maxPrice]);
+
+  const onClickResetFilters = () => {
+    dispatch(resetProductFilters());
+    setFilters({    
+      sort: "",
+      order: "",
+      searc: "",
+      categoryIds: "",
+      minPrice: "",
+      maxPrice: "",
+    });
+  }
+
   return (
     <Menu fluid>
       {categories.map((category, idx) => (
@@ -72,7 +88,7 @@ const UpperMenu = ({ categories }) => {
                 selection
                 fluid
                 options={orderOptions}
-                value={null}
+                value={filters.order}
                 onChange={(event, data) =>
                   setFilters((prevFilters) => ({
                     ...prevFilters,
@@ -88,7 +104,7 @@ const UpperMenu = ({ categories }) => {
                 fluid
                 selection
                 options={sortOptions}
-                value={null}
+                value={filters.sort}
                 onChange={(event, data) =>
                   setFilters((prevFilters) => ({
                     ...prevFilters,
@@ -109,7 +125,7 @@ const UpperMenu = ({ categories }) => {
                     minPrice: event.target.value,
                   }))
                 }
-                value={null}
+                value={filters.minPrice}
               />
             </Dropdown.Item>
             <Dropdown.Item>
@@ -124,7 +140,7 @@ const UpperMenu = ({ categories }) => {
                     maxPrice: event.target.value,
                   }))
                 }
-                value={null}
+                value={filters.maxPrice}
               />
             </Dropdown.Item>
             {priceFilterError && (
@@ -142,7 +158,7 @@ const UpperMenu = ({ categories }) => {
                 multiple
                 selection
                 options={categoryOptions}
-                value={null}
+                value={filters.categoryIds}
                 onChange={(event, data) =>
                   setFilters((prevFilters) => ({
                     ...prevFilters,
@@ -157,11 +173,11 @@ const UpperMenu = ({ categories }) => {
                 basic
                 color="green"
                 disabled={priceFilterError}
-                onClick={() => null} // get products
+                onClick={() => dispatch(addProductFilters(filters))}
               >
                 Apply
               </Button>
-              <Button basic color="red" onClick={null}>
+              <Button basic color="red" onClick={onClickResetFilters}>
                 Reset
               </Button>
             </div>

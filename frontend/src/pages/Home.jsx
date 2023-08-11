@@ -77,8 +77,8 @@ const Home = () => {
 
   return (
     <>
-      <UpperMenu />
-      <ProductList products={products} onPageChange={onPageChange} />
+      <UpperMenu categories={categories}/>
+      <ProductList products={products} onPageChange={null} />
     </>
   );
 };
