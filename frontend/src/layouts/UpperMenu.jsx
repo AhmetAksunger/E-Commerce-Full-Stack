@@ -4,7 +4,7 @@ import { orderOptions, sortOptions } from "../utils/constants";
 import { useEffect } from "react";
 
 const UpperMenu = ({ categories }) => {
-  const [params, setParams] = useState({
+  const [filters, setFilters] = useState({
     sort: undefined,
     order: undefined,
     searc: undefined,
@@ -32,14 +32,14 @@ const UpperMenu = ({ categories }) => {
   }, [categories]);
 
   useEffect(() => {
-    if (params.minPrice && params.maxPrice) {
-      if (isNaN(params.minPrice) || isNaN(params.maxPrice)) {
+    if (filters.minPrice && filters.maxPrice) {
+      if (isNaN(filters.minPrice) || isNaN(filters.maxPrice)) {
         setPriceFilterError(true);
       } else {
         setPriceFilterError(false);
       }
     }
-  }, [params.minPrice, params.maxPrice]);
+  }, [filters.minPrice, filters.maxPrice]);
   return (
     <Menu fluid>
       {categories.map((category, idx) => (
@@ -74,8 +74,8 @@ const UpperMenu = ({ categories }) => {
                 options={orderOptions}
                 value={null}
                 onChange={(event, data) =>
-                  setParams((prevParams) => ({
-                    ...prevParams,
+                  setFilters((prevFilters) => ({
+                    ...prevFilters,
                     order: data.value,
                   }))
                 }
@@ -90,8 +90,8 @@ const UpperMenu = ({ categories }) => {
                 options={sortOptions}
                 value={null}
                 onChange={(event, data) =>
-                  setParams((prevParams) => ({
-                    ...prevParams,
+                  setFilters((prevFilters) => ({
+                    ...prevFilters,
                     sort: data.value,
                   }))
                 }
@@ -104,8 +104,8 @@ const UpperMenu = ({ categories }) => {
                 style={{ width: "100px", marginLeft: "0.5rem" }}
                 onClick={(event) => event.stopPropagation()}
                 onChange={(event) =>
-                  setParams((prevParams) => ({
-                    ...prevParams,
+                  setFilters((prevFilters) => ({
+                    ...prevFilters,
                     minPrice: event.target.value,
                   }))
                 }
@@ -119,8 +119,8 @@ const UpperMenu = ({ categories }) => {
                 style={{ width: "100px", marginLeft: "0.5rem" }}
                 onClick={(event) => event.stopPropagation()}
                 onChange={(event) =>
-                  setParams((prevParams) => ({
-                    ...prevParams,
+                  setFilters((prevFilters) => ({
+                    ...prevFilters,
                     maxPrice: event.target.value,
                   }))
                 }
@@ -144,8 +144,8 @@ const UpperMenu = ({ categories }) => {
                 options={categoryOptions}
                 value={null}
                 onChange={(event, data) =>
-                  setParams((prevParams) => ({
-                    ...prevParams,
+                  setFilters((prevFilters) => ({
+                    ...prevFilters,
                     categoryIds: data.value,
                   }))
                 }

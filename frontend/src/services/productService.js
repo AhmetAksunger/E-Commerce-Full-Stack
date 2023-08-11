@@ -5,11 +5,11 @@ export default class ProductService {
    * Fetches a list of products based on provided filters and pagination options.
    *
    * @param {string} jwt - JSON Web Token for authentication.
-   * @param {object} params - Object that includes all the parameters. {sort,order,search,categoryIds,minPrice,maxPrice,page,size}
+   * @param {object} filters - Object that includes all the parameters. {sort,order,search,categoryIds,minPrice,maxPrice,page,size}
    */
-  getProducts(jwt, params) {
+  getProducts(jwt, filters) {
     const config = {
-      params: params,
+      params: filters,
       headers: {
         Authorization: `Bearer ${jwt}`,
       },
