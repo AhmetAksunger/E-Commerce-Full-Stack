@@ -1,6 +1,7 @@
 package com.ahmetaksunger.ecommerce.service;
 
 import com.ahmetaksunger.ecommerce.dto.request.product.CreateProductRequest;
+import com.ahmetaksunger.ecommerce.dto.request.product.UpdateProductRequest;
 import com.ahmetaksunger.ecommerce.dto.response.ProductVM;
 import com.ahmetaksunger.ecommerce.dto.response.SellerVM;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.ProductNotFoundException;
@@ -176,6 +177,45 @@ public class ProductManager implements ProductService{
 
         return productRepository.findBySellerId(sellerId,pageable)
                 .map(product -> mapperService.forResponse().map(product,ProductVM.class));
+    }
+
+    /**
+     *
+     * Retrieves the product with the specified id.
+     * Verifies that the product belongs to the logged-in seller.
+     * Updates the product based on the updateProductRequest, and persists it to the database
+     *
+     * @param productId Product Id
+     * @param updateProductRequest Update Product Request
+     * @param loggedInUser Logged In User
+     * @return ProductVM
+     */
+    @Override
+    public ProductVM updateProduct(Long productId, UpdateProductRequest updateProductRequest, User loggedInUser) {
+
+        //Rules
+        productRules.checkIfCanUpdate(productId,loggedInUser);
+
+        Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
+        if(updateProductRequest.getName() != null){
+            product.setName(updateProductRequest.getName());
+        }
+        if(updateProductRequest.getDescription()!= null){
+            product.setDescription(updateProductRequest.getDescription());
+        }
+        if(updateProductRequest.getPrice()!= null){
+            product.setPrice(updateProductRequest.getPrice());
+        }
+        if(updateProductRequest.getQuantity()!= null){
+            product.setQuantity(updateProductRequest.getQuantity());
+        }
+        if(updateProductRequest.getLogo() != null){
+            product.setLogo(updateProductRequest.getLogo());
+        }
+
+        product.setUpdatedAt(new Date());
+
+        return mapperService.forResponse().map(productRepository.save(product),ProductVM.class);
     }
 
 }

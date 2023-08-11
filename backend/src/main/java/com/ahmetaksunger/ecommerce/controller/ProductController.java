@@ -1,6 +1,7 @@
 package com.ahmetaksunger.ecommerce.controller;
 
 import com.ahmetaksunger.ecommerce.dto.request.product.CreateProductRequest;
+import com.ahmetaksunger.ecommerce.dto.request.product.UpdateProductRequest;
 import com.ahmetaksunger.ecommerce.dto.response.ProductVM;
 import com.ahmetaksunger.ecommerce.model.User;
 import com.ahmetaksunger.ecommerce.security.CurrentUser;
@@ -128,4 +129,22 @@ public class ProductController {
                                                                  Integer size){
         return ResponseEntity.ok(productService.getProductsBySellerId(sellerId,page,size));
     }
+
+    /**
+     * Retrieves the updated ProductVM
+     * This controller allows seller to update their own products
+     *
+     * @param productId Product Id
+     * @param updateProductRequest Update Product Request DTO {@link UpdateProductRequest}
+     * @param loggedInUser Logged in user
+     * @return Response entity with ProductVM
+     */
+    @PutMapping("/{productId}")
+    @PreAuthorize("hasAnyAuthority('SELLER')")
+    public ResponseEntity<ProductVM> updateProduct(@PathVariable Long productId,
+                                                   @RequestBody UpdateProductRequest updateProductRequest,
+                                                   @CurrentUser User loggedInUser){
+        return ResponseEntity.ok(productService.updateProduct(productId,updateProductRequest,loggedInUser));
+    }
+
 }
