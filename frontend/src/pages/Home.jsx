@@ -1,15 +1,7 @@
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Dropdown,
-  Input,
-  Label,
-  Menu,
-} from "semantic-ui-react";
 import ProductService from "../services/productService";
 import CategoryService from "../services/categoryService";
 import { useSelector } from "react-redux";
-import { orderOptions, sortOptions } from "../utils/constants";
 import ProductList from "../utils/ProductList";
 import UpperMenu from "../layouts/UpperMenu";
 
@@ -33,34 +25,14 @@ const Home = () => {
 
   const { jwt } = useSelector((state) => state.auth);
 
-  const getProducts = (
-    sort,
-    order,
-    categoryIds,
-    minPrice,
-    maxPrice,
-    page,
-    size
-  ) => {
+  const filters = useSelector((state) => state.filter);
+
+  const getProducts = (filterParams = filters,page,size) => {
     let productService = new ProductService();
-    productService
-      .getProducts(
-        jwt,
-        sort,
-        order,
-        categoryIds,
-        minPrice,
-        maxPrice,
-        page,
-        size
-      )
-      .then((response) => {
-        setProducts(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+    productService.getProducts(jwt,filterParams,page,size)
+    .then((response) => setProducts(response.data))
+    .catch((error) => console.log(error));
+  }
 
   const getCategories = () => {
     let categoryService = new CategoryService();
@@ -70,6 +42,11 @@ const Home = () => {
       .catch((error) => console.log(error));
   };
 
+  const onPageChange = (event, {activePage}) => {
+    let activePageIdx = activePage - 1;
+    getProducts(filters,activePageIdx);
+  }
+
   useEffect(() => {
     getProducts();
     getCategories();
@@ -78,7 +55,7 @@ const Home = () => {
   return (
     <>
       <UpperMenu categories={categories}/>
-      <ProductList products={products} onPageChange={null} />
+      <ProductList products={products} onPageChange={onPageChange} />
     </>
   );
 };

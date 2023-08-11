@@ -9,9 +9,9 @@ export default class ProductService {
    * @param {number} page - Page number
    * @param {number} size - Amount of elements on each page
    */
-  getProducts(jwt, filters, page=0, size=5) {
+  getProducts(jwt, filters, page=0, size=9) {
     const config = {
-      params: {filters,page,size},
+      params: {...filters,page,size},
       headers: {
         Authorization: `Bearer ${jwt}`,
       },
