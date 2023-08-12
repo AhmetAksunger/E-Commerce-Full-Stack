@@ -1,6 +1,7 @@
 package com.ahmetaksunger.ecommerce.controller;
 
 import com.ahmetaksunger.ecommerce.dto.request.product.CreateProductRequest;
+import com.ahmetaksunger.ecommerce.dto.request.product.UpdateProductRequest;
 import com.ahmetaksunger.ecommerce.dto.response.ProductVM;
 import com.ahmetaksunger.ecommerce.model.User;
 import com.ahmetaksunger.ecommerce.security.CurrentUser;
@@ -109,4 +110,41 @@ public class ProductController {
     public ResponseEntity<ProductVM> getProductById(@PathVariable Long productId){
         return ResponseEntity.ok(productService.getProductById(productId));
     }
+
+    /**
+     * 
+     * Retrieves a paginated model of products based on the specified seller id.
+     * This endpoint allows both customers and sellers to retrieve products of specified seller
+     * {@link com.ahmetaksunger.ecommerce.service.ProductManager#getProductsBySellerId(Long, Integer, Integer)}
+     *
+     * @param sellerId Seller Id
+     * @return A Response entity with Paginated ProductVM (Product View Model)
+     */
+    @GetMapping("/seller/{sellerId}")
+    @PreAuthorize("hasAnyAuthority('SELLER','CUSTOMER')")
+    public ResponseEntity<Page<ProductVM>> getProductsBySellerId(@PathVariable Long sellerId,
+                                                                 @RequestParam(name = "page",defaultValue = "0")
+                                                                 Integer page,
+                                                                 @RequestParam(name = "size",defaultValue = "5")
+                                                                 Integer size){
+        return ResponseEntity.ok(productService.getProductsBySellerId(sellerId,page,size));
+    }
+
+    /**
+     * Retrieves the updated ProductVM
+     * This controller allows seller to update their own products
+     *
+     * @param productId Product Id
+     * @param updateProductRequest Update Product Request DTO {@link UpdateProductRequest}
+     * @param loggedInUser Logged in user
+     * @return Response entity with ProductVM
+     */
+    @PutMapping("/{productId}")
+    @PreAuthorize("hasAnyAuthority('SELLER')")
+    public ResponseEntity<ProductVM> updateProduct(@PathVariable Long productId,
+                                                   @RequestBody UpdateProductRequest updateProductRequest,
+                                                   @CurrentUser User loggedInUser){
+        return ResponseEntity.ok(productService.updateProduct(productId,updateProductRequest,loggedInUser));
+    }
+
 }
