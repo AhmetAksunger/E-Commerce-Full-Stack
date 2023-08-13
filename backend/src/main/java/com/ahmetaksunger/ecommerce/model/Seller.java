@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -21,9 +22,10 @@ public class Seller extends User{
     private String contactNumber;
     @Column(name = "logo",nullable = true)
     private String logo;
-
+    @Column(name = "total_revenue",nullable = true)
+    @Builder.Default
+    private BigDecimal totalRevenue = BigDecimal.ZERO;
     @OneToMany(mappedBy = "seller",cascade = CascadeType.REMOVE)
     private List<Product> products;
-
 
 }
