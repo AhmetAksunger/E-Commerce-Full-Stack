@@ -14,11 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class OrderManager implements OrderService{
+public class OrderManager implements OrderService {
 
     private final OrderRepository orderRepository;
     private final CartRepository cartRepository;
@@ -37,7 +38,7 @@ public class OrderManager implements OrderService{
         PaymentDetail paymentDetail = paymentDetailRepository.findById(paymentDetailId).orElseThrow(PaymentDetailNotFoundException::new);
 
         //Rules
-        orderRules.verifyCartAndPaymentDetailBelongsToUser(cart,paymentDetail,loggedInUser);
+        orderRules.verifyCartAndPaymentDetailBelongsToUser(cart, paymentDetail, loggedInUser);
         orderRules.checkInsufficientStock(cart); // TODO: Optimistic - Pessimistic lock
 
         Order order = Order.builder()
@@ -58,39 +59,36 @@ public class OrderManager implements OrderService{
         // Resetting the customer cart
         cartItemRepository.deleteAllByCartId(cartId);
 
-        // Incrementing the sellers total revenue
-        HashMap<Long,BigDecimal> sellerTotalRevenue = this.calculateRevenuesForSellers(cart);
+        // Incrementing the seller's total revenue
+        HashMap<Long, BigDecimal> sellerTotalRevenue = this.calculateRevenuesForSellers(cart);
         sellerTotalRevenue.forEach(
-                (sellerId,revenue) -> {
+                (sellerId, revenue) -> {
                     Seller seller = sellerRepository.findById(sellerId).orElseThrow();
                     seller.setTotalRevenue(revenue);
                     sellerRepository.save(seller);
                 }
         );
 
-        return mapperService.forResponse().map(dbOrder,OrderCompletedResponse.class);
+        return mapperService.forResponse().map(dbOrder, OrderCompletedResponse.class);
     }
 
-    private HashMap<Long,BigDecimal> calculateRevenuesForSellers(Cart cart){
+    private HashMap<Long, BigDecimal> calculateRevenuesForSellers(Cart cart) {
 
-        HashMap<Long,BigDecimal> sellerIdTotalRevenueMap = new HashMap<>();
+        HashMap<Long, BigDecimal> sellerIdTotalRevenueMap = new HashMap<>();
 
-        List<Product> boughtProducts = cart.getCartItems()
+        Map<Product, Integer> boughtProductsAndProductQuantities = cart.getCartItems()
                 .stream()
-                .map(CartItem::getProduct)
-                .toList();
+                .collect(Collectors.toMap(CartItem::getProduct, CartItem::getQuantity));
 
-        boughtProducts.forEach(product -> {
-            long sellerId = product.getSeller().getId();
-            BigDecimal productPrice = product.getPrice();
+        boughtProductsAndProductQuantities.forEach(
+                (product, quantity) -> {
+                    long sellerId = product.getSeller().getId();
+                    BigDecimal totalProductPrice = product.getPrice().multiply(BigDecimal.valueOf(quantity));
 
-            if(sellerIdTotalRevenueMap.containsKey(sellerId)){
-                sellerIdTotalRevenueMap.put(sellerId,
-                        sellerIdTotalRevenueMap.get(sellerId).add(productPrice));
-            }else{
-                sellerIdTotalRevenueMap.put(sellerId,productPrice);
-            }
-        });
+                    sellerIdTotalRevenueMap.compute(sellerId,
+                            (key, value) -> (value == null ? totalProductPrice : value.add(totalProductPrice)));
+
+                });
         return sellerIdTotalRevenueMap;
     }
 
