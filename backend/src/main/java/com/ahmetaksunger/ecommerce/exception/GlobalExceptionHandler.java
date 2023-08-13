@@ -77,8 +77,8 @@ public class GlobalExceptionHandler {
                 .build(), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler({InvalidRequestParamException.class})
-    public ResponseEntity<DefaultExceptionResponse> handle(InvalidRequestParamException exception, HttpServletRequest request){
+    @ExceptionHandler({InvalidRequestParamException.class,InsufficientRevenueException.class,InvalidWithdrawAmountException.class})
+    public ResponseEntity<DefaultExceptionResponse> handle(RuntimeException exception, HttpServletRequest request){
         log.error(exception.getMessage(),exception);
 
         return new ResponseEntity<>(DefaultExceptionResponse.builder()
