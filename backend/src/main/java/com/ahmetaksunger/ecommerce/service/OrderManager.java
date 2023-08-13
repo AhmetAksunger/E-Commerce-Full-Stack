@@ -5,10 +5,7 @@ import com.ahmetaksunger.ecommerce.exception.NotFoundException.CartNotFoundExcep
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.PaymentDetailNotFoundExcepition;
 import com.ahmetaksunger.ecommerce.mapper.MapperService;
 import com.ahmetaksunger.ecommerce.model.*;
-import com.ahmetaksunger.ecommerce.repository.CartItemRepository;
-import com.ahmetaksunger.ecommerce.repository.CartRepository;
-import com.ahmetaksunger.ecommerce.repository.OrderRepository;
-import com.ahmetaksunger.ecommerce.repository.PaymentDetailRepository;
+import com.ahmetaksunger.ecommerce.repository.*;
 import com.ahmetaksunger.ecommerce.service.rules.OrderRules;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,6 +27,7 @@ public class OrderManager implements OrderService{
     private final OrderRules orderRules;
     private final MapperService mapperService;
     private final ProductService productService;
+    private final SellerRepository sellerRepository;
 
     @Override
     @Transactional
@@ -52,17 +50,29 @@ public class OrderManager implements OrderService{
 
         Order dbOrder = orderRepository.save(order);
 
+        // Reducing quantities by 1, for the bought products
         productService.reduceQuantityForBoughtProducts(cart.getCartItems()
                 .stream()
                 .map(CartItem::getProduct)
                 .toList());
+        // Resetting the customer cart
         cartItemRepository.deleteAllByCartId(cartId);
+
+        // Incrementing the sellers total revenue
+        HashMap<Seller,BigDecimal> sellerTotalRevenue = this.calculateRevenuesForSellers(cart);
+        sellerTotalRevenue.forEach(
+                (seller,totalRevenue) -> {
+                    seller.setTotalRevenue(totalRevenue);
+                    sellerRepository.save(seller);
+                }
+        );
+
         return mapperService.forResponse().map(dbOrder,OrderCompletedResponse.class);
     }
 
-    private HashMap<Long,BigDecimal> calculateRevenuesForSellers(Cart cart){
+    private HashMap<Seller,BigDecimal> calculateRevenuesForSellers(Cart cart){
 
-        HashMap<Long,BigDecimal> sellerIdTotalRevenueMap = new HashMap<>();
+        HashMap<Seller,BigDecimal> sellerIdTotalRevenueMap = new HashMap<>();
 
         List<Product> boughtProducts = cart.getCartItems()
                 .stream()
@@ -70,14 +80,14 @@ public class OrderManager implements OrderService{
                 .toList();
 
         boughtProducts.forEach(product -> {
-            Long sellerId = product.getSeller().getId();
+            Seller seller = product.getSeller();
             BigDecimal productPrice = product.getPrice();
 
-            if(sellerIdTotalRevenueMap.containsKey(sellerId)){
-                sellerIdTotalRevenueMap.put(sellerId,
-                        sellerIdTotalRevenueMap.get(sellerId).add(productPrice));
+            if(sellerIdTotalRevenueMap.containsKey(seller)){
+                sellerIdTotalRevenueMap.put(seller,
+                        sellerIdTotalRevenueMap.get(seller).add(productPrice));
             }else{
-                sellerIdTotalRevenueMap.put(sellerId,productPrice);
+                sellerIdTotalRevenueMap.put(seller,productPrice);
             }
         });
         return sellerIdTotalRevenueMap;
