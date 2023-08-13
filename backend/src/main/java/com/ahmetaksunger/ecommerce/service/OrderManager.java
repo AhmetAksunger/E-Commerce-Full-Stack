@@ -2,13 +2,12 @@ package com.ahmetaksunger.ecommerce.service;
 
 import com.ahmetaksunger.ecommerce.dto.response.OrderCompletedResponse;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.CartNotFoundException;
-import com.ahmetaksunger.ecommerce.exception.NotFoundException.PaymentDetailNotFoundExcepition;
+import com.ahmetaksunger.ecommerce.exception.NotFoundException.PaymentDetailNotFoundException;
 import com.ahmetaksunger.ecommerce.mapper.MapperService;
 import com.ahmetaksunger.ecommerce.model.*;
 import com.ahmetaksunger.ecommerce.repository.*;
 import com.ahmetaksunger.ecommerce.service.rules.OrderRules;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +34,7 @@ public class OrderManager implements OrderService{
     public OrderCompletedResponse create(long cartId, long paymentDetailId, User loggedInUser) {
 
         Cart cart = cartRepository.findById(cartId).orElseThrow(CartNotFoundException::new);
-        PaymentDetail paymentDetail = paymentDetailRepository.findById(paymentDetailId).orElseThrow(PaymentDetailNotFoundExcepition::new);
+        PaymentDetail paymentDetail = paymentDetailRepository.findById(paymentDetailId).orElseThrow(PaymentDetailNotFoundException::new);
 
         //Rules
         orderRules.verifyCartAndPaymentDetailBelongsToUser(cart,paymentDetail,loggedInUser);

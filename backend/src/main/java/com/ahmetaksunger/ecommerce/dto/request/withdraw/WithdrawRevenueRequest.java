@@ -10,6 +10,6 @@ import java.math.BigDecimal;
 public class WithdrawRevenueRequest {
 
     private Long paymentDetailId;
-    private BigDecimal depositAmount;
+    private BigDecimal withdrawAmount;
 
 }

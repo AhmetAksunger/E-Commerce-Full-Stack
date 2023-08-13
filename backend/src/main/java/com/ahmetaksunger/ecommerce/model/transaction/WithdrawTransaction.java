@@ -4,8 +4,11 @@ import com.ahmetaksunger.ecommerce.model.BaseEntity;
 import com.ahmetaksunger.ecommerce.model.PaymentDetail;
 import com.ahmetaksunger.ecommerce.model.Seller;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -14,6 +17,8 @@ import java.util.Date;
 @Table(name = "withdraw_transactions")
 @Getter
 @Setter
+@SuperBuilder
+@NoArgsConstructor
 public class WithdrawTransaction extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
