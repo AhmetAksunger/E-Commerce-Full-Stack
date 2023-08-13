@@ -1,5 +1,6 @@
 package com.ahmetaksunger.ecommerce.model;
 
+import com.ahmetaksunger.ecommerce.model.transaction.WithdrawTransaction;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -26,7 +27,8 @@ public class Seller extends User{
     private BigDecimal totalRevenue = BigDecimal.ZERO;
     @OneToMany(mappedBy = "seller",cascade = CascadeType.REMOVE)
     private List<Product> products;
-
+    @OneToMany(mappedBy = "seller",cascade = CascadeType.REMOVE)
+    private List<WithdrawTransaction> withdrawTransactions;
     public void incrementTotalRevenue(BigDecimal amount){
         this.totalRevenue = this.totalRevenue.add(amount);
     }

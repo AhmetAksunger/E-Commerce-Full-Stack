@@ -24,11 +24,11 @@ public class WithdrawTransaction extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     private Long id;
-    @OneToOne
+    @ManyToOne
     private Seller seller;
     @Column(name = "amount", nullable = false)
     private BigDecimal amount;
-    @OneToOne
+    @ManyToOne
     private PaymentDetail paymentDetail;
 
     @PrePersist
