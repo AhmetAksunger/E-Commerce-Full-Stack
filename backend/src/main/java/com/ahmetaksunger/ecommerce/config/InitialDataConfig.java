@@ -1,12 +1,7 @@
 package com.ahmetaksunger.ecommerce.config;
 
 import com.ahmetaksunger.ecommerce.model.*;
-import com.ahmetaksunger.ecommerce.repository.CustomerRepository;
-import com.ahmetaksunger.ecommerce.repository.ProductRepository;
-import com.ahmetaksunger.ecommerce.repository.SellerRepository;
-import com.ahmetaksunger.ecommerce.repository.UserRepository;
-import com.ahmetaksunger.ecommerce.repository.AddressRepository;
-import com.ahmetaksunger.ecommerce.repository.PaymentDetailRepository;
+import com.ahmetaksunger.ecommerce.repository.*;
 import com.github.javafaker.Faker;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -28,17 +23,16 @@ public class InitialDataConfig {
     private final ProductRepository productRepository;
     private final AddressRepository addressRepository;
     private final PaymentDetailRepository paymentDetailRepository;
+    private final CategoryRepository categoryRepository;
 
     /**
-     *
      * The default method used for creating and saving default data into the database
      * at the beginning of the project, where instances of the {@link User} and {@link Seller}
      * entity objects are created and persisted as default data.
-     *
      */
     @Bean
     @Transactional
-    CommandLineRunner initialData(){
+    CommandLineRunner initialData() {
         return new CommandLineRunner() {
             @Override
             public void run(String... args) throws Exception {
@@ -57,6 +51,21 @@ public class InitialDataConfig {
                 userRepository.save(defaultAdminUserEntity);
 
                 /*
+                  Creating 20 categories
+                 */
+
+                for (int i = 0; i < 20; i++) {
+
+                    final Category category = Category.builder()
+                            .name(faker.commerce().department())
+                            .description(faker.lorem().paragraph(2))
+                            .createdAt(new Date())
+                            .build();
+
+                    categoryRepository.save(category);
+                }
+
+                /*
                  Creating 20 default customers
                  Each customer will have
                     1 address
@@ -66,11 +75,11 @@ public class InitialDataConfig {
                 for (int i = 0; i < 20; i++) {
 
                     final String phoneNumber = faker.phoneNumber().cellPhone()
-                            .replace("-","")
-                            .replace(" ","")
-                            .replace(".","")
-                            .replace("(","")
-                            .replace(")","");
+                            .replace("-", "")
+                            .replace(" ", "")
+                            .replace(".", "")
+                            .replace("(", "")
+                            .replace(")", "");
 
                     final Customer customer = Customer.builder()
                             .email(faker.internet().emailAddress())
@@ -101,11 +110,11 @@ public class InitialDataConfig {
                     addressRepository.save(address);
 
                     final PaymentDetail paymentDetail = PaymentDetail.builder()
-                                    .creditCardNumber(faker.business().creditCardNumber())
-                                    .cvv("123")
-                                    .expirationDate(faker.business().creditCardExpiry())
-                                    .user(customer)
-                                    .build();
+                            .creditCardNumber(faker.business().creditCardNumber())
+                            .cvv("123")
+                            .expirationDate(faker.business().creditCardExpiry())
+                            .user(customer)
+                            .build();
 
                     paymentDetailRepository.save(paymentDetail);
                 }
