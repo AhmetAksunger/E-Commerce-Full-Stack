@@ -11,10 +11,10 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
-@Table(name = "deposit_transaction")
+@Table(name = "withdraw_transactions")
 @Getter
 @Setter
-public class DepositTransaction extends BaseEntity {
+public class WithdrawTransaction extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)

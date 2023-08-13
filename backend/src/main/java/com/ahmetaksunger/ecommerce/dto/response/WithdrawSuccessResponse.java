@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 @Builder
 @Getter
 @Setter
-public class DepositSuccessResponse {
+public class WithdrawSuccessResponse {
     private BigDecimal amount;
     private SellerVM seller;
 }
