@@ -9,16 +9,15 @@ import com.ahmetaksunger.ecommerce.repository.CartItemRepository;
 import com.ahmetaksunger.ecommerce.repository.CartRepository;
 import com.ahmetaksunger.ecommerce.repository.OrderRepository;
 import com.ahmetaksunger.ecommerce.repository.PaymentDetailRepository;
-import com.ahmetaksunger.ecommerce.service.rules.CartRules;
 import com.ahmetaksunger.ecommerce.service.rules.OrderRules;
-import com.ahmetaksunger.ecommerce.service.rules.PaymentDetailRules;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -53,7 +52,6 @@ public class OrderManager implements OrderService{
 
         Order dbOrder = orderRepository.save(order);
 
-        //TODO: How to link different transactions
         productService.reduceQuantityForBoughtProducts(cart.getCartItems()
                 .stream()
                 .map(CartItem::getProduct)
@@ -62,5 +60,27 @@ public class OrderManager implements OrderService{
         return mapperService.forResponse().map(dbOrder,OrderCompletedResponse.class);
     }
 
+    private HashMap<Long,BigDecimal> calculateRevenuesForSellers(Cart cart){
+
+        HashMap<Long,BigDecimal> sellerIdTotalRevenueMap = new HashMap<>();
+
+        List<Product> boughtProducts = cart.getCartItems()
+                .stream()
+                .map(CartItem::getProduct)
+                .toList();
+
+        boughtProducts.forEach(product -> {
+            Long sellerId = product.getSeller().getId();
+            BigDecimal productPrice = product.getPrice();
+
+            if(sellerIdTotalRevenueMap.containsKey(sellerId)){
+                sellerIdTotalRevenueMap.put(sellerId,
+                        sellerIdTotalRevenueMap.get(sellerId).add(productPrice));
+            }else{
+                sellerIdTotalRevenueMap.put(sellerId,productPrice);
+            }
+        });
+        return sellerIdTotalRevenueMap;
+    }
 
 }
