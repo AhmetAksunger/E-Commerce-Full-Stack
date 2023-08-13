@@ -5,7 +5,6 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 
 @Table(name = "sellers")
@@ -28,4 +27,10 @@ public class Seller extends User{
     @OneToMany(mappedBy = "seller",cascade = CascadeType.REMOVE)
     private List<Product> products;
 
+    public void incrementTotalRevenue(BigDecimal amount){
+        this.totalRevenue = this.totalRevenue.add(amount);
+    }
+    public void decrementTotalRevenue(BigDecimal amount){
+        this.totalRevenue = this.totalRevenue.subtract(amount);
+    }
 }
