@@ -2,16 +2,17 @@ package com.ahmetaksunger.ecommerce.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.Date;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 @Table(name = "payment_details")
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter @Setter
+@SuperBuilder
 public class PaymentDetail {
 
     @Id

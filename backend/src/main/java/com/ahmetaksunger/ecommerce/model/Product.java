@@ -2,6 +2,7 @@ package com.ahmetaksunger.ecommerce.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -12,6 +13,7 @@ import java.util.List;
 @Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@SuperBuilder
 public class Product extends BaseEntity{
 
     @Id
@@ -30,6 +32,9 @@ public class Product extends BaseEntity{
 
     @Column(name = "quantity", nullable = false)
     private int quantity;
+
+    @Column(name = "all_time_order_amount", nullable = true)
+    private Integer allTimeOrderAmount = 0;
 
     @Column(name = "logo",nullable = false)
     private String logo;
