@@ -21,7 +21,7 @@ import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
-public class SellerManager implements SellerService{
+public class SellerManager implements SellerService {
 
     private final SellerRepository sellerRepository;
     private final PaymentDetailRepository paymentDetailRepository;
@@ -31,18 +31,17 @@ public class SellerManager implements SellerService{
     private final MapperService mapperService;
 
     /**
-     *
      * Updates the seller's total revenue by the amount and increment/decrement specified.
      *
-     * @param seller {@link Seller}
-     * @param amount Amount to increment/decrement by
+     * @param seller      {@link Seller}
+     * @param amount      Amount to increment/decrement by
      * @param isIncrement increment when is true, decrement when is false
      */
     @Override
     public void updateTotalRevenue(Seller seller, BigDecimal amount, boolean isIncrement) {
-        if(isIncrement){
+        if (isIncrement) {
             seller.incrementTotalRevenue(amount);
-        }else{
+        } else {
             seller.decrementTotalRevenue(amount);
         }
 
@@ -50,7 +49,6 @@ public class SellerManager implements SellerService{
     }
 
     /**
-     *
      * A method for {@link Seller}s to withdraw money to their bank accounts.
      * <p> - Checks if the payment detail entered belongs to the seller.</p>
      * <p> - Checks if the withdrawal amount is valid (Specified on the application.properties).</p>
@@ -59,9 +57,8 @@ public class SellerManager implements SellerService{
      * At the end, creates a {@link WithdrawTransaction} to log the withdrawal operation.
      *
      * @param withdrawRevenueRequest {@link WithdrawRevenueRequest}
-     * @param loggedInUser {@link Seller}
+     * @param loggedInUser           {@link Seller}
      * @return {@link WithdrawSuccessResponse}
-     *
      * @see WithdrawRules
      * @see #updateTotalRevenue(Seller, BigDecimal, boolean)
      */
@@ -73,14 +70,14 @@ public class SellerManager implements SellerService{
                 .orElseThrow(PaymentDetailNotFoundException::new);
 
         //Rules
-        paymentDetailRules.verifyPaymentDetailBelongsToUser(paymentDetail,seller, UnauthorizedException.class);
+        paymentDetailRules.verifyPaymentDetailBelongsToUser(paymentDetail, seller, UnauthorizedException.class);
         withdrawRules.checkIfWithdrawAmountValid(withdrawRevenueRequest.getWithdrawAmount());
-        withdrawRules.checkIfSellerHasEnoughRevenueToWithdraw(seller,withdrawRevenueRequest.getWithdrawAmount());
+        withdrawRules.checkIfSellerHasEnoughRevenueToWithdraw(seller, withdrawRevenueRequest.getWithdrawAmount());
 
         // Simulating payment operations
 
         // Decrement the withdrawn amount from the seller's revenue
-        this.updateTotalRevenue(seller, withdrawRevenueRequest.getWithdrawAmount(),false);
+        this.updateTotalRevenue(seller, withdrawRevenueRequest.getWithdrawAmount(), false);
 
         //Withdraw Transaction
         WithdrawTransaction transaction = WithdrawTransaction.builder()
@@ -91,6 +88,6 @@ public class SellerManager implements SellerService{
 
 
         return mapperService.forResponse()
-                .map(withdrawTransactionRepository.save(transaction),WithdrawSuccessResponse.class);
+                .map(withdrawTransactionRepository.save(transaction), WithdrawSuccessResponse.class);
     }
 }

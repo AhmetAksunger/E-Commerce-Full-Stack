@@ -9,5 +9,6 @@ import java.math.BigDecimal;
 
 public interface SellerService {
     void updateTotalRevenue(Seller seller, BigDecimal amount, boolean isIncrement);
+
     WithdrawSuccessResponse withdraw(WithdrawRevenueRequest withdrawRevenueRequest, User loggedInUser);
 }
