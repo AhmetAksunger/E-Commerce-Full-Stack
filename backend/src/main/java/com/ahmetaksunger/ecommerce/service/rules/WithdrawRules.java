@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @Component
 public class WithdrawRules {
 
-    @Value("min-withdraw-limit")
+    @Value("${min-withdraw-limit}")
     private BigDecimal minWithdrawLimit;
     public void checkIfSellerHasEnoughRevenueToWithdraw(Seller seller, BigDecimal amount){
         if(seller.getTotalRevenue().compareTo(amount) < 0){
