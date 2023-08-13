@@ -8,6 +8,7 @@ import com.ahmetaksunger.ecommerce.model.*;
 import com.ahmetaksunger.ecommerce.repository.*;
 import com.ahmetaksunger.ecommerce.service.rules.OrderRules;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,10 +60,11 @@ public class OrderManager implements OrderService{
         cartItemRepository.deleteAllByCartId(cartId);
 
         // Incrementing the sellers total revenue
-        HashMap<Seller,BigDecimal> sellerTotalRevenue = this.calculateRevenuesForSellers(cart);
+        HashMap<Long,BigDecimal> sellerTotalRevenue = this.calculateRevenuesForSellers(cart);
         sellerTotalRevenue.forEach(
-                (seller,totalRevenue) -> {
-                    seller.setTotalRevenue(totalRevenue);
+                (sellerId,revenue) -> {
+                    Seller seller = sellerRepository.findById(sellerId).orElseThrow();
+                    seller.setTotalRevenue(revenue);
                     sellerRepository.save(seller);
                 }
         );
@@ -70,9 +72,9 @@ public class OrderManager implements OrderService{
         return mapperService.forResponse().map(dbOrder,OrderCompletedResponse.class);
     }
 
-    private HashMap<Seller,BigDecimal> calculateRevenuesForSellers(Cart cart){
+    private HashMap<Long,BigDecimal> calculateRevenuesForSellers(Cart cart){
 
-        HashMap<Seller,BigDecimal> sellerIdTotalRevenueMap = new HashMap<>();
+        HashMap<Long,BigDecimal> sellerIdTotalRevenueMap = new HashMap<>();
 
         List<Product> boughtProducts = cart.getCartItems()
                 .stream()
@@ -80,14 +82,14 @@ public class OrderManager implements OrderService{
                 .toList();
 
         boughtProducts.forEach(product -> {
-            Seller seller = product.getSeller();
+            long sellerId = product.getSeller().getId();
             BigDecimal productPrice = product.getPrice();
 
-            if(sellerIdTotalRevenueMap.containsKey(seller)){
-                sellerIdTotalRevenueMap.put(seller,
-                        sellerIdTotalRevenueMap.get(seller).add(productPrice));
+            if(sellerIdTotalRevenueMap.containsKey(sellerId)){
+                sellerIdTotalRevenueMap.put(sellerId,
+                        sellerIdTotalRevenueMap.get(sellerId).add(productPrice));
             }else{
-                sellerIdTotalRevenueMap.put(seller,productPrice);
+                sellerIdTotalRevenueMap.put(sellerId,productPrice);
             }
         });
         return sellerIdTotalRevenueMap;
