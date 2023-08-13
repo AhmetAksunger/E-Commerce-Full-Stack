@@ -5,6 +5,8 @@ import com.ahmetaksunger.ecommerce.repository.CustomerRepository;
 import com.ahmetaksunger.ecommerce.repository.ProductRepository;
 import com.ahmetaksunger.ecommerce.repository.SellerRepository;
 import com.ahmetaksunger.ecommerce.repository.UserRepository;
+import com.ahmetaksunger.ecommerce.repository.AddressRepository;
+import com.ahmetaksunger.ecommerce.repository.PaymentDetailRepository;
 import com.github.javafaker.Faker;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -13,9 +15,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.UUID;
 
 @Configuration
 @RequiredArgsConstructor
@@ -26,6 +26,8 @@ public class InitialDataConfig {
     private final CustomerRepository customerRepository;
     private final PasswordEncoder passwordEncoder;
     private final ProductRepository productRepository;
+    private final AddressRepository addressRepository;
+    private final PaymentDetailRepository paymentDetailRepository;
 
     /**
      *
@@ -41,6 +43,9 @@ public class InitialDataConfig {
             @Override
             public void run(String... args) throws Exception {
 
+                //Faker
+                Faker faker = new Faker();
+
                 // Creating Default Admin User
                 final User defaultAdminUserEntity = User.builder()
                         .email("admin@gmail.com")
@@ -50,6 +55,60 @@ public class InitialDataConfig {
                         .build();
 
                 userRepository.save(defaultAdminUserEntity);
+
+                /*
+                 Creating 20 default customers
+                 Each customer will have
+                    1 address
+                    1 payment detail
+                    1 cart
+                 */
+                for (int i = 0; i < 20; i++) {
+
+                    final String phoneNumber = faker.phoneNumber().cellPhone()
+                            .replace("-","")
+                            .replace(" ","")
+                            .replace(".","")
+                            .replace("(","")
+                            .replace(")","");
+
+                    final Customer customer = Customer.builder()
+                            .email(faker.internet().emailAddress())
+                            .password(passwordEncoder.encode("test123"))
+                            .userType(UserType.CUSTOMER)
+                            .fullName(faker.name().fullName())
+                            .phoneNumber(phoneNumber)
+                            .createdAt(new Date())
+                            .build();
+
+                    final Cart cart = Cart.builder()
+                            .createdAt(new Date())
+                            .customer(customer)
+                            .build();
+
+                    customer.setCart(cart);
+                    customerRepository.save(customer);
+
+                    final Address address = Address.builder()
+                            .address(faker.address().fullAddress())
+                            .city(faker.address().city())
+                            .country(Country.TURKEY)
+                            .zipCode(faker.address().zipCode())
+                            .user(customer)
+                            .createdAt(new Date())
+                            .build();
+
+                    addressRepository.save(address);
+
+                    final PaymentDetail paymentDetail = PaymentDetail.builder()
+                                    .creditCardNumber(faker.business().creditCardNumber())
+                                    .cvv("123")
+                                    .expirationDate(faker.business().creditCardExpiry())
+                                    .user(customer)
+                                    .build();
+
+                    paymentDetailRepository.save(paymentDetail);
+                }
             }
         };
     }
