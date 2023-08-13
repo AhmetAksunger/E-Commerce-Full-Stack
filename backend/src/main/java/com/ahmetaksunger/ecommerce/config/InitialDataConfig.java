@@ -105,7 +105,7 @@ public class InitialDataConfig {
 
     /**
      * Creates specified amount of {@link Seller}s.
-     * Each seller has 10 {@link PaymentDetail},10 {@link Product}s and
+     * Each seller has 1 {@link PaymentDetail},10 {@link Product}s and
      * each product has 2 randomly picked {@link Category}s
      *
      * @param amount number of sellers
