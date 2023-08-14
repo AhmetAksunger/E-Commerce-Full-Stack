@@ -48,7 +48,7 @@ class SellerManagerTest {
     @DisplayName("When withdraw method is called with a valid request, " +
             "it should return a valid withdraw success response")
     @Test
-    public void whenWithdrawCalledWithValidRequest_itShouldReturnValidWithdrawSuccessResponse() {
+    void whenWithdrawCalledWithValidRequest_itShouldReturnValidWithdrawSuccessResponse() {
 
         Seller seller = Seller.builder()
                 .id(1L)
@@ -102,7 +102,7 @@ class SellerManagerTest {
     @DisplayName("When withdraw is called with a non existing payment detail id," +
             "it should throw PaymentDetailNotFoundException")
     @Test
-    public void whenWithdrawCalledWithNonExistingPaymentDetailId_itShouldThrowPaymentDetailNotFoundException() {
+    void whenWithdrawCalledWithNonExistingPaymentDetailId_itShouldThrowPaymentDetailNotFoundException() {
 
         WithdrawRevenueRequest request = WithdrawRevenueRequest.builder()
                 .withdrawAmount(BigDecimal.valueOf(120))

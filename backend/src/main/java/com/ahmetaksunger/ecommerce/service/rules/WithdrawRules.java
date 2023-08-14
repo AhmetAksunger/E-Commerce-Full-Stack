@@ -13,6 +13,11 @@ public class WithdrawRules {
 
     @Value("${min-withdraw-limit}")
     private BigDecimal minWithdrawLimit;
+
+    public WithdrawRules(BigDecimal minWithdrawLimit){
+        this.minWithdrawLimit = minWithdrawLimit;
+    }
+
     public void checkIfSellerHasEnoughRevenueToWithdraw(Seller seller, BigDecimal amount){
         if(seller.getTotalRevenue().compareTo(amount) < 0){
             throw new InsufficientRevenueException();
