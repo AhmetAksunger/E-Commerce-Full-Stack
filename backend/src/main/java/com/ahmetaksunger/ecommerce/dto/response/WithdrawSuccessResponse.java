@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 @Builder
 @Getter
 @Setter
+@EqualsAndHashCode
 public class WithdrawSuccessResponse {
     private BigDecimal amount;
     private SellerVM seller;

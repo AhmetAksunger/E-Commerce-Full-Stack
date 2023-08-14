@@ -4,6 +4,7 @@ import com.ahmetaksunger.ecommerce.model.BaseEntity;
 import com.ahmetaksunger.ecommerce.model.PaymentDetail;
 import com.ahmetaksunger.ecommerce.model.Seller;
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,6 +17,7 @@ import java.util.Date;
 @Table(name = "withdraw_transactions")
 @Getter
 @Setter
+@EqualsAndHashCode
 @SuperBuilder
 @NoArgsConstructor
 public class WithdrawTransaction extends BaseEntity {
