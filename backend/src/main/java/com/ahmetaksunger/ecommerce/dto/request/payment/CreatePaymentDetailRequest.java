@@ -23,6 +23,4 @@ public class CreatePaymentDetailRequest {
 
     @Pattern(regexp = "(0[1-9]|1[0-2])/[0-9]{2}", message = "Expiration date must be in the format MM/YY")
     private String expirationDate;
-
-    private long billingAddressId;
 }

@@ -18,10 +18,11 @@ public enum ExceptionMessages {
     CART_NOT_FOUND("Cart not found"),
     CART_ITEM_NOT_FOUND("Cart item not found"),
     USER_ALREADY_HAS_CART("User already has cart"),
-    INSUFF_PRODUCT_QUANTITY("Insufficient product quantity");
+    INSUFF_PRODUCT_QUANTITY("Insufficient product quantity"),
+    INSUFF_REVENUE("Seller doesn't have enough revenue to withdraw."),
+    INVALID_WITHDRAW_AMOUNT("Invalid withdraw amount");
 
     private String message;
-
     public String message(){
         return this.message;
     }

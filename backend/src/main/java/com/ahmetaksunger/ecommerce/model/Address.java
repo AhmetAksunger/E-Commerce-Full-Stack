@@ -7,32 +7,29 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-import java.util.List;
-
 @Table(name = "addresses")
 @Entity
-@Getter @Setter
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-public class Address extends BaseEntity{
+public class Address extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "address_id")
     private long id;
-    @Column(name = "address",nullable = false)
+    @Column(name = "address", nullable = false)
     private String address;
-    @Column(name = "city",nullable = false)
+    @Column(name = "city", nullable = false)
     private String city;
-    @Column(name = "country",nullable = false)
+    @Column(name = "country", nullable = false)
     @Enumerated(EnumType.STRING)
     private Country country;
-    @Column(name = "zip_code",nullable = true)
+    @Column(name = "zip_code", nullable = true)
     private String zipCode;
 
-    @OneToMany(mappedBy = "address",cascade = CascadeType.REMOVE)
-    private List<PaymentDetail> paymentDetails;
     @ManyToOne()
     private User user;
 }

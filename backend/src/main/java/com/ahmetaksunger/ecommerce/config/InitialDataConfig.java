@@ -105,10 +105,10 @@ public class InitialDataConfig {
 
     /**
      * Creates specified amount of {@link Seller}s.
-     * Each seller has 10 {@link Product}s and
+     * Each seller has 1 {@link PaymentDetail},10 {@link Product}s and
      * each product has 2 randomly picked {@link Category}s
      *
-     * @param amount amount of sellers
+     * @param amount number of sellers
      */
     private void createSellers(int amount) {
 
@@ -134,8 +134,17 @@ public class InitialDataConfig {
 
             sellerRepository.save(seller);
 
+            final PaymentDetail paymentDetail = PaymentDetail.builder()
+                    .creditCardNumber(faker.business().creditCardNumber())
+                    .cvv("123")
+                    .expirationDate(faker.business().creditCardExpiry())
+                    .user(seller)
+                    .build();
+
+            paymentDetailRepository.save(paymentDetail);
+
             for (int k = 0; k < 10; k++) {
-                //randomly pick 2 categories
+                //randomly pick two categories
                 List<Category> productCategories = new ArrayList<>();
                 for (int j = 0; j < 2; j++) {
                     productCategories.add(dbCategories.get(faker.number().numberBetween(0, dbCategories.size() - 1)));

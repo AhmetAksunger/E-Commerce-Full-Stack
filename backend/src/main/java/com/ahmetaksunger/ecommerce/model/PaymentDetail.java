@@ -11,7 +11,8 @@ import lombok.experimental.SuperBuilder;
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter @Setter
+@Getter
+@Setter
 @SuperBuilder
 public class PaymentDetail {
 
@@ -20,19 +21,16 @@ public class PaymentDetail {
     @Column(name = "payment_id")
     private long id;
 
-    @Column(name = "credit_cart_number",nullable = false)
+    @Column(name = "credit_cart_number", nullable = false)
     private String creditCardNumber;
 
-    @Column(name = "cvv",nullable = false)
+    @Column(name = "cvv", nullable = false)
     private String cvv;
 
-    @Column(name = "expiration_date",nullable = false)
+    @Column(name = "expiration_date", nullable = false)
     private String expirationDate;
 
     @ManyToOne()
     private User user;
-
-    @ManyToOne(cascade = CascadeType.DETACH,optional = true)
-    private Address address;
 
 }

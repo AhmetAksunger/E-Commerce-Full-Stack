@@ -15,5 +15,4 @@ public class PaymentDetailVM {
     private String creditCardNumber;
     private String cvv;
     private String expirationDate;
-    private AddressVM address;
 }
