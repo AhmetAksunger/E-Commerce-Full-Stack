@@ -4,7 +4,6 @@ import com.ahmetaksunger.ecommerce.model.BaseEntity;
 import com.ahmetaksunger.ecommerce.model.PaymentDetail;
 import com.ahmetaksunger.ecommerce.model.Seller;
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

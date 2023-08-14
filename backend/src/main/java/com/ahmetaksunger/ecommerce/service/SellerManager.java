@@ -14,6 +14,7 @@ import com.ahmetaksunger.ecommerce.repository.SellerRepository;
 import com.ahmetaksunger.ecommerce.repository.WithdrawTransactionRepository;
 import com.ahmetaksunger.ecommerce.service.rules.PaymentDetailRules;
 import com.ahmetaksunger.ecommerce.service.rules.WithdrawRules;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -62,6 +63,7 @@ public class SellerManager implements SellerService {
      * @see WithdrawRules
      * @see #updateTotalRevenue(Seller, BigDecimal, boolean)
      */
+    @Transactional
     @Override
     public WithdrawSuccessResponse withdraw(WithdrawRevenueRequest withdrawRevenueRequest, User loggedInUser) {
 
