@@ -72,9 +72,18 @@ public class OrderManager implements OrderService {
         return mapperService.forResponse().map(dbOrder, OrderCompletedResponse.class);
     }
 
+    /**
+     * <p>Takes a cart by a parameter and
+     * creates a Product - Quantity map from the cart</p>
+     * <p>Then creates a Seller Id - Revenue map for the cart,
+     * to see which seller made how much revenue from this order</p>
+     *
+     * @param cart {@link Cart}
+     * @return {@link HashMap<Long,BigDecimal>} Seller Id - Revenue map
+     */
     private HashMap<Long, BigDecimal> calculateRevenuesForSellers(Cart cart) {
 
-        HashMap<Long, BigDecimal> sellerIdTotalRevenueMap = new HashMap<>();
+        HashMap<Long, BigDecimal> sellerIdRevenueMap = new HashMap<>();
 
         Map<Product, Integer> boughtProductsAndProductQuantities = cart.getCartItems()
                 .stream()
@@ -85,11 +94,11 @@ public class OrderManager implements OrderService {
                     long sellerId = product.getSeller().getId();
                     BigDecimal totalProductPrice = product.getPrice().multiply(BigDecimal.valueOf(quantity));
 
-                    sellerIdTotalRevenueMap.compute(sellerId,
+                    sellerIdRevenueMap.compute(sellerId,
                             (key, value) -> (value == null ? totalProductPrice : value.add(totalProductPrice)));
 
                 });
-        return sellerIdTotalRevenueMap;
+        return sellerIdRevenueMap;
     }
 
 }
