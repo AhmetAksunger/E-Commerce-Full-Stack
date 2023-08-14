@@ -7,7 +7,10 @@ import com.ahmetaksunger.ecommerce.model.PaymentDetail;
 import com.ahmetaksunger.ecommerce.model.User;
 import com.ahmetaksunger.ecommerce.repository.PaymentDetailRepository;
 import lombok.RequiredArgsConstructor;
+import org.aopalliance.intercept.Invocation;
 import org.springframework.stereotype.Component;
+
+import java.lang.reflect.InvocationTargetException;
 
 @Component
 @RequiredArgsConstructor
@@ -16,7 +19,7 @@ public class PaymentDetailRules {
     private final PaymentDetailRepository paymentDetailRepository;
 
     public void checkIfCanDelete(long paymentDetailId, User user) {
-        var paymentDetail = paymentDetailRepository.findById(paymentDetailId).orElseThrow(() -> new PaymentDetailNotFoundException());
+        var paymentDetail = paymentDetailRepository.findById(paymentDetailId).orElseThrow(PaymentDetailNotFoundException::new);
         this.verifyPaymentDetailBelongsToUser(paymentDetail, user, PaymentDetailDeletionNotAllowedException.class);
     }
 
@@ -25,7 +28,7 @@ public class PaymentDetailRules {
         if (paymentDetail.getUser().getId() != user.getId()) {
             try {
                 throw exceptionClass.getDeclaredConstructor().newInstance();
-            } catch (Exception e) {
+            } catch (ReflectiveOperationException e) {
                 throw new UnauthorizedException(e.getMessage());
             }
         }
