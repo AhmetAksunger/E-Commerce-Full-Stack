@@ -23,6 +23,7 @@ import org.mockito.Mockito;
 import org.modelmapper.ModelMapper;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 class SellerManagerTest {
@@ -90,6 +91,10 @@ class SellerManagerTest {
         Mockito.when(paymentDetailRepository.findById(1L)).thenReturn(Optional.of(paymentDetail));
         Mockito.when(withdrawTransactionRepository.save(transaction)).thenReturn(transaction);
         WithdrawSuccessResponse result = sellerManager.withdraw(request, seller);
+
+        Mockito.doNothing().when(paymentDetailRules).verifyPaymentDetailBelongsToUser(paymentDetail,seller, UnauthorizedException.class);
+        Mockito.doNothing().when(withdrawRules).checkIfWithdrawAmountValid(request.getWithdrawAmount());
+        Mockito.doNothing().when(withdrawRules).checkIfSellerHasEnoughRevenueToWithdraw(seller,request.getWithdrawAmount());
 
         Assertions.assertEquals(result, successResponse);
         Mockito.verify(paymentDetailRules).verifyPaymentDetailBelongsToUser(paymentDetail, seller, UnauthorizedException.class);
