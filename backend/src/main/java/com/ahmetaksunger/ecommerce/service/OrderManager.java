@@ -85,7 +85,9 @@ public class OrderManager implements OrderService {
         // Creating a new cart for the customer
         Cart newCart = cartService.create(customer);
 
-        return mapperService.forResponse().map(dbOrder, OrderCompletedResponse.class);
+        var response = mapperService.forResponse().map(dbOrder, OrderCompletedResponse.class);
+        response.setNewCartId(newCart.getId());
+        return response;
     }
 
     /**

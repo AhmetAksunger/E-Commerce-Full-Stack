@@ -8,9 +8,10 @@ import java.math.BigDecimal;
 @Getter @Setter
 public class OrderCompletedResponse {
 
-    private long id;
+    private Long id;
     private BigDecimal total;
     private CartVM cart;
     private PaymentDetailVM paymentDetail;
+    private Long newCartId;
 
 }
