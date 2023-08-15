@@ -1,11 +1,15 @@
 package com.ahmetaksunger.ecommerce.service;
 
+import com.ahmetaksunger.ecommerce.dto.request.order.CreateOrderRequest;
 import com.ahmetaksunger.ecommerce.dto.response.OrderCompletedResponse;
+import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
+import com.ahmetaksunger.ecommerce.exception.NotFoundException.AddressNotFoundException;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.CartNotFoundException;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.PaymentDetailNotFoundException;
 import com.ahmetaksunger.ecommerce.mapper.MapperService;
 import com.ahmetaksunger.ecommerce.model.*;
 import com.ahmetaksunger.ecommerce.repository.*;
+import com.ahmetaksunger.ecommerce.service.rules.AddressRules;
 import com.ahmetaksunger.ecommerce.service.rules.OrderRules;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,23 +33,28 @@ public class OrderManager implements OrderService {
     private final MapperService mapperService;
     private final ProductService productService;
     private final SellerRepository sellerRepository;
+    private final AddressRules addressRules;
+    private final AddressRepository addressRepository;
 
     @Override
     @Transactional
-    public OrderCompletedResponse create(long cartId, long paymentDetailId, User loggedInUser) {
+    public OrderCompletedResponse create(CreateOrderRequest createOrderRequest, User loggedInUser) {
 
-        Cart cart = cartRepository.findById(cartId).orElseThrow(CartNotFoundException::new);
-        PaymentDetail paymentDetail = paymentDetailRepository.findById(paymentDetailId).orElseThrow(PaymentDetailNotFoundException::new);
+        Cart cart = cartRepository.findById(createOrderRequest.getCartId()).orElseThrow(CartNotFoundException::new);
+        PaymentDetail paymentDetail = paymentDetailRepository.findById(createOrderRequest.getPaymentDetailId()).orElseThrow(PaymentDetailNotFoundException::new);
+        Address address = addressRepository.findById(createOrderRequest.getAddressId()).orElseThrow(AddressNotFoundException::new);
 
         //Rules
         orderRules.verifyCartAndPaymentDetailBelongsToUser(cart, paymentDetail, loggedInUser);
         orderRules.checkInsufficientStock(cart); // TODO: Optimistic - Pessimistic lock
+        addressRules.verifyAddressBelongsToUser(address,loggedInUser, UnauthorizedException.class);
 
         Order order = Order.builder()
                 .total(PriceCalculator.calculateTotal(cart))
                 .cart(cart)
                 .customer((Customer) loggedInUser)
                 .paymentDetail(paymentDetail)
+                .address(address)
                 .build();
 
         Order dbOrder = orderRepository.save(order);
@@ -56,7 +65,7 @@ public class OrderManager implements OrderService {
                 .map(CartItem::getProduct)
                 .toList());
         // Resetting the customer cart
-        cartItemRepository.deleteAllByCartId(cartId);
+        cartItemRepository.deleteAllByCartId(createOrderRequest.getCartId());
 
         // Incrementing the seller's total revenue
         HashMap<Long, BigDecimal> sellerTotalRevenue = this.calculateRevenuesForSellers(cart);
