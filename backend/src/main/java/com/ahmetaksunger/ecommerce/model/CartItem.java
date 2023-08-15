@@ -19,7 +19,7 @@ public class CartItem extends BaseEntity{
     @ManyToOne(cascade = CascadeType.DETACH)
     private Cart cart;
 
-    @OneToOne
+    @ManyToOne
     private Product product;
 
     @Column(name = "quantity",nullable = false)
