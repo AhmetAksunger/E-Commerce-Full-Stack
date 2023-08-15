@@ -47,6 +47,7 @@ public class OrderManager implements OrderService {
         //Rules
         orderRules.verifyCartAndPaymentDetailBelongsToUser(cart, paymentDetail, loggedInUser);
         orderRules.checkInsufficientStock(cart); // TODO: Optimistic - Pessimistic lock
+        orderRules.checkIfCartIsEmpty(cart);
         addressRules.verifyAddressBelongsToUser(address,loggedInUser, UnauthorizedException.class);
 
         Order order = Order.builder()
