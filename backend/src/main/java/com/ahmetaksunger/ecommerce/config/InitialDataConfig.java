@@ -161,7 +161,7 @@ public class InitialDataConfig {
                         .name(faker.commerce().productName())
                         .description(faker.lorem().paragraph(2))
                         .price(new BigDecimal(faker.commerce().price().replace(",", ".")))
-                        .quantity(faker.number().numberBetween(1, 20))
+                        .quantity(faker.number().numberBetween(120, 200))
                         .logo(faker.company().logo())
                         .seller(seller)
                         .categories(productCategories)
