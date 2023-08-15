@@ -30,7 +30,6 @@ public class CartManager implements CartService{
 
         Cart cart = Cart.builder()
                 .customer((Customer) user)
-                .createdAt(new Date())
                 .build();
 
         return cartRepository.save(cart);

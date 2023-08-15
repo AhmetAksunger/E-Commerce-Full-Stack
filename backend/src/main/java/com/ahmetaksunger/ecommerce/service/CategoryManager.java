@@ -10,37 +10,35 @@ import com.ahmetaksunger.ecommerce.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class CategoryManager implements CategoryService{
+public class CategoryManager implements CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final MapperService mapperService;
+
     @Override
     public CategoryVM create(CreateCategoryRequest createCategoryRequest) {
         Category category = mapperService.forRequest().map(createCategoryRequest, Category.class);
-        category.setCreatedAt(new Date());
 
-        return mapperService.forResponse().map(categoryRepository.save(category),CategoryVM.class);
+        return mapperService.forResponse().map(categoryRepository.save(category), CategoryVM.class);
     }
 
     @Override
-    public CategoryVM update(long categoryId,UpdateCategoryRequest updateCategoryRequest) {
+    public CategoryVM update(long categoryId, UpdateCategoryRequest updateCategoryRequest) {
 
-        Category category = categoryRepository.findById(categoryId).orElseThrow(()->new CategoryNotFoundException());
+        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new CategoryNotFoundException());
 
-        if(updateCategoryRequest.getName() != null){
+        if (updateCategoryRequest.getName() != null) {
             category.setName(updateCategoryRequest.getName());
         }
-        if(updateCategoryRequest.getDescription() != null){
+        if (updateCategoryRequest.getDescription() != null) {
             category.setDescription(updateCategoryRequest.getDescription());
         }
 
-        category.setUpdatedAt(new Date());
-        return mapperService.forResponse().map(categoryRepository.save(category),CategoryVM.class);
+        return mapperService.forResponse().map(categoryRepository.save(category), CategoryVM.class);
     }
 
     @Override
@@ -48,7 +46,7 @@ public class CategoryManager implements CategoryService{
         List<Category> categories = categoryRepository.findAll();
         return categories
                 .stream()
-                .map(category -> mapperService.forResponse().map(category,CategoryVM.class)).toList();
+                .map(category -> mapperService.forResponse().map(category, CategoryVM.class)).toList();
     }
 
     @Override

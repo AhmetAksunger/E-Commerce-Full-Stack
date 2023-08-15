@@ -46,7 +46,6 @@ public class OrderManager implements OrderService {
                 .cart(cart)
                 .customer((Customer) loggedInUser)
                 .paymentDetail(paymentDetail)
-                .createdAt(new Date())
                 .build();
 
         Order dbOrder = orderRepository.save(order);

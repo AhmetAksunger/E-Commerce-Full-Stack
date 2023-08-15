@@ -27,21 +27,21 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ProductManager implements ProductService{
+public class ProductManager implements ProductService {
 
     private final ProductRepository productRepository;
     private final MapperService mapperService;
     private final CategoryService categoryService;
     private final ProductRules productRules;
+
     @Override
     public ProductVM create(CreateProductRequest createProductRequest, User loggedInUser) {
 
         Product product = mapperService.forRequest().map(createProductRequest, Product.class);
-        product.setCreatedAt(new Date());
         product.setSeller((Seller) loggedInUser);
         List<Category> categories = categoryService.getCategoriesByIds(createProductRequest.getCategoryIds());
         product.setCategories(categories);
-        var response = mapperService.forResponse().map(productRepository.save(product),ProductVM.class);
+        var response = mapperService.forResponse().map(productRepository.save(product), ProductVM.class);
         response.setSeller(mapperService.forResponse().map(product.getSeller(), SellerVM.class));
         return response;
     }
@@ -50,9 +50,9 @@ public class ProductManager implements ProductService{
     public ProductVM addCategoriesByIdsToProduct(long productId, List<Long> categoryIds, User loggedInUser) {
 
         //Rules
-        productRules.checkIfCanUpdate(productId,loggedInUser);
+        productRules.checkIfCanUpdate(productId, loggedInUser);
 
-        Product product = productRepository.findById(productId).orElseThrow(()->new ProductNotFoundException());
+        Product product = productRepository.findById(productId).orElseThrow(() -> new ProductNotFoundException());
         List<Category> dbCategories = product.getCategories();
         List<Category> categoriesToBeAdded = categoryService.getCategoriesByIds(categoryIds);
         dbCategories.addAll(
@@ -62,16 +62,16 @@ public class ProductManager implements ProductService{
         );
         product.setCategories(dbCategories);
         product.setUpdatedAt(new Date());
-        return mapperService.forResponse().map(productRepository.save(product),ProductVM.class);
+        return mapperService.forResponse().map(productRepository.save(product), ProductVM.class);
     }
 
     @Override
     public ProductVM removeCategoriesByIdsFromProduct(long productId, List<Long> categoryIds, User loggedInUser) {
 
         //Rules
-        productRules.checkIfCanUpdate(productId,loggedInUser);
+        productRules.checkIfCanUpdate(productId, loggedInUser);
 
-        Product product = productRepository.findById(productId).orElseThrow(()->new ProductNotFoundException());
+        Product product = productRepository.findById(productId).orElseThrow(() -> new ProductNotFoundException());
         List<Category> dbCategories = product.getCategories();
         List<Category> categoriesToBeRemoved = categoryService.getCategoriesByIds(categoryIds);
         dbCategories.removeAll(
@@ -81,7 +81,7 @@ public class ProductManager implements ProductService{
         );
         product.setCategories(dbCategories);
         product.setUpdatedAt(new Date());
-        return mapperService.forResponse().map(productRepository.save(product),ProductVM.class);
+        return mapperService.forResponse().map(productRepository.save(product), ProductVM.class);
     }
 
     /**
@@ -93,8 +93,8 @@ public class ProductManager implements ProductService{
      *                    See {@link ProductRules#checkIfOrderParamIsValid(String)}
      * @param search      A field to search name,category or company name
      * @param categoryIds List of category IDs
-     * @param minPrice Minimum price
-     * @param maxPrice Maximum price
+     * @param minPrice    Minimum price
+     * @param maxPrice    Maximum price
      * @param page        Page number
      * @param size        Element amount on each page
      * @return
@@ -110,39 +110,39 @@ public class ProductManager implements ProductService{
 
         Specification<Product> specification = Specification.where(null);
 
-        Pageable pageable = PageRequest.of(page,size,Sort.by(Sort.Direction.valueOf(sort.toUpperCase()),order));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.valueOf(sort.toUpperCase()), order));
 
-        if(search != null && !search.isEmpty()){
+        if (search != null && !search.isEmpty()) {
             specification = specification.and(ProductSpecification.searchByKeyword(search));
         }
 
-        if(categoryIds != null && !categoryIds.isEmpty()) {
+        if (categoryIds != null && !categoryIds.isEmpty()) {
             specification = specification.and(ProductSpecification.withCategoryIds(categoryIds));
         }
-        if(minPrice != null){
+        if (minPrice != null) {
             specification = specification.and(ProductSpecification.withPriceGreaterThanOrEqualTo(minPrice));
         }
-        if(maxPrice != null){
+        if (maxPrice != null) {
             specification = specification.and(ProductSpecification.withPriceLessThanOrEqualTo(maxPrice));
         }
 
-        return productRepository.findAll(specification,pageable)
-                .map(product -> mapperService.forResponse().map(product,ProductVM.class));
+        return productRepository.findAll(specification, pageable)
+                .map(product -> mapperService.forResponse().map(product, ProductVM.class));
     }
 
     @Override
     public void delete(long productId, User loggedInUser) {
 
         //Rules
-        productRules.checkIfCanDelete(productId,loggedInUser);
+        productRules.checkIfCanDelete(productId, loggedInUser);
 
         productRepository.deleteById(productId);
     }
 
     @Override
-    public void reduceQuantityForBoughtProducts(List<Product> boughtProducts){
+    public void reduceQuantityForBoughtProducts(List<Product> boughtProducts) {
         boughtProducts.forEach(product -> {
-            product.setQuantity(product.getQuantity()-1);
+            product.setQuantity(product.getQuantity() - 1);
             productRepository.save(product);
         });
     }
@@ -158,64 +158,60 @@ public class ProductManager implements ProductService{
     public ProductVM getProductById(Long productId) {
 
         Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
-        return mapperService.forResponse().map(product,ProductVM.class);
+        return mapperService.forResponse().map(product, ProductVM.class);
     }
 
     /**
-     *
      * Retrieves products by seller id from the database
      *
      * @param sellerId Seller Id
-     * @param page Page number
-     * @param size Element amount on each page
+     * @param page     Page number
+     * @param size     Element amount on each page
      * @return Paginated ProductVM
      */
     @Override
     public Page<ProductVM> getProductsBySellerId(Long sellerId, Integer page, Integer size) {
 
-        Pageable pageable = PageRequest.of(page,size,Sort.by(Sort.Direction.DESC,"createdAt"));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 
-        return productRepository.findBySellerId(sellerId,pageable)
-                .map(product -> mapperService.forResponse().map(product,ProductVM.class));
+        return productRepository.findBySellerId(sellerId, pageable)
+                .map(product -> mapperService.forResponse().map(product, ProductVM.class));
     }
 
     /**
-     *
      * Retrieves the product with the specified id.
      * Verifies that the product belongs to the logged-in seller.
      * Updates the product based on the updateProductRequest, and persists it to the database
      *
-     * @param productId Product Id
+     * @param productId            Product Id
      * @param updateProductRequest Update Product Request
-     * @param loggedInUser Logged In User
+     * @param loggedInUser         Logged In User
      * @return ProductVM
      */
     @Override
     public ProductVM updateProduct(Long productId, UpdateProductRequest updateProductRequest, User loggedInUser) {
 
         //Rules
-        productRules.checkIfCanUpdate(productId,loggedInUser);
+        productRules.checkIfCanUpdate(productId, loggedInUser);
 
         Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
-        if(updateProductRequest.getName() != null){
+        if (updateProductRequest.getName() != null) {
             product.setName(updateProductRequest.getName());
         }
-        if(updateProductRequest.getDescription()!= null){
+        if (updateProductRequest.getDescription() != null) {
             product.setDescription(updateProductRequest.getDescription());
         }
-        if(updateProductRequest.getPrice()!= null){
+        if (updateProductRequest.getPrice() != null) {
             product.setPrice(updateProductRequest.getPrice());
         }
-        if(updateProductRequest.getQuantity()!= null){
+        if (updateProductRequest.getQuantity() != null) {
             product.setQuantity(updateProductRequest.getQuantity());
         }
-        if(updateProductRequest.getLogo() != null){
+        if (updateProductRequest.getLogo() != null) {
             product.setLogo(updateProductRequest.getLogo());
         }
 
-        product.setUpdatedAt(new Date());
-
-        return mapperService.forResponse().map(productRepository.save(product),ProductVM.class);
+        return mapperService.forResponse().map(productRepository.save(product), ProductVM.class);
     }
 
 }

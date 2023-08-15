@@ -11,7 +11,6 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 @Entity
 @Table(name = "withdraw_transactions")
@@ -32,8 +31,4 @@ public class WithdrawTransaction extends BaseEntity {
     @ManyToOne
     private PaymentDetail paymentDetail;
 
-    @PrePersist
-    public void beforePersist() {
-        this.setCreatedAt(new Date());
-    }
 }

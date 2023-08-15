@@ -43,7 +43,6 @@ public class CartItemManager implements CartItemService{
                 .cart(cart)
                 .product(product)
                 .quantity(quantity)
-                .createdAt(new Date())
                 .build();
         CartItem dbCartItem = cartItemRepository.save(cartItem);
         var response = mapperService.forResponse().map(dbCartItem.getCart(), CartVM.class);

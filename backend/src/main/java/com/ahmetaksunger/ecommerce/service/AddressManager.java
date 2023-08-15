@@ -34,7 +34,6 @@ public class AddressManager implements AddressService{
 
         Address address = mapperService.forRequest().map(createAddressRequest,Address.class);
         address.setCountry(Country.valueOf(createAddressRequest.getCountry().toUpperCase(Locale.ENGLISH)));
-        address.setCreatedAt(new Date());
         address.setUser(user);
 
         return mapperService.forResponse().map(addressRepository.save(address),AddressVM.class);
@@ -60,8 +59,6 @@ public class AddressManager implements AddressService{
 	    if (updateAddressRequest.getZipCode() != null) {
 	        address.setZipCode(updateAddressRequest.getZipCode());
 	    }
-		
-		address.setUpdatedAt(new Date());
 
 		return mapperService.forResponse().map(addressRepository.save(address), AddressVM.class);
 	}
