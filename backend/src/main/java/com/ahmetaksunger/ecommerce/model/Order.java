@@ -25,10 +25,13 @@ public class Order extends BaseEntity{
     @ManyToOne
     private Customer customer;
 
-    @OneToOne
+    @ManyToOne
+    private Address address;
+
+    @ManyToOne
     private Cart cart;
 
-    @OneToOne
+    @ManyToOne
     private PaymentDetail paymentDetail;
 
 

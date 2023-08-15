@@ -1,5 +1,6 @@
 package com.ahmetaksunger.ecommerce.service.rules;
 
+import com.ahmetaksunger.ecommerce.exception.CartIsEmptyException;
 import com.ahmetaksunger.ecommerce.exception.InsufficientProductQuantityException;
 import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
 import com.ahmetaksunger.ecommerce.model.*;
@@ -29,8 +30,14 @@ public class OrderRules {
                 .map(CartItem::getProduct)
                 .toList();
 
-        if(productsWithInsufficientStock .size() > 0){
+        if(!productsWithInsufficientStock.isEmpty()){
             throw new InsufficientProductQuantityException(productsWithInsufficientStock);
+        }
+    }
+
+    public void checkIfCartIsEmpty(Cart cart){
+        if(cart.getCartItems().isEmpty()){
+            throw new CartIsEmptyException();
         }
     }
 }
