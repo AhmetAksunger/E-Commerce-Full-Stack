@@ -35,38 +35,39 @@ public class OrderManager implements OrderService {
     private final SellerRepository sellerRepository;
     private final AddressRules addressRules;
     private final AddressRepository addressRepository;
+    private final CartService cartService;
 
     @Override
     @Transactional
     public OrderCompletedResponse create(CreateOrderRequest createOrderRequest, User loggedInUser) {
+
+        Customer customer = (Customer) loggedInUser;
 
         Cart cart = cartRepository.findById(createOrderRequest.getCartId()).orElseThrow(CartNotFoundException::new);
         PaymentDetail paymentDetail = paymentDetailRepository.findById(createOrderRequest.getPaymentDetailId()).orElseThrow(PaymentDetailNotFoundException::new);
         Address address = addressRepository.findById(createOrderRequest.getAddressId()).orElseThrow(AddressNotFoundException::new);
 
         //Rules
-        orderRules.verifyCartAndPaymentDetailBelongsToUser(cart, paymentDetail, loggedInUser);
+        orderRules.verifyCartAndPaymentDetailBelongsToUser(cart, paymentDetail, customer);
         orderRules.checkInsufficientStock(cart); // TODO: Optimistic - Pessimistic lock
         orderRules.checkIfCartIsEmpty(cart);
-        addressRules.verifyAddressBelongsToUser(address,loggedInUser, UnauthorizedException.class);
+        addressRules.verifyAddressBelongsToUser(address,customer, UnauthorizedException.class);
 
         Order order = Order.builder()
                 .total(PriceCalculator.calculateTotal(cart))
                 .cart(cart)
-                .customer((Customer) loggedInUser)
+                .customer(customer)
                 .paymentDetail(paymentDetail)
                 .address(address)
                 .build();
 
         Order dbOrder = orderRepository.save(order);
 
-        // Reducing quantities by 1, for the bought products
+        // Reducing quantities by one, for the bought products
         productService.reduceQuantityForBoughtProducts(cart.getCartItems()
                 .stream()
                 .map(CartItem::getProduct)
                 .toList());
-        // Resetting the customer cart
-        cartItemRepository.deleteAllByCartId(createOrderRequest.getCartId());
 
         // Incrementing the seller's total revenue
         HashMap<Long, BigDecimal> sellerTotalRevenue = this.calculateRevenuesForSellers(cart);
@@ -77,6 +78,12 @@ public class OrderManager implements OrderService {
                     sellerRepository.save(seller);
                 }
         );
+
+        // Deactivating the customer's current cart
+        cartService.deactivateCart(cart);
+
+        // Creating a new cart for the customer
+        Cart newCart = cartService.create(customer);
 
         return mapperService.forResponse().map(dbOrder, OrderCompletedResponse.class);
     }
