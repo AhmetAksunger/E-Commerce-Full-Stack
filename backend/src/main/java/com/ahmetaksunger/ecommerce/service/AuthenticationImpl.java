@@ -41,7 +41,7 @@ public class AuthenticationImpl implements AuthenticationService {
         var jwt = jwtService.generateToken(user);
         if (user.getUserType().equals(UserType.CUSTOMER)) {
             Customer customer = customerRepository.findById(user.getId()).orElseThrow();
-            Cart activeCart = cartRepository.findByCartStatus(CartStatus.ACTIVE).orElseThrow(CartNotFoundException::new);
+            Cart activeCart = cartRepository.findByCustomerIdAndStatus(customer.getId(), CartStatus.ACTIVE).orElseThrow(CartNotFoundException::new);
             var response = mapperService.forResponse().map(customer, CustomerAuthenticationResponse.class);
             response.setCartId(activeCart.getId());
             response.setJwt(jwt);
@@ -104,11 +104,13 @@ public class AuthenticationImpl implements AuthenticationService {
                 .phoneNumber(registerCustomerRequest.getPhoneNumber())
                 .userType(UserType.CUSTOMER)
                 .build();
+
+        Customer dbCustomer = customerRepository.save(customer);
         Cart cart = Cart.builder()
                 .customer(customer)
                 .build();
         cartRepository.save(cart);
-        var response = mapperService.forResponse().map(customerRepository.save(customer), CustomerAuthenticationResponse.class);
+        var response = mapperService.forResponse().map(dbCustomer, CustomerAuthenticationResponse.class);
         response.setJwt(jwtService.generateToken(customer));
         response.setCartId(cart.getId());
         return response;
