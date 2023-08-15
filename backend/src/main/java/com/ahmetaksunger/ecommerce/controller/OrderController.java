@@ -6,6 +6,7 @@ import com.ahmetaksunger.ecommerce.model.User;
 import com.ahmetaksunger.ecommerce.security.CurrentUser;
 import com.ahmetaksunger.ecommerce.service.OrderService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<OrderCompletedResponse> createOrder(@RequestBody CreateOrderRequest createOrderRequest,
+    public ResponseEntity<OrderCompletedResponse> createOrder(@RequestBody @Valid CreateOrderRequest createOrderRequest,
                                                               @CurrentUser User loggedInUser){
         return new ResponseEntity<>(orderService.create(createOrderRequest,loggedInUser), HttpStatus.CREATED);
     }
