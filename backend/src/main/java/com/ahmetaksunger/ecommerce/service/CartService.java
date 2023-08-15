@@ -13,8 +13,6 @@ public interface CartService {
 
     void delete(long cartId, User loggedInUser);
 
-    Cart findByCustomerId(long id);
-
     CartVM getCartByCustomerId(long customerId,User loggedInUser);
 
     void activateCart(Cart cart);

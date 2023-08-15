@@ -41,7 +41,7 @@ public class AuthenticationImpl implements AuthenticationService {
         var jwt = jwtService.generateToken(user);
         if (user.getUserType().equals(UserType.CUSTOMER)) {
             Customer customer = customerRepository.findById(user.getId()).orElseThrow();
-            Cart activeCart = cartRepository.findByCustomerIdAndStatus(customer.getId(), CartStatus.ACTIVE).orElseThrow(CartNotFoundException::new);
+            Cart activeCart = cartRepository.findActiveCartsByCustomerId(customer.getId()).orElseThrow(CartNotFoundException::new);
             var response = mapperService.forResponse().map(customer, CustomerAuthenticationResponse.class);
             response.setCartId(activeCart.getId());
             response.setJwt(jwt);

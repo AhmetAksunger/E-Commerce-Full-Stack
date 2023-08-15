@@ -41,14 +41,9 @@ public class CartManager implements CartService {
     }
 
     @Override
-    public Cart findByCustomerId(long id) {
-        return cartRepository.findByCustomerId(id).orElseThrow(CartNotFoundException::new);
-    }
-
-    @Override
     public CartVM getCartByCustomerId(long customerId, User loggedInUser) {
 
-        Cart cart = cartRepository.findByCustomerId(customerId).orElseThrow(CartNotFoundException::new);
+        Cart cart = cartRepository.findActiveCartsByCustomerId(customerId).orElseThrow(CartNotFoundException::new);
 
         //Rules
         cartRules.verifyCartBelongsToUser(cart, loggedInUser, UnauthorizedException.class);
