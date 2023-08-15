@@ -73,7 +73,7 @@ public class OrderManager implements OrderService {
         sellerTotalRevenue.forEach(
                 (sellerId, revenue) -> {
                     Seller seller = sellerRepository.findById(sellerId).orElseThrow();
-                    seller.setTotalRevenue(revenue);
+                    seller.setTotalRevenue(seller.getTotalRevenue().add(revenue));
                     sellerRepository.save(seller);
                 }
         );
