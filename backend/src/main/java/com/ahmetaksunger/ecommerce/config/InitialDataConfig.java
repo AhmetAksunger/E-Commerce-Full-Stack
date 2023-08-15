@@ -12,7 +12,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Configuration
@@ -52,11 +51,9 @@ public class InitialDataConfig {
                     .userType(UserType.CUSTOMER)
                     .fullName(faker.name().fullName())
                     .phoneNumber(phoneNumber)
-                    .createdAt(new Date())
                     .build();
 
             final Cart cart = Cart.builder()
-                    .createdAt(new Date())
                     .customer(customer)
                     .build();
 
@@ -69,7 +66,6 @@ public class InitialDataConfig {
                     .country(Country.TURKEY)
                     .zipCode(faker.address().zipCode())
                     .user(customer)
-                    .createdAt(new Date())
                     .build();
 
             addressRepository.save(address);
@@ -96,7 +92,6 @@ public class InitialDataConfig {
             final Category category = Category.builder()
                     .name(faker.commerce().department())
                     .description(faker.lorem().paragraph(2))
-                    .createdAt(new Date())
                     .build();
 
             categoryRepository.save(category);
@@ -129,7 +124,6 @@ public class InitialDataConfig {
                     .companyName(faker.company().name())
                     .contactNumber(contactNumber)
                     .logo(faker.company().logo())
-                    .createdAt(new Date())
                     .build();
 
             sellerRepository.save(seller);
@@ -158,7 +152,6 @@ public class InitialDataConfig {
                         .logo(faker.company().logo())
                         .seller(seller)
                         .categories(productCategories)
-                        .createdAt(new Date())
                         .build();
 
                 productRepository.save(product);
@@ -178,7 +171,6 @@ public class InitialDataConfig {
                         .email("admin@gmail.com")
                         .password(passwordEncoder.encode("test123"))
                         .userType(UserType.ADMIN)
-                        .createdAt(new Date())
                         .build();
 
                 userRepository.save(defaultAdminUserEntity);
