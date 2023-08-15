@@ -1,10 +1,7 @@
 package com.ahmetaksunger.ecommerce.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.util.List;
@@ -29,13 +26,7 @@ public class Cart extends BaseEntity {
     private List<CartItem> cartItems;
 
     @Enumerated(EnumType.STRING)
-    private CartStatus status;
+    @Builder.Default
+    private CartStatus status = CartStatus.ACTIVE;
 
-    private void activateCart() {
-        this.status = CartStatus.ACTIVE;
-    }
-
-    private void deactivateCart() {
-        this.status = CartStatus.INACTIVE;
-    }
 }
