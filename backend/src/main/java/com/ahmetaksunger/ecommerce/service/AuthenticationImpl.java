@@ -16,19 +16,15 @@ import com.ahmetaksunger.ecommerce.repository.CustomerRepository;
 import com.ahmetaksunger.ecommerce.repository.SellerRepository;
 import com.ahmetaksunger.ecommerce.repository.UserRepository;
 import com.ahmetaksunger.ecommerce.security.JwtService;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-
 @RequiredArgsConstructor
 @Service
-public class AuthenticationImpl implements AuthenticationService{
+public class AuthenticationImpl implements AuthenticationService {
 
     private final UserRepository userRepository;
     private final CustomerRepository customerRepository;
@@ -40,15 +36,15 @@ public class AuthenticationImpl implements AuthenticationService{
 
     @Override
     public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(),authenticationRequest.getPassword()));
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getEmail(), authenticationRequest.getPassword()));
         var user = userRepository.findByEmail(authenticationRequest.getEmail()).orElseThrow();
         var jwt = jwtService.generateToken(user);
-        if(user.getUserType().equals(UserType.CUSTOMER)){
+        if (user.getUserType().equals(UserType.CUSTOMER)) {
             Customer customer = customerRepository.findById(user.getId()).orElseThrow();
-            var response = mapperService.forResponse().map(customer,CustomerAuthenticationResponse.class);
+            var response = mapperService.forResponse().map(customer, CustomerAuthenticationResponse.class);
             response.setJwt(jwt);
             return response;
-        }else if(user.getUserType().equals(UserType.SELLER)){
+        } else if (user.getUserType().equals(UserType.SELLER)) {
             Seller seller = sellerRepository.findById(user.getId()).orElseThrow();
             return SellerAuthenticationResponse
                     .builder()
@@ -65,11 +61,11 @@ public class AuthenticationImpl implements AuthenticationService{
     @Override
     public AuthenticationResponse register(RegisterRequest registerRequest) {
 
-        if(registerRequest instanceof RegisterCustomerRequest){
+        if (registerRequest instanceof RegisterCustomerRequest) {
             return this.registerCustomer((RegisterCustomerRequest) registerRequest);
         }
 
-        if(registerRequest instanceof RegisterSellerRequest){
+        if (registerRequest instanceof RegisterSellerRequest) {
             return this.registerSeller((RegisterSellerRequest) registerRequest);
         }
         return AuthenticationResponse.builder()
@@ -78,14 +74,13 @@ public class AuthenticationImpl implements AuthenticationService{
 
     private SellerAuthenticationResponse registerSeller(RegisterSellerRequest registerSellerRequest) {
         Seller seller = Seller.builder()
-                        .email(registerSellerRequest.getEmail())
-                                .password(passwordEncoder.encode(registerSellerRequest.getPassword()))
-                                        .createdAt(new Date())
-                                                .companyName(registerSellerRequest.getCompanyName())
-                                                        .contactNumber(registerSellerRequest.getContactNumber())
-                                                                .logo(registerSellerRequest.getLogo())
-                                                                        .userType(UserType.SELLER)
-                                                                                .build();
+                .email(registerSellerRequest.getEmail())
+                .password(passwordEncoder.encode(registerSellerRequest.getPassword()))
+                .companyName(registerSellerRequest.getCompanyName())
+                .contactNumber(registerSellerRequest.getContactNumber())
+                .logo(registerSellerRequest.getLogo())
+                .userType(UserType.SELLER)
+                .build();
         sellerRepository.save(seller);
 
         return SellerAuthenticationResponse
@@ -98,22 +93,20 @@ public class AuthenticationImpl implements AuthenticationService{
                 .build();
     }
 
-    private CustomerAuthenticationResponse registerCustomer(RegisterCustomerRequest registerCustomerRequest){
+    private CustomerAuthenticationResponse registerCustomer(RegisterCustomerRequest registerCustomerRequest) {
 
         Customer customer = Customer.builder()
-                        .email(registerCustomerRequest.getEmail())
-                                .password(passwordEncoder.encode(registerCustomerRequest.getPassword()))
-                                        .createdAt(new Date())
-                                                .fullName(registerCustomerRequest.getFullName())
-                                                        .phoneNumber(registerCustomerRequest.getPhoneNumber())
-                                                                .userType(UserType.CUSTOMER)
-                                                                        .build();
+                .email(registerCustomerRequest.getEmail())
+                .password(passwordEncoder.encode(registerCustomerRequest.getPassword()))
+                .fullName(registerCustomerRequest.getFullName())
+                .phoneNumber(registerCustomerRequest.getPhoneNumber())
+                .userType(UserType.CUSTOMER)
+                .build();
         Cart cart = Cart.builder()
-                        .createdAt(new Date())
-                                .customer(customer)
-                                        .build();
+                .customer(customer)
+                .build();
         customer.setCart(cart);
-        var response = mapperService.forResponse().map(customerRepository.save(customer),CustomerAuthenticationResponse.class);
+        var response = mapperService.forResponse().map(customerRepository.save(customer), CustomerAuthenticationResponse.class);
         response.setJwt(jwtService.generateToken(customer));
         return response;
     }

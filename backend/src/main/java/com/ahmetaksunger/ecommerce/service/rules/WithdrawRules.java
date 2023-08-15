@@ -3,6 +3,7 @@ package com.ahmetaksunger.ecommerce.service.rules;
 import com.ahmetaksunger.ecommerce.exception.InsufficientRevenueException;
 import com.ahmetaksunger.ecommerce.exception.InvalidWithdrawAmountException;
 import com.ahmetaksunger.ecommerce.model.Seller;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +15,11 @@ public class WithdrawRules {
     @Value("${min-withdraw-limit}")
     private BigDecimal minWithdrawLimit;
 
-    public WithdrawRules(BigDecimal minWithdrawLimit){
+    /**
+     * Constructor for unit test operations
+     * @param minWithdrawLimit
+     */
+    public WithdrawRules(@Value("${min-withdraw-limit}") BigDecimal minWithdrawLimit){
         this.minWithdrawLimit = minWithdrawLimit;
     }
 
