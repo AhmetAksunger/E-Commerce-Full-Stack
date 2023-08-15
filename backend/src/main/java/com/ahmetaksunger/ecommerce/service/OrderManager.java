@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -37,6 +38,28 @@ public class OrderManager implements OrderService {
     private final AddressRepository addressRepository;
     private final CartService cartService;
 
+
+    /**
+     *
+     * <p> - Verifies that the specified cart, payment detail, and address belong to the customer.</p>
+     * <p> - Checks if the products in the cart still have enough stocks</p>
+     * <p> - Checks if the cart is empty</p>
+     *
+     * <p>If all the rules pass:</p>
+     * <p>1-) It creates an order and saves it to the database</p>
+     * <p>2-) It reduces the bought products' quantities by one</p>
+     * <p>3-) It increments the sellers' total revenues</p>
+     * <p>4-) It deactivates the customer's used cart</p>
+     * <p>5-) It creates a new cart for the customer</p>
+     * <p>Then returns {@link OrderCompletedResponse}</p>
+     * @param createOrderRequest {@link CreateOrderRequest}
+     * @param loggedInUser {@link Customer}
+     * @return {@link OrderCompletedResponse}
+     * @see OrderRules
+     * @see AddressRules
+     * @see CartService
+     * @see ProductService#reduceQuantityForBoughtProducts(List)
+     */
     @Override
     @Transactional
     public OrderCompletedResponse create(CreateOrderRequest createOrderRequest, User loggedInUser) {
