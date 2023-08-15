@@ -18,7 +18,7 @@ public class Cart extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @OneToOne
+    @ManyToOne
     private Customer customer;
 
     @OneToMany(mappedBy = "cart",cascade = CascadeType.REMOVE)

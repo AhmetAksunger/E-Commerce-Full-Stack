@@ -19,11 +19,11 @@ public class Customer extends User{
     @Column(name = "phone_number",nullable = false)
     private String phoneNumber;
 
-    @OneToOne(
+    @OneToMany(
             mappedBy = "customer",
             cascade = CascadeType.PERSIST
     )
-    private Cart cart;
+    private List<Cart> carts;
 
     @OneToMany(mappedBy = "customer")
     private List<Order> orders;
