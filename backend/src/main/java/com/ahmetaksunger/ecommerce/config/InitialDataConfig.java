@@ -28,6 +28,7 @@ public class InitialDataConfig {
     private final CategoryRepository categoryRepository;
 
     private final Faker faker = new Faker();
+    private final CartItemRepository cartItemRepository;
 
     /**
      * Creates specified amount of {@link Customer}s.
@@ -78,6 +79,18 @@ public class InitialDataConfig {
                     .build();
 
             paymentDetailRepository.save(paymentDetail);
+
+            List<CartItem> cartItems = new ArrayList<CartItem>();
+            List<Product> products = productRepository.findAll();
+            for (int j = 0; j < 5; j++) {
+                var product = products.get(faker.number().numberBetween(0,products.size() - 1));
+                CartItem cartItem = CartItem.builder()
+                        .cart(cart)
+                        .product(product)
+                        .quantity(faker.number().numberBetween(1,5))
+                        .build();
+                cartItemRepository.save(cartItem);
+            }
         }
     }
 
@@ -175,14 +188,14 @@ public class InitialDataConfig {
 
                 userRepository.save(defaultAdminUserEntity);
 
-                // Creating Default Customers
-                createCustomers(20);
-
                 // Creating categories
                 createCategories(20);
 
                 // Creating Sellers
                 createSellers(10);
+
+                // Creating Default Customers
+                createCustomers(20);
             }
         };
     }
