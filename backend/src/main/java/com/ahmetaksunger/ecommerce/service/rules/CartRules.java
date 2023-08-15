@@ -17,6 +17,8 @@ import org.springframework.stereotype.Component;
 public class CartRules {
 
     private final CartRepository cartRepository;
+
+    @Deprecated
     public void checkIfUserAlreadyHasACart(User user){
         if(cartRepository.countByCustomerId(user.getId()) > 0){
             throw new UserAlreadyHasCartException();
