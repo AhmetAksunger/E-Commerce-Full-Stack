@@ -7,11 +7,9 @@ import com.ahmetaksunger.ecommerce.dto.request.authentication.RegisterSellerRequ
 import com.ahmetaksunger.ecommerce.dto.response.AuthenticationResponse;
 import com.ahmetaksunger.ecommerce.dto.response.CustomerAuthenticationResponse;
 import com.ahmetaksunger.ecommerce.dto.response.SellerAuthenticationResponse;
+import com.ahmetaksunger.ecommerce.exception.NotFoundException.CartNotFoundException;
 import com.ahmetaksunger.ecommerce.mapper.MapperService;
-import com.ahmetaksunger.ecommerce.model.Cart;
-import com.ahmetaksunger.ecommerce.model.Customer;
-import com.ahmetaksunger.ecommerce.model.Seller;
-import com.ahmetaksunger.ecommerce.model.UserType;
+import com.ahmetaksunger.ecommerce.model.*;
 import com.ahmetaksunger.ecommerce.repository.CartRepository;
 import com.ahmetaksunger.ecommerce.repository.CustomerRepository;
 import com.ahmetaksunger.ecommerce.repository.SellerRepository;
@@ -43,7 +41,9 @@ public class AuthenticationImpl implements AuthenticationService {
         var jwt = jwtService.generateToken(user);
         if (user.getUserType().equals(UserType.CUSTOMER)) {
             Customer customer = customerRepository.findById(user.getId()).orElseThrow();
+            Cart activeCart = cartRepository.findByCartStatus(CartStatus.ACTIVE).orElseThrow(CartNotFoundException::new);
             var response = mapperService.forResponse().map(customer, CustomerAuthenticationResponse.class);
+            response.setCartId(activeCart.getId());
             response.setJwt(jwt);
             return response;
         } else if (user.getUserType().equals(UserType.SELLER)) {
@@ -110,6 +110,7 @@ public class AuthenticationImpl implements AuthenticationService {
         cartRepository.save(cart);
         var response = mapperService.forResponse().map(customerRepository.save(customer), CustomerAuthenticationResponse.class);
         response.setJwt(jwtService.generateToken(customer));
+        response.setCartId(cart.getId());
         return response;
     }
 
