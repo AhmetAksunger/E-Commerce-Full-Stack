@@ -29,6 +29,7 @@ public class InitialDataConfig {
 
     private final Faker faker = new Faker();
     private final CartItemRepository cartItemRepository;
+    private final CartRepository cartRepository;
 
     /**
      * Creates specified amount of {@link Customer}s.
@@ -58,7 +59,7 @@ public class InitialDataConfig {
                     .customer(customer)
                     .build();
 
-            customer.setCart(cart);
+            cartRepository.save(cart);
             customerRepository.save(customer);
 
             final Address address = Address.builder()

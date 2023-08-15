@@ -12,6 +12,7 @@ import com.ahmetaksunger.ecommerce.model.Cart;
 import com.ahmetaksunger.ecommerce.model.Customer;
 import com.ahmetaksunger.ecommerce.model.Seller;
 import com.ahmetaksunger.ecommerce.model.UserType;
+import com.ahmetaksunger.ecommerce.repository.CartRepository;
 import com.ahmetaksunger.ecommerce.repository.CustomerRepository;
 import com.ahmetaksunger.ecommerce.repository.SellerRepository;
 import com.ahmetaksunger.ecommerce.repository.UserRepository;
@@ -33,6 +34,7 @@ public class AuthenticationImpl implements AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final MapperService mapperService;
+    private final CartRepository cartRepository;
 
     @Override
     public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
@@ -105,7 +107,7 @@ public class AuthenticationImpl implements AuthenticationService {
         Cart cart = Cart.builder()
                 .customer(customer)
                 .build();
-        customer.setCart(cart);
+        cartRepository.save(cart);
         var response = mapperService.forResponse().map(customerRepository.save(customer), CustomerAuthenticationResponse.class);
         response.setJwt(jwtService.generateToken(customer));
         return response;
