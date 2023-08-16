@@ -28,7 +28,7 @@ public class Order extends BaseEntity{
     @ManyToOne
     private Address address;
 
-    @ManyToOne
+    @OneToOne
     private Cart cart;
 
     @ManyToOne

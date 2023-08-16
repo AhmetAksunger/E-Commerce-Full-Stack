@@ -8,11 +8,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.server.MethodNotAllowedException;
@@ -28,15 +26,15 @@ public class GlobalExceptionHandler {
     private final MapperService mapperService;
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
-    public ResponseEntity<FieldExceptionResponse> handle(Exception exception, HttpServletRequest request){
-        log.error(exception.getMessage(),exception);
+    public ResponseEntity<FieldExceptionResponse> handle(Exception exception, HttpServletRequest request) {
+        log.error(exception.getMessage(), exception);
 
-        HashMap<String,String> messages = new HashMap<>();
+        HashMap<String, String> messages = new HashMap<>();
 
-        if(exception instanceof MethodArgumentNotValidException){
+        if (exception instanceof MethodArgumentNotValidException) {
             MethodArgumentNotValidException ex = (MethodArgumentNotValidException) exception;
-            for (FieldError fieldError:ex.getBindingResult().getFieldErrors()) {
-                messages.put(fieldError.getField(),fieldError.getDefaultMessage());
+            for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
+                messages.put(fieldError.getField(), fieldError.getDefaultMessage());
             }
         }
 
@@ -48,12 +46,12 @@ public class GlobalExceptionHandler {
                 .path(request.getRequestURI())
                 .build();
 
-        return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({UnauthorizedException.class})
-    public ResponseEntity<DefaultExceptionResponse> handle(UnauthorizedException exception, HttpServletRequest request){
-        log.error(exception.getMessage(),exception);
+    public ResponseEntity<DefaultExceptionResponse> handle(UnauthorizedException exception, HttpServletRequest request) {
+        log.error(exception.getMessage(), exception);
 
         return new ResponseEntity<>(DefaultExceptionResponse.builder()
                 .status(HttpStatus.UNAUTHORIZED.value())
@@ -63,10 +61,10 @@ public class GlobalExceptionHandler {
                 .path(request.getRequestURI())
                 .build(), HttpStatus.UNAUTHORIZED);
     }
-    
+
     @ExceptionHandler({NotFoundException.class})
-    public ResponseEntity<DefaultExceptionResponse> handle(NotFoundException exception, HttpServletRequest request){
-        log.error(exception.getMessage(),exception);
+    public ResponseEntity<DefaultExceptionResponse> handle(NotFoundException exception, HttpServletRequest request) {
+        log.error(exception.getMessage(), exception);
 
         return new ResponseEntity<>(DefaultExceptionResponse.builder()
                 .status(HttpStatus.NOT_FOUND.value())
@@ -77,9 +75,14 @@ public class GlobalExceptionHandler {
                 .build(), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler({InvalidRequestParamException.class,InsufficientRevenueException.class,InvalidWithdrawAmountException.class, CartIsEmptyException.class})
-    public ResponseEntity<DefaultExceptionResponse> handle(RuntimeException exception, HttpServletRequest request){
-        log.error(exception.getMessage(),exception);
+    @ExceptionHandler({
+            InvalidRequestParamException.class
+            , InsufficientRevenueException.class
+            , InvalidWithdrawAmountException.class
+            , CartIsEmptyException.class
+            , InvalidCartException.class})
+    public ResponseEntity<DefaultExceptionResponse> handle(RuntimeException exception, HttpServletRequest request) {
+        log.error(exception.getMessage(), exception);
 
         return new ResponseEntity<>(DefaultExceptionResponse.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
@@ -87,12 +90,12 @@ public class GlobalExceptionHandler {
                 .message(exception.getMessage())
                 .timeStamp(System.currentTimeMillis())
                 .path(request.getRequestURI())
-                .build(),HttpStatus.BAD_REQUEST);
+                .build(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler({UserAlreadyHasCartException.class})
-    public ResponseEntity<DefaultExceptionResponse> handle(UserAlreadyHasCartException exception, HttpServletRequest request){
-        log.error(exception.getMessage(),exception);
+    public ResponseEntity<DefaultExceptionResponse> handle(UserAlreadyHasCartException exception, HttpServletRequest request) {
+        log.error(exception.getMessage(), exception);
 
         return new ResponseEntity<>(DefaultExceptionResponse.builder()
                 .status(HttpStatus.CONFLICT.value())
@@ -100,16 +103,16 @@ public class GlobalExceptionHandler {
                 .message(exception.getMessage())
                 .timeStamp(System.currentTimeMillis())
                 .path(request.getRequestURI())
-                .build(),HttpStatus.CONFLICT);
+                .build(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler({InsufficientProductQuantityException.class})
-    public ResponseEntity<InsufficientQuantityResponse> handle(InsufficientProductQuantityException exception,HttpServletRequest request){
-        log.error(exception.getMessage(),exception);
+    public ResponseEntity<InsufficientQuantityResponse> handle(InsufficientProductQuantityException exception, HttpServletRequest request) {
+        log.error(exception.getMessage(), exception);
 
         List<ProductVM> products = exception.getProductsWithInsufficientStock()
                 .stream()
-                .map(product -> mapperService.forResponse().map(product,ProductVM.class))
+                .map(product -> mapperService.forResponse().map(product, ProductVM.class))
                 .toList();
 
 
@@ -124,8 +127,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({MethodNotAllowedException.class})
-    public ResponseEntity<DefaultExceptionResponse> handle(MethodArgumentNotValidException exception, HttpServletRequest request){
-        log.error(exception.getMessage(),exception);
+    public ResponseEntity<DefaultExceptionResponse> handle(MethodArgumentNotValidException exception, HttpServletRequest request) {
+        log.error(exception.getMessage(), exception);
         return ResponseEntity.badRequest().body(DefaultExceptionResponse.builder()
                 .status(HttpStatus.BAD_REQUEST.value())
                 .error(HttpStatus.BAD_REQUEST.getReasonPhrase())

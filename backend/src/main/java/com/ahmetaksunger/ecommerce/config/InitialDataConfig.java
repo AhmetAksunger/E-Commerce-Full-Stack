@@ -29,12 +29,13 @@ public class InitialDataConfig {
 
     private final Faker faker = new Faker();
     private final CartItemRepository cartItemRepository;
+    private final CartRepository cartRepository;
 
     /**
      * Creates specified amount of {@link Customer}s.
      * Each customer has 1 {@link Address}, 1 {@link PaymentDetail} and 1 {@link Cart}
      *
-     * @param amount amount of customers
+     * @param amount number of customers
      */
     private void createCustomers(int amount) {
         for (int i = 0; i < amount; i++) {
@@ -54,12 +55,13 @@ public class InitialDataConfig {
                     .phoneNumber(phoneNumber)
                     .build();
 
+            customerRepository.save(customer);
+
             final Cart cart = Cart.builder()
                     .customer(customer)
                     .build();
 
-            customer.setCart(cart);
-            customerRepository.save(customer);
+            cartRepository.save(cart);
 
             final Address address = Address.builder()
                     .address(faker.address().fullAddress())
@@ -83,11 +85,11 @@ public class InitialDataConfig {
             List<CartItem> cartItems = new ArrayList<CartItem>();
             List<Product> products = productRepository.findAll();
             for (int j = 0; j < 5; j++) {
-                var product = products.get(faker.number().numberBetween(0,products.size() - 1));
+                var product = products.get(faker.number().numberBetween(0, products.size() - 1));
                 CartItem cartItem = CartItem.builder()
                         .cart(cart)
                         .product(product)
-                        .quantity(faker.number().numberBetween(1,5))
+                        .quantity(faker.number().numberBetween(1, 5))
                         .build();
                 cartItemRepository.save(cartItem);
             }
@@ -97,7 +99,7 @@ public class InitialDataConfig {
     /**
      * Creates specified amount of @{@link Category}s
      *
-     * @param amount amount of categories
+     * @param amount number of categories
      */
     private void createCategories(int amount) {
         for (int i = 0; i < amount; i++) {

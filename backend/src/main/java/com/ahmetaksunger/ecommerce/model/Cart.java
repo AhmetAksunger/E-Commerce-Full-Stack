@@ -10,17 +10,23 @@ import java.util.List;
 @Table(name = "carts")
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter @Setter
+@Getter
+@Setter
 @SuperBuilder
-public class Cart extends BaseEntity{
+public class Cart extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @OneToOne
+    @ManyToOne
     private Customer customer;
 
-    @OneToMany(mappedBy = "cart",cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.REMOVE)
     private List<CartItem> cartItems;
+
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private CartStatus status = CartStatus.ACTIVE;
+
 }

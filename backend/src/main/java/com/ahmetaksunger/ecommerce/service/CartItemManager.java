@@ -37,6 +37,7 @@ public class CartItemManager implements CartItemService{
         //Rules
         cartRules.verifyCartBelongsToUser(cart,loggedInUser, UnauthorizedException.class);
         cartRules.checkIfQuantityIsValid(quantity,product);
+        cartRules.checkIfCartActive(cart);
 
         CartItem cartItem = CartItem
                 .builder()
