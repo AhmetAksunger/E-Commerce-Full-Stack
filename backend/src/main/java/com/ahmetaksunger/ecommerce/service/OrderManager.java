@@ -10,6 +10,7 @@ import com.ahmetaksunger.ecommerce.mapper.MapperService;
 import com.ahmetaksunger.ecommerce.model.*;
 import com.ahmetaksunger.ecommerce.repository.*;
 import com.ahmetaksunger.ecommerce.service.rules.AddressRules;
+import com.ahmetaksunger.ecommerce.service.rules.CartRules;
 import com.ahmetaksunger.ecommerce.service.rules.OrderRules;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,7 @@ public class OrderManager implements OrderService {
     private final AddressRules addressRules;
     private final AddressRepository addressRepository;
     private final CartService cartService;
+    private final CartRules cartRules;
 
 
     /**
@@ -75,6 +77,7 @@ public class OrderManager implements OrderService {
         orderRules.checkInsufficientStock(cart); // TODO: Optimistic - Pessimistic lock
         orderRules.checkIfCartIsEmpty(cart);
         addressRules.verifyAddressBelongsToUser(address,customer, UnauthorizedException.class);
+        cartRules.checkIfCartActive(cart);
 
         Order order = Order.builder()
                 .total(PriceCalculator.calculateTotal(cart))

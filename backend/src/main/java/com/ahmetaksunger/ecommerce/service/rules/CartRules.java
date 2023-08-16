@@ -1,11 +1,13 @@
 package com.ahmetaksunger.ecommerce.service.rules;
 
 import com.ahmetaksunger.ecommerce.exception.InsufficientProductQuantityException;
+import com.ahmetaksunger.ecommerce.exception.InvalidCartException;
 import com.ahmetaksunger.ecommerce.exception.NotAllowedException.CartDeletionNotAllowedException;
 import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.CartNotFoundException;
 import com.ahmetaksunger.ecommerce.exception.UserAlreadyHasCartException;
 import com.ahmetaksunger.ecommerce.model.Cart;
+import com.ahmetaksunger.ecommerce.model.CartStatus;
 import com.ahmetaksunger.ecommerce.model.Product;
 import com.ahmetaksunger.ecommerce.model.User;
 import com.ahmetaksunger.ecommerce.repository.CartRepository;
@@ -44,6 +46,12 @@ public class CartRules {
     public void checkIfQuantityIsValid(int quantity, Product product){
         if(quantity > product.getQuantity()){
             throw new InsufficientProductQuantityException(product);
+        }
+    }
+
+    public void checkIfCartActive(Cart cart){
+        if(cart.getStatus().equals(CartStatus.INACTIVE)){
+            throw new InvalidCartException();
         }
     }
 }
