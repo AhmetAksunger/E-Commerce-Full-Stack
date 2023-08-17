@@ -2,11 +2,12 @@ import { legacy_createStore as createStore } from 'redux';
 import rootReducer from './rootReducer';
 import { devToolsEnhancer } from 'redux-devtools-extension';
 import { defaultAuthState } from "./initialValues/authState";
+import ls from '../shared/SecureLsConfiguration';
 
 
 export function configureStore(){
 
-    const authState = localStorage.getItem('auth');
+    const authState = ls.get('auth');
 
     let authStateInLocalStorage = defaultAuthState;
 
