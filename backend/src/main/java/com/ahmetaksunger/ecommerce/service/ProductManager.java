@@ -2,6 +2,8 @@ package com.ahmetaksunger.ecommerce.service;
 
 import com.ahmetaksunger.ecommerce.dto.request.product.CreateProductRequest;
 import com.ahmetaksunger.ecommerce.dto.request.product.UpdateProductRequest;
+import com.ahmetaksunger.ecommerce.dto.response.ProductOrderInfo;
+import com.ahmetaksunger.ecommerce.dto.response.ProductOrderInfoDto;
 import com.ahmetaksunger.ecommerce.dto.response.ProductVM;
 import com.ahmetaksunger.ecommerce.dto.response.SellerVM;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.ProductNotFoundException;
@@ -212,6 +214,23 @@ public class ProductManager implements ProductService {
         }
 
         return mapperService.forResponse().map(productRepository.save(product), ProductVM.class);
+    }
+
+    /**
+     * Retrieves the top ten most ordered products from the {@link ProductRepository#getTop10MostOrderedProducts()}
+     * Maps them to a list of {@link ProductOrderInfoDto}, and returns.
+     * @return {@link List<ProductOrderInfoDto>}
+     */
+
+    @Override
+    public List<ProductOrderInfoDto> getTop10MostOrderedProducts() {
+        List<ProductOrderInfo> productOrderInfos = productRepository.getTop10MostOrderedProducts();
+
+        return productOrderInfos.stream()
+                .map(productOrderInfo -> mapperService
+                        .forResponse()
+                        .map(productOrderInfo, ProductOrderInfoDto.class))
+                .toList();
     }
 
 }
