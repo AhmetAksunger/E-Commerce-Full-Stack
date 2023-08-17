@@ -2,6 +2,7 @@ package com.ahmetaksunger.ecommerce.service;
 
 import com.ahmetaksunger.ecommerce.dto.request.product.CreateProductRequest;
 import com.ahmetaksunger.ecommerce.dto.request.product.UpdateProductRequest;
+import com.ahmetaksunger.ecommerce.dto.response.ProductOrderInfoDto;
 import com.ahmetaksunger.ecommerce.dto.response.ProductVM;
 import com.ahmetaksunger.ecommerce.model.Product;
 import com.ahmetaksunger.ecommerce.model.User;
@@ -27,4 +28,6 @@ public interface ProductService {
     Page<ProductVM> getProductsBySellerId(Long sellerId, Integer page, Integer size);
 
     ProductVM updateProduct(Long productId, UpdateProductRequest updateProductRequest, User loggedInUser);
+
+    List<ProductOrderInfoDto> getTop10MostOrderedProducts();
 }

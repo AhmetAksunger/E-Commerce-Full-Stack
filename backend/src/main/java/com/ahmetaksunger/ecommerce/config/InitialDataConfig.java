@@ -1,7 +1,9 @@
 package com.ahmetaksunger.ecommerce.config;
 
+import com.ahmetaksunger.ecommerce.dto.response.ProductOrderInfo;
 import com.ahmetaksunger.ecommerce.model.*;
 import com.ahmetaksunger.ecommerce.repository.*;
+import com.ahmetaksunger.ecommerce.service.PriceCalculator;
 import com.github.javafaker.Faker;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,7 @@ public class InitialDataConfig {
     private final Faker faker = new Faker();
     private final CartItemRepository cartItemRepository;
     private final CartRepository cartRepository;
+    private final OrderRepository orderRepository;
 
     /**
      * Creates specified amount of {@link Customer}s.
@@ -93,6 +96,16 @@ public class InitialDataConfig {
                         .build();
                 cartItemRepository.save(cartItem);
             }
+
+            Order order = Order.builder()
+                    .customer(customer)
+                    .cart(cart)
+                    .address(address)
+                    .paymentDetail(paymentDetail)
+                    .total(BigDecimal.valueOf(120))
+                    .build();
+
+            orderRepository.save(order);
         }
     }
 

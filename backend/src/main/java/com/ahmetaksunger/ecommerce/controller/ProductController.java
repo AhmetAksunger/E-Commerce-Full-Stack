@@ -2,9 +2,11 @@ package com.ahmetaksunger.ecommerce.controller;
 
 import com.ahmetaksunger.ecommerce.dto.request.product.CreateProductRequest;
 import com.ahmetaksunger.ecommerce.dto.request.product.UpdateProductRequest;
+import com.ahmetaksunger.ecommerce.dto.response.ProductOrderInfoDto;
 import com.ahmetaksunger.ecommerce.dto.response.ProductVM;
 import com.ahmetaksunger.ecommerce.model.User;
 import com.ahmetaksunger.ecommerce.security.CurrentUser;
+import com.ahmetaksunger.ecommerce.service.ProductManager;
 import com.ahmetaksunger.ecommerce.service.ProductService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
@@ -145,6 +147,17 @@ public class ProductController {
                                                    @RequestBody UpdateProductRequest updateProductRequest,
                                                    @CurrentUser User loggedInUser){
         return ResponseEntity.ok(productService.updateProduct(productId,updateProductRequest,loggedInUser));
+    }
+
+    /**
+     * Retrieves the top ten most ordered products from the {@link ProductManager#getTop10MostOrderedProducts()}
+     * And returns a {@link ResponseEntity<List<ProductOrderInfoDto>}
+     * @return Returns a {@link ResponseEntity<List<ProductOrderInfoDto>}
+     */
+    @GetMapping("/most-ordered")
+    @PreAuthorize("hasAuthority('CUSTOMER')")
+    public ResponseEntity<List<ProductOrderInfoDto>> getMostOrderedProducts(){
+        return ResponseEntity.ok(productService.getTop10MostOrderedProducts());
     }
 
 }
