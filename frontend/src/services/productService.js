@@ -19,4 +19,22 @@ export default class ProductService {
 
     return axios.get("/api/v1/products",config);
   }
+
+  /**
+   * 
+   * Fetches a product by the specified product id.
+   * 
+   * @param {string} jwt - JSON Web Token for authentication.
+   * @param {number} id - Product Id
+   * @returns 
+   */
+  getProductById(jwt, id){
+    const config = {
+      headers: {
+        Authorizatio: `Bearer ${jwt}`
+      }
+    };
+
+    return axios.get(`/api/v1/products/${id}`,config);
+  }
 }
