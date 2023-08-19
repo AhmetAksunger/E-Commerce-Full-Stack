@@ -12,12 +12,12 @@ import com.ahmetaksunger.ecommerce.repository.*;
 import com.ahmetaksunger.ecommerce.service.rules.AddressRules;
 import com.ahmetaksunger.ecommerce.service.rules.CartRules;
 import com.ahmetaksunger.ecommerce.service.rules.OrderRules;
+import com.ahmetaksunger.ecommerce.service.transaction.PaymentTransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,10 +39,10 @@ public class OrderManager implements OrderService {
     private final AddressRepository addressRepository;
     private final CartService cartService;
     private final CartRules cartRules;
+    private final PaymentTransactionService paymentTransactionService;
 
 
     /**
-     *
      * <p> - Verifies that the specified cart, payment detail, and address belong to the customer.</p>
      * <p> - Checks if the products in the cart still have enough stocks</p>
      * <p> - Checks if the cart is empty</p>
@@ -54,8 +54,9 @@ public class OrderManager implements OrderService {
      * <p>4-) It deactivates the customer's used cart</p>
      * <p>5-) It creates a new cart for the customer</p>
      * <p>Then returns {@link OrderCompletedResponse}</p>
+     *
      * @param createOrderRequest {@link CreateOrderRequest}
-     * @param loggedInUser {@link Customer}
+     * @param loggedInUser       {@link Customer}
      * @return {@link OrderCompletedResponse}
      * @see OrderRules
      * @see AddressRules
@@ -66,20 +67,25 @@ public class OrderManager implements OrderService {
     @Transactional
     public OrderCompletedResponse create(CreateOrderRequest createOrderRequest, User loggedInUser) {
 
-        Customer customer = (Customer) loggedInUser;
+        final Customer customer = (Customer) loggedInUser;
 
-        Cart cart = cartRepository.findById(createOrderRequest.getCartId()).orElseThrow(CartNotFoundException::new);
-        PaymentDetail paymentDetail = paymentDetailRepository.findById(createOrderRequest.getPaymentDetailId()).orElseThrow(PaymentDetailNotFoundException::new);
-        Address address = addressRepository.findById(createOrderRequest.getAddressId()).orElseThrow(AddressNotFoundException::new);
+        final Cart cart = cartRepository.findById(createOrderRequest.getCartId()).orElseThrow(CartNotFoundException::new);
+        final PaymentDetail paymentDetail = paymentDetailRepository.findById(createOrderRequest.getPaymentDetailId()).orElseThrow(PaymentDetailNotFoundException::new);
+        final Address address = addressRepository.findById(createOrderRequest.getAddressId()).orElseThrow(AddressNotFoundException::new);
 
         //Rules
         orderRules.verifyCartAndPaymentDetailBelongsToUser(cart, paymentDetail, customer);
         orderRules.checkInsufficientStock(cart); // TODO: Optimistic - Pessimistic lock
         orderRules.checkIfCartIsEmpty(cart);
-        addressRules.verifyAddressBelongsToUser(address,customer, UnauthorizedException.class);
+        addressRules.verifyAddressBelongsToUser(address, customer, UnauthorizedException.class);
         cartRules.checkIfCartActive(cart);
 
-        Order order = Order.builder()
+        final List<Product> boughtProducts = cart.getCartItems()
+                .stream()
+                .map(CartItem::getProduct)
+                .toList();
+
+        final Order order = Order.builder()
                 .total(PriceCalculator.calculateTotal(cart))
                 .cart(cart)
                 .customer(customer)
@@ -87,13 +93,15 @@ public class OrderManager implements OrderService {
                 .address(address)
                 .build();
 
-        Order dbOrder = orderRepository.save(order);
+        final Order dbOrder = orderRepository.save(order);
+
+        // Creating a payment transaction for the bought products
+        boughtProducts.forEach(product ->
+                paymentTransactionService.createTransactionForPurchaseOperations(customer, paymentDetail, product));
+
 
         // Reducing quantities by one, for the bought products
-        productService.reduceQuantityForBoughtProducts(cart.getCartItems()
-                .stream()
-                .map(CartItem::getProduct)
-                .toList());
+        productService.reduceQuantityForBoughtProducts(boughtProducts);
 
         // Incrementing the seller's total revenue
         HashMap<Long, BigDecimal> sellerTotalRevenue = this.calculateRevenuesForSellers(cart);
@@ -109,7 +117,7 @@ public class OrderManager implements OrderService {
         cartService.deactivateCart(cart);
 
         // Creating a new cart for the customer
-        Cart newCart = cartService.create(customer);
+        final Cart newCart = cartService.create(customer);
 
         var response = mapperService.forResponse().map(dbOrder, OrderCompletedResponse.class);
         response.setNewCartId(newCart.getId());
