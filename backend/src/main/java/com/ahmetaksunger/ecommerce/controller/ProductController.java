@@ -2,6 +2,7 @@ package com.ahmetaksunger.ecommerce.controller;
 
 import com.ahmetaksunger.ecommerce.dto.request.product.CreateProductRequest;
 import com.ahmetaksunger.ecommerce.dto.request.product.UpdateProductRequest;
+import com.ahmetaksunger.ecommerce.dto.response.GetProductByIdResponse;
 import com.ahmetaksunger.ecommerce.dto.response.ProductOrderInfoDto;
 import com.ahmetaksunger.ecommerce.dto.response.ProductVM;
 import com.ahmetaksunger.ecommerce.model.User;
@@ -109,7 +110,7 @@ public class ProductController {
      */
     @GetMapping("/{productId}")
     @PreAuthorize("hasAnyAuthority('SELLER','CUSTOMER')")
-    public ResponseEntity<ProductVM> getProductById(@PathVariable Long productId){
+    public ResponseEntity<GetProductByIdResponse> getProductById(@PathVariable Long productId){
         return ResponseEntity.ok(productService.getProductById(productId));
     }
 
@@ -124,10 +125,10 @@ public class ProductController {
      */
     @GetMapping("/seller/{sellerId}")
     @PreAuthorize("hasAnyAuthority('SELLER','CUSTOMER')")
-    public ResponseEntity<Page<ProductVM>> getProductsBySellerId(@PathVariable Long sellerId,
-                                                                 @RequestParam(name = "page",defaultValue = "0")
+    public ResponseEntity<Page<GetProductByIdResponse>> getProductsBySellerId(@PathVariable Long sellerId,
+                                                                              @RequestParam(name = "page",defaultValue = "0")
                                                                  Integer page,
-                                                                 @RequestParam(name = "size",defaultValue = "5")
+                                                                              @RequestParam(name = "size",defaultValue = "5")
                                                                  Integer size){
         return ResponseEntity.ok(productService.getProductsBySellerId(sellerId,page,size));
     }
