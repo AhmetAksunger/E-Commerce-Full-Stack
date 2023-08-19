@@ -1,6 +1,7 @@
 package com.ahmetaksunger.ecommerce.model.transaction;
 
 import com.ahmetaksunger.ecommerce.model.BaseEntity;
+import com.ahmetaksunger.ecommerce.model.Customer;
 import com.ahmetaksunger.ecommerce.model.PaymentDetail;
 import com.ahmetaksunger.ecommerce.model.Seller;
 import jakarta.persistence.*;
@@ -24,6 +25,8 @@ public class PaymentTransaction extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     private Long id;
+    @ManyToOne
+    private Customer customer;
     @ManyToOne
     private Seller seller;
     @Column(name = "amount", nullable = false)
