@@ -31,7 +31,7 @@ export default class ProductService {
   getProductById(jwt, id){
     const config = {
       headers: {
-        Authorizatio: `Bearer ${jwt}`
+        Authorization: `Bearer ${jwt}`
       }
     };
 
