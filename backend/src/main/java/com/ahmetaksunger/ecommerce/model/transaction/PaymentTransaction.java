@@ -30,5 +30,7 @@ public class PaymentTransaction extends BaseEntity {
     private BigDecimal amount;
     @ManyToOne
     private PaymentDetail paymentDetail;
+    @Enumerated(EnumType.STRING)
+    private TransactionType transactionType;
 
 }
