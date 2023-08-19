@@ -18,10 +18,11 @@ import {
 } from "semantic-ui-react";
 import { defaultProduct } from "../utils/constants";
 import CartItemService from "../services/cartItemService";
+import { ToastContainer, toast } from "react-toastify";
 
 const ProductDetail = () => {
-  const { id:productId } = useParams();
-  const { jwt,cartId } = useSelector((state) => state.auth);
+  const { id: productId } = useParams();
+  const { jwt, cartId } = useSelector((state) => state.auth);
 
   const [product, setProduct] = useState(defaultProduct);
 
@@ -38,11 +39,39 @@ const ProductDetail = () => {
 
   const onClickAddToCart = () => {
     let cartItemService = new CartItemService();
-    cartItemService.addCartItem(jwt,cartId,productId,1);
-  }
+    cartItemService
+      .addCartItem(jwt, cartId, productId, 1)
+      .then((response) => null);
+    notify();
+  };
+
+  const notify = () => {
+    return toast.success("Added to the cart", {
+      position: "top-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+  };
 
   return (
     <Segment>
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
       <Grid>
         <Grid.Column width={6}>
           <Segment placeholder style={{ height: "100%" }}>
@@ -134,7 +163,7 @@ const ProductDetail = () => {
               <Grid.Row>
                 <strong>Categories</strong>
                 <Table>
-                  {product.categories.map((category,idx) => (
+                  {product.categories.map((category, idx) => (
                     <Table.Row>
                       <Table.Cell>{category.name}</Table.Cell>
                     </Table.Row>
