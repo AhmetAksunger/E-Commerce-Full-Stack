@@ -7,13 +7,17 @@ import ls from '../shared/SecureLsConfiguration';
 
 export function configureStore(){
 
-    const authState = ls.get('auth');
+    let authState = defaultAuthState
 
-    let authStateInLocalStorage = defaultAuthState;
-
-    if(authState){
-        authStateInLocalStorage = JSON.parse(authState);
+    try {
+        authState = ls.get('auth');
+    } catch (error) {
+        console.log(error);
     }
 
-    return createStore(rootReducer,{auth:authStateInLocalStorage},devToolsEnhancer())
+    if(authState){
+        authState = JSON.parse(authState);
+    }
+
+    return createStore(rootReducer,{auth:authState},devToolsEnhancer())
 }
