@@ -27,3 +27,31 @@ export const sortOptions = [
     {key: "asc", text:"Ascending", value: "asc", icon:"sort up"},
     {key: "desc", text:"Descending", value: "desc", icon:"sort down"},
 ];
+
+export const defaultProduct = {
+  "id": 0,
+  "name": "",
+  "price": 0.0,
+  "quantity": 0,
+  "logo": "",
+  "createdAt": 0,
+  "updatedAt": null,
+  "seller": {
+      "sellerId": 0,
+      "companyName": "",
+      "contactNumber": "",
+      "logo": ""
+  },
+  "categories": [
+      {
+          "id": 0,
+          "name": "",
+          "description": ""
+      },
+      {
+          "id": 0,
+          "name": "",
+          "description": ""
+      }
+  ]
+};
