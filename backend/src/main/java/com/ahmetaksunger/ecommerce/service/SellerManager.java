@@ -29,7 +29,6 @@ public class SellerManager implements SellerService {
     private final PaymentDetailRepository paymentDetailRepository;
     private final PaymentDetailRules paymentDetailRules;
     private final WithdrawRules withdrawRules;
-    private final PaymentTransactionRepository paymentTransactionRepository;
     private final MapperService mapperService;
     private final PaymentTransactionService paymentTransactionService;
 
@@ -87,6 +86,6 @@ public class SellerManager implements SellerService {
         var transaction = paymentTransactionService.createTransactionForWithdrawOperations(seller,paymentDetail,withdrawRevenueRequest.getWithdrawAmount());
 
         return mapperService.forResponse()
-                .map(paymentTransactionRepository.save(transaction), WithdrawSuccessResponse.class);
+                .map(transaction, WithdrawSuccessResponse.class);
     }
 }
