@@ -8,10 +8,10 @@ import com.ahmetaksunger.ecommerce.mapper.MapperService;
 import com.ahmetaksunger.ecommerce.model.PaymentDetail;
 import com.ahmetaksunger.ecommerce.model.Seller;
 import com.ahmetaksunger.ecommerce.model.User;
-import com.ahmetaksunger.ecommerce.model.transaction.WithdrawTransaction;
+import com.ahmetaksunger.ecommerce.model.transaction.PaymentTransaction;
 import com.ahmetaksunger.ecommerce.repository.PaymentDetailRepository;
 import com.ahmetaksunger.ecommerce.repository.SellerRepository;
-import com.ahmetaksunger.ecommerce.repository.WithdrawTransactionRepository;
+import com.ahmetaksunger.ecommerce.repository.PaymentTransactionRepository;
 import com.ahmetaksunger.ecommerce.service.rules.PaymentDetailRules;
 import com.ahmetaksunger.ecommerce.service.rules.WithdrawRules;
 import jakarta.transaction.Transactional;
@@ -28,7 +28,7 @@ public class SellerManager implements SellerService {
     private final PaymentDetailRepository paymentDetailRepository;
     private final PaymentDetailRules paymentDetailRules;
     private final WithdrawRules withdrawRules;
-    private final WithdrawTransactionRepository withdrawTransactionRepository;
+    private final PaymentTransactionRepository paymentTransactionRepository;
     private final MapperService mapperService;
 
     /**
@@ -55,7 +55,7 @@ public class SellerManager implements SellerService {
      * <p> - Checks if the withdrawal amount is valid (Specified on the application.properties).</p>
      * <p> - Checks if the seller has enough revenue to withdraw.</p>
      * Then decrements the seller's revenue by the withdrawn amount
-     * At the end, creates a {@link WithdrawTransaction} to log the withdrawal operation.
+     * At the end, creates a {@link PaymentTransaction} to log the withdrawal operation.
      *
      * @param withdrawRevenueRequest {@link WithdrawRevenueRequest}
      * @param loggedInUser           {@link Seller}
@@ -82,7 +82,7 @@ public class SellerManager implements SellerService {
         this.updateTotalRevenue(seller, withdrawRevenueRequest.getWithdrawAmount(), false);
 
         //Withdraw Transaction
-        WithdrawTransaction transaction = WithdrawTransaction.builder()
+        PaymentTransaction transaction = PaymentTransaction.builder()
                 .seller(seller)
                 .amount(withdrawRevenueRequest.getWithdrawAmount())
                 .paymentDetail(paymentDetail)
@@ -90,6 +90,6 @@ public class SellerManager implements SellerService {
 
 
         return mapperService.forResponse()
-                .map(withdrawTransactionRepository.save(transaction), WithdrawSuccessResponse.class);
+                .map(paymentTransactionRepository.save(transaction), WithdrawSuccessResponse.class);
     }
 }

@@ -9,10 +9,10 @@ import com.ahmetaksunger.ecommerce.mapper.MapperManager;
 import com.ahmetaksunger.ecommerce.mapper.MapperService;
 import com.ahmetaksunger.ecommerce.model.PaymentDetail;
 import com.ahmetaksunger.ecommerce.model.Seller;
-import com.ahmetaksunger.ecommerce.model.transaction.WithdrawTransaction;
+import com.ahmetaksunger.ecommerce.model.transaction.PaymentTransaction;
 import com.ahmetaksunger.ecommerce.repository.PaymentDetailRepository;
 import com.ahmetaksunger.ecommerce.repository.SellerRepository;
-import com.ahmetaksunger.ecommerce.repository.WithdrawTransactionRepository;
+import com.ahmetaksunger.ecommerce.repository.PaymentTransactionRepository;
 import com.ahmetaksunger.ecommerce.service.rules.PaymentDetailRules;
 import com.ahmetaksunger.ecommerce.service.rules.WithdrawRules;
 import org.junit.jupiter.api.Assertions;
@@ -23,7 +23,6 @@ import org.mockito.Mockito;
 import org.modelmapper.ModelMapper;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Optional;
 
 class SellerManagerTest {
@@ -33,7 +32,7 @@ class SellerManagerTest {
     private PaymentDetailRepository paymentDetailRepository;
     private PaymentDetailRules paymentDetailRules;
     private WithdrawRules withdrawRules;
-    private WithdrawTransactionRepository withdrawTransactionRepository;
+    private PaymentTransactionRepository paymentTransactionRepository;
     private MapperService mapperService = new MapperManager(new ModelMapper());;
 
     @BeforeEach
@@ -42,8 +41,8 @@ class SellerManagerTest {
         paymentDetailRepository = Mockito.mock(PaymentDetailRepository.class);
         paymentDetailRules = Mockito.mock(PaymentDetailRules.class);
         withdrawRules = Mockito.mock(WithdrawRules.class);
-        withdrawTransactionRepository = Mockito.mock(WithdrawTransactionRepository.class);
-        sellerManager = new SellerManager(sellerRepository, paymentDetailRepository, paymentDetailRules, withdrawRules, withdrawTransactionRepository, mapperService);
+        paymentTransactionRepository = Mockito.mock(PaymentTransactionRepository.class);
+        sellerManager = new SellerManager(sellerRepository, paymentDetailRepository, paymentDetailRules, withdrawRules, paymentTransactionRepository, mapperService);
     }
 
     @DisplayName("When withdraw method is called with a valid request, " +
@@ -72,7 +71,7 @@ class SellerManagerTest {
                 .user(seller)
                 .build();
 
-        WithdrawTransaction transaction = WithdrawTransaction.builder()
+        PaymentTransaction transaction = PaymentTransaction.builder()
                 .seller(seller)
                 .amount(request.getWithdrawAmount())
                 .paymentDetail(paymentDetail)
@@ -89,7 +88,7 @@ class SellerManagerTest {
                 .build();
 
         Mockito.when(paymentDetailRepository.findById(1L)).thenReturn(Optional.of(paymentDetail));
-        Mockito.when(withdrawTransactionRepository.save(transaction)).thenReturn(transaction);
+        Mockito.when(paymentTransactionRepository.save(transaction)).thenReturn(transaction);
         WithdrawSuccessResponse result = sellerManager.withdraw(request, seller);
 
         Mockito.doNothing().when(paymentDetailRules).verifyPaymentDetailBelongsToUser(paymentDetail,seller, UnauthorizedException.class);
@@ -118,7 +117,7 @@ class SellerManagerTest {
 
         Assertions.assertThrows(PaymentDetailNotFoundException.class,() -> sellerManager.withdraw(request,new Seller()));
         Mockito.verifyNoInteractions(withdrawRules);
-        Mockito.verifyNoInteractions(withdrawTransactionRepository);
+        Mockito.verifyNoInteractions(paymentTransactionRepository);
     }
 
 }

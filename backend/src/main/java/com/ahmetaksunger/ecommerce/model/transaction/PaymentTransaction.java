@@ -13,13 +13,13 @@ import lombok.experimental.SuperBuilder;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "withdraw_transactions")
+@Table(name = "payment_transactions")
 @Getter
 @Setter
 @EqualsAndHashCode
 @SuperBuilder
 @NoArgsConstructor
-public class WithdrawTransaction extends BaseEntity {
+public class PaymentTransaction extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
