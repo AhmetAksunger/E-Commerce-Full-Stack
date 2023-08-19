@@ -2,6 +2,7 @@ package com.ahmetaksunger.ecommerce.service;
 
 import com.ahmetaksunger.ecommerce.dto.request.withdraw.WithdrawRevenueRequest;
 import com.ahmetaksunger.ecommerce.dto.response.WithdrawSuccessResponse;
+import com.ahmetaksunger.ecommerce.exception.InsufficientRevenueException;
 import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.PaymentDetailNotFoundException;
 import com.ahmetaksunger.ecommerce.mapper.MapperService;
@@ -76,7 +77,21 @@ public class SellerManager implements SellerService {
         //Rules
         paymentDetailRules.verifyPaymentDetailBelongsToUser(paymentDetail, seller, UnauthorizedException.class);
         withdrawRules.checkIfWithdrawAmountValid(withdrawRevenueRequest.getWithdrawAmount());
-        withdrawRules.checkIfSellerHasEnoughRevenueToWithdraw(seller, withdrawRevenueRequest.getWithdrawAmount());
+        try {
+            withdrawRules.checkIfSellerHasEnoughRevenueToWithdraw(seller, withdrawRevenueRequest.getWithdrawAmount());
+        }catch (InsufficientRevenueException exception){
+            final PaymentTransaction transaction = PaymentTransaction.builder()
+                    .seller(seller)
+                    .amount(withdrawRevenueRequest.getWithdrawAmount())
+                    .paymentDetail(paymentDetail)
+                    .transactionType(TransactionType.WITHDRAW)
+                    .status(PaymentStatus.FAILED)
+                    .failureReason(exception.getMessage())
+                    .build();
+            paymentTransactionRepository.save(transaction);
+
+            throw new InsufficientRevenueException();
+        }
 
         // Simulating payment operations
 
@@ -84,7 +99,7 @@ public class SellerManager implements SellerService {
         this.updateTotalRevenue(seller, withdrawRevenueRequest.getWithdrawAmount(), false);
 
         //Withdraw Transaction
-        PaymentTransaction transaction = PaymentTransaction.builder()
+        final PaymentTransaction transaction = PaymentTransaction.builder()
                 .seller(seller)
                 .amount(withdrawRevenueRequest.getWithdrawAmount())
                 .paymentDetail(paymentDetail)
