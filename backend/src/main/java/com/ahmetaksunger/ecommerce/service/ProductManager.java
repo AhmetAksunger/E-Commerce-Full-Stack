@@ -158,7 +158,8 @@ public class ProductManager implements ProductService {
 
         Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
         GetProductByIdResponse response = mapperService.forResponse().map(product, GetProductByIdResponse.class);
-        response.setOrderCount(productRepository.getOrderCountByProductId(productId));
+        var orderCount = productRepository.getOrderCountByProductId(productId);
+        response.setOrderCount(orderCount != null ? orderCount : 0L);
         return response;
     }
 
@@ -178,7 +179,8 @@ public class ProductManager implements ProductService {
         return productRepository.findBySellerId(sellerId, pageable)
                 .map(product -> {
                     GetProductByIdResponse response = mapperService.forResponse().map(product, GetProductByIdResponse.class);
-                    response.setOrderCount(productRepository.getOrderCountByProductId(product.getId()));
+                    var orderCount = productRepository.getOrderCountByProductId(product.getId());
+                    response.setOrderCount(orderCount != null ? orderCount : 0L);
                     return response;
                 });
     }
