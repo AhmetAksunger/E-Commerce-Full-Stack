@@ -25,17 +25,17 @@ public class PaymentTransactionManager implements PaymentTransactionService {
      *
      * @param customer The customer who has ordered
      * @param paymentDetail The payment detail that the customer used
-     * @param boughtProduct The product that the customer purchased
+     * @param total Total price paid
      * @return Returns the saved {@link PaymentTransaction}
      */
     @Override
     public PaymentTransaction createTransactionForPurchaseOperations(Customer customer,
                                                                      PaymentDetail paymentDetail,
-                                                                     Product boughtProduct) {
+                                                                     BigDecimal total) {
         PaymentTransaction transaction = PaymentTransaction.builder()
                 .customer(customer)
-                .seller(boughtProduct.getSeller())
-                .amount(boughtProduct.getPrice())
+                .seller(null)
+                .amount(total)
                 .paymentDetail(paymentDetail)
                 .transactionType(TransactionType.PURCHASE)
                 .status(PaymentStatus.COMPLETED)

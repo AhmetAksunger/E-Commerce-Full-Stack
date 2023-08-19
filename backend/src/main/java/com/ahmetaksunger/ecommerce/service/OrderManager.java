@@ -85,8 +85,10 @@ public class OrderManager implements OrderService {
                 .map(CartItem::getProduct)
                 .toList();
 
+        final BigDecimal total = PriceCalculator.calculateTotal(cart);
+
         final Order order = Order.builder()
-                .total(PriceCalculator.calculateTotal(cart))
+                .total(total)
                 .cart(cart)
                 .customer(customer)
                 .paymentDetail(paymentDetail)
@@ -96,9 +98,7 @@ public class OrderManager implements OrderService {
         final Order dbOrder = orderRepository.save(order);
 
         // Creating a payment transaction for the bought products
-        boughtProducts.forEach(product ->
-                paymentTransactionService.createTransactionForPurchaseOperations(customer, paymentDetail, product));
-
+        paymentTransactionService.createTransactionForPurchaseOperations(customer,paymentDetail,total);
 
         // Reducing quantities by one, for the bought products
         productService.reduceQuantityForBoughtProducts(boughtProducts);
