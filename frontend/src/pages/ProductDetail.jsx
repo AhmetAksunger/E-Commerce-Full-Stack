@@ -13,14 +13,16 @@ import {
   Label,
   Segment,
   Statistic,
+  Tab,
   Table,
 } from "semantic-ui-react";
+import { defaultProduct } from "../utils/constants";
 
 const ProductDetail = () => {
   const { id } = useParams();
   const { jwt } = useSelector((state) => state.auth);
 
-  const [product, setProduct] = useState({});
+  const [product, setProduct] = useState(defaultProduct);
 
   useEffect(() => {
     getProductById();
@@ -28,10 +30,9 @@ const ProductDetail = () => {
 
   const getProductById = () => {
     let productService = new ProductService();
-    const response = productService
+    productService
       .getProductById(jwt, id)
-      .then((response) => setProduct(response.data))
-      .catch((error) => console.log(error));
+      .then((response) => setProduct(response.data));
   };
 
   return (
@@ -39,28 +40,31 @@ const ProductDetail = () => {
       <Grid>
         <Grid.Column width={6}>
           <Segment placeholder style={{ height: "100%" }}>
-            <Image
-              src="https://pigment.github.io/fake-logos/logos/medium/color/2.png"
-              fluid
-            />
+            <Image src={product.logo} fluid />
           </Segment>
         </Grid.Column>
         <Grid.Column width={10}>
           <Segment placeholder>
             <div>
               <Label basic size="massive">
-                Product Name Here
+                {product.name}
               </Label>
             </div>
-            <div style={{ textAlign: "left", marginTop:"1rem",marginBottom:"1rem"}}>
+            <div
+              style={{
+                textAlign: "left",
+                marginTop: "1rem",
+                marginBottom: "1rem",
+              }}
+            >
               <Label as="a" color="teal" size="medium" image>
-                <Image src="https://pigment.github.io/fake-logos/logos/medium/color/2.png"/>
-                Company Name Here
-              </Label>{" "}
+                <Image src={product.seller.logo} />
+                {product.seller.companyName}
+              </Label>
             </div>
             <div style={{ textAlign: "left" }}>
               <Statistic size="small">
-                <Statistic.Value>123₺</Statistic.Value>
+                <Statistic.Value>{`${product.price}₺`}</Statistic.Value>
               </Statistic>
             </div>
             <Divider />
@@ -107,7 +111,7 @@ const ProductDetail = () => {
                   <Statistic>
                     <Statistic.Value>
                       <Icon name="box" />
-                      100
+                      {product.quantity}
                     </Statistic.Value>
                     <Statistic.Label>In Stock</Statistic.Label>
                   </Statistic>
@@ -123,12 +127,11 @@ const ProductDetail = () => {
               <Grid.Row>
                 <strong>Categories</strong>
                 <Table>
-                  <Table.Row>
-                    <Table.Cell>a</Table.Cell>
-                  </Table.Row>
-                  <Table.Row>
-                    <Table.Cell>a</Table.Cell>
-                  </Table.Row>
+                  {product.categories.map((category,idx) => (
+                    <Table.Row>
+                      <Table.Cell>{category.name}</Table.Cell>
+                    </Table.Row>
+                  ))}
                 </Table>
               </Grid.Row>
             </Grid>
