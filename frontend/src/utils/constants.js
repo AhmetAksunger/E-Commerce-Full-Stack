@@ -33,6 +33,7 @@ export const defaultProduct = {
   "name": "",
   "price": 0.0,
   "quantity": 0,
+  "orderCount": 0,
   "logo": "",
   "createdAt": 0,
   "updatedAt": null,

@@ -154,7 +154,7 @@ const ProductDetail = () => {
                   <Statistic>
                     <Statistic.Value>
                       <Icon name="shipping" />
-                      1023
+                      {product.orderCount}
                     </Statistic.Value>
                     <Statistic.Label>Total Orders</Statistic.Label>
                   </Statistic>
