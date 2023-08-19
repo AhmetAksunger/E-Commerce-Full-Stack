@@ -8,11 +8,13 @@ import com.ahmetaksunger.ecommerce.exception.NotFoundException.CartNotFoundExcep
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.PaymentDetailNotFoundException;
 import com.ahmetaksunger.ecommerce.mapper.MapperService;
 import com.ahmetaksunger.ecommerce.model.*;
+import com.ahmetaksunger.ecommerce.model.transaction.PaymentStatus;
+import com.ahmetaksunger.ecommerce.model.transaction.PaymentTransaction;
+import com.ahmetaksunger.ecommerce.model.transaction.TransactionType;
 import com.ahmetaksunger.ecommerce.repository.*;
 import com.ahmetaksunger.ecommerce.service.rules.AddressRules;
 import com.ahmetaksunger.ecommerce.service.rules.CartRules;
 import com.ahmetaksunger.ecommerce.service.rules.OrderRules;
-import com.ahmetaksunger.ecommerce.service.transaction.PaymentTransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,7 +41,7 @@ public class OrderManager implements OrderService {
     private final AddressRepository addressRepository;
     private final CartService cartService;
     private final CartRules cartRules;
-    private final PaymentTransactionService paymentTransactionService;
+    private final PaymentTransactionRepository paymentTransactionRepository;
 
 
     /**
@@ -98,7 +100,15 @@ public class OrderManager implements OrderService {
         final Order dbOrder = orderRepository.save(order);
 
         // Creating a payment transaction for the bought products
-        paymentTransactionService.createTransactionForPurchaseOperations(customer,paymentDetail,total);
+        PaymentTransaction transaction = PaymentTransaction.builder()
+                .customer(customer)
+                .amount(total)
+                .paymentDetail(paymentDetail)
+                .transactionType(TransactionType.PURCHASE)
+                .status(PaymentStatus.COMPLETED)
+                .build();
+
+        paymentTransactionRepository.save(transaction);
 
         // Reducing quantities by one, for the bought products
         productService.reduceQuantityForBoughtProducts(boughtProducts);
@@ -152,5 +162,4 @@ public class OrderManager implements OrderService {
                 });
         return sellerIdRevenueMap;
     }
-
 }

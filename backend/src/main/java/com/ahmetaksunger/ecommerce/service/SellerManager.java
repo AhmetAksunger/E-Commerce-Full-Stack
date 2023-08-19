@@ -8,13 +8,14 @@ import com.ahmetaksunger.ecommerce.mapper.MapperService;
 import com.ahmetaksunger.ecommerce.model.PaymentDetail;
 import com.ahmetaksunger.ecommerce.model.Seller;
 import com.ahmetaksunger.ecommerce.model.User;
+import com.ahmetaksunger.ecommerce.model.transaction.PaymentStatus;
 import com.ahmetaksunger.ecommerce.model.transaction.PaymentTransaction;
+import com.ahmetaksunger.ecommerce.model.transaction.TransactionType;
 import com.ahmetaksunger.ecommerce.repository.PaymentDetailRepository;
-import com.ahmetaksunger.ecommerce.repository.SellerRepository;
 import com.ahmetaksunger.ecommerce.repository.PaymentTransactionRepository;
+import com.ahmetaksunger.ecommerce.repository.SellerRepository;
 import com.ahmetaksunger.ecommerce.service.rules.PaymentDetailRules;
 import com.ahmetaksunger.ecommerce.service.rules.WithdrawRules;
-import com.ahmetaksunger.ecommerce.service.transaction.PaymentTransactionService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,7 @@ public class SellerManager implements SellerService {
     private final PaymentDetailRules paymentDetailRules;
     private final WithdrawRules withdrawRules;
     private final MapperService mapperService;
-    private final PaymentTransactionService paymentTransactionService;
+    private final PaymentTransactionRepository paymentTransactionRepository;
 
     /**
      * Updates the seller's total revenue by the amount and increment/decrement specified.
@@ -83,9 +84,17 @@ public class SellerManager implements SellerService {
         this.updateTotalRevenue(seller, withdrawRevenueRequest.getWithdrawAmount(), false);
 
         //Withdraw Transaction
-        var transaction = paymentTransactionService.createTransactionForWithdrawOperations(seller,paymentDetail,withdrawRevenueRequest.getWithdrawAmount());
+        PaymentTransaction transaction = PaymentTransaction.builder()
+                .seller(seller)
+                .amount(withdrawRevenueRequest.getWithdrawAmount())
+                .paymentDetail(paymentDetail)
+                .transactionType(TransactionType.WITHDRAW)
+                .status(PaymentStatus.COMPLETED)
+                .build();
+
+        paymentTransactionRepository.save(transaction);
 
         return mapperService.forResponse()
-                .map(transaction, WithdrawSuccessResponse.class);
+                .map(paymentTransactionRepository.save(transaction), WithdrawSuccessResponse.class);
     }
 }
