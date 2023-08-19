@@ -17,10 +17,11 @@ import {
   Table,
 } from "semantic-ui-react";
 import { defaultProduct } from "../utils/constants";
+import CartItemService from "../services/cartItemService";
 
 const ProductDetail = () => {
-  const { id } = useParams();
-  const { jwt } = useSelector((state) => state.auth);
+  const { id:productId } = useParams();
+  const { jwt,cartId } = useSelector((state) => state.auth);
 
   const [product, setProduct] = useState(defaultProduct);
 
@@ -31,9 +32,14 @@ const ProductDetail = () => {
   const getProductById = () => {
     let productService = new ProductService();
     productService
-      .getProductById(jwt, id)
+      .getProductById(jwt, productId)
       .then((response) => setProduct(response.data));
   };
+
+  const onClickAddToCart = () => {
+    let cartItemService = new CartItemService();
+    cartItemService.addCartItem(jwt,cartId,productId,1);
+  }
 
   return (
     <Segment>
@@ -74,6 +80,7 @@ const ProductDetail = () => {
                 color="orange"
                 animated
                 style={{ width: "100%" }}
+                onClick={onClickAddToCart}
               >
                 <Button.Content visible>Add to Cart</Button.Content>
                 <Button.Content hidden>
