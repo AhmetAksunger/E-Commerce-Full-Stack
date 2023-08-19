@@ -35,5 +35,6 @@ public class PaymentTransaction extends BaseEntity {
     private PaymentDetail paymentDetail;
     @Enumerated(EnumType.STRING)
     private TransactionType transactionType;
-
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus status;
 }
