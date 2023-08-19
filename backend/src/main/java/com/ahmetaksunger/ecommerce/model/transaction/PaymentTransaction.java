@@ -37,5 +37,5 @@ public class PaymentTransaction extends BaseEntity {
     private TransactionType transactionType;
     @Enumerated(EnumType.STRING)
     private PaymentStatus status;
-    private String exceptionMessage;
+    private String failureReason;
 }
