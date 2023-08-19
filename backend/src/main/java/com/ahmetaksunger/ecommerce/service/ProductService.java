@@ -2,6 +2,7 @@ package com.ahmetaksunger.ecommerce.service;
 
 import com.ahmetaksunger.ecommerce.dto.request.product.CreateProductRequest;
 import com.ahmetaksunger.ecommerce.dto.request.product.UpdateProductRequest;
+import com.ahmetaksunger.ecommerce.dto.response.GetProductByIdResponse;
 import com.ahmetaksunger.ecommerce.dto.response.ProductOrderInfoDto;
 import com.ahmetaksunger.ecommerce.dto.response.ProductVM;
 import com.ahmetaksunger.ecommerce.model.Product;
@@ -23,9 +24,9 @@ public interface ProductService {
 
     void reduceQuantityForBoughtProducts(List<Product> boughtProducts);
 
-    ProductVM getProductById(Long productId);
+    GetProductByIdResponse getProductById(Long productId);
 
-    Page<ProductVM> getProductsBySellerId(Long sellerId, Integer page, Integer size);
+    Page<GetProductByIdResponse> getProductsBySellerId(Long sellerId, Integer page, Integer size);
 
     ProductVM updateProduct(Long productId, UpdateProductRequest updateProductRequest, User loggedInUser);
 

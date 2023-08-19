@@ -17,7 +17,8 @@ public class ProductVM {
     private long id;
     private String name;
     private BigDecimal price;
-    private int quantity;
+    private Integer quantity;
+    private Long orderCount;
     private String logo;
     private Date createdAt;
     private Date updatedAt;

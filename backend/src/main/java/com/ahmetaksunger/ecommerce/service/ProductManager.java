@@ -2,10 +2,7 @@ package com.ahmetaksunger.ecommerce.service;
 
 import com.ahmetaksunger.ecommerce.dto.request.product.CreateProductRequest;
 import com.ahmetaksunger.ecommerce.dto.request.product.UpdateProductRequest;
-import com.ahmetaksunger.ecommerce.dto.response.ProductOrderInfo;
-import com.ahmetaksunger.ecommerce.dto.response.ProductOrderInfoDto;
-import com.ahmetaksunger.ecommerce.dto.response.ProductVM;
-import com.ahmetaksunger.ecommerce.dto.response.SellerVM;
+import com.ahmetaksunger.ecommerce.dto.response.*;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.ProductNotFoundException;
 import com.ahmetaksunger.ecommerce.mapper.MapperService;
 import com.ahmetaksunger.ecommerce.model.Category;
@@ -157,10 +154,13 @@ public class ProductManager implements ProductService {
      * @return ProductVM
      */
     @Override
-    public ProductVM getProductById(Long productId) {
+    public GetProductByIdResponse getProductById(Long productId) {
 
         Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
-        return mapperService.forResponse().map(product, ProductVM.class);
+        GetProductByIdResponse response = mapperService.forResponse().map(product, GetProductByIdResponse.class);
+        var orderCount = productRepository.getOrderCountByProductId(productId);
+        response.setOrderCount(orderCount != null ? orderCount : 0L);
+        return response;
     }
 
     /**
@@ -172,12 +172,17 @@ public class ProductManager implements ProductService {
      * @return Paginated ProductVM
      */
     @Override
-    public Page<ProductVM> getProductsBySellerId(Long sellerId, Integer page, Integer size) {
+    public Page<GetProductByIdResponse> getProductsBySellerId(Long sellerId, Integer page, Integer size) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 
         return productRepository.findBySellerId(sellerId, pageable)
-                .map(product -> mapperService.forResponse().map(product, ProductVM.class));
+                .map(product -> {
+                    GetProductByIdResponse response = mapperService.forResponse().map(product, GetProductByIdResponse.class);
+                    var orderCount = productRepository.getOrderCountByProductId(product.getId());
+                    response.setOrderCount(orderCount != null ? orderCount : 0L);
+                    return response;
+                });
     }
 
     /**
@@ -219,9 +224,9 @@ public class ProductManager implements ProductService {
     /**
      * Retrieves the top ten most ordered products from the {@link ProductRepository#getTop10MostOrderedProducts()}
      * Maps them to a list of {@link ProductOrderInfoDto}, and returns.
+     *
      * @return {@link List<ProductOrderInfoDto>}
      */
-
     @Override
     public List<ProductOrderInfoDto> getTop10MostOrderedProducts() {
         List<ProductOrderInfo> productOrderInfos = productRepository.getTop10MostOrderedProducts();

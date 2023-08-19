@@ -21,4 +21,8 @@ public interface ProductRepository extends JpaRepository<Product,Long>, JpaSpeci
             "ORDER BY count(o.id) DESC " +
             "LIMIT 10")
     List<ProductOrderInfo> getTop10MostOrderedProducts();
+
+    @Query("SELECT count(o.id) FROM Order o JOIN CartItem c ON o.cart = c.cart " +
+            "WHERE c.product.id = :id GROUP BY c.product" )
+    Long getOrderCountByProductId(Long id);
 }
