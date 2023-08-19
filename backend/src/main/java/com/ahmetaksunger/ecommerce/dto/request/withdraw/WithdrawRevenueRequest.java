@@ -1,14 +1,14 @@
 package com.ahmetaksunger.ecommerce.dto.request.withdraw;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 
 @Getter
 @Setter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class WithdrawRevenueRequest {
 
     private Long paymentDetailId;
