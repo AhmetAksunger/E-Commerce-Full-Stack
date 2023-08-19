@@ -14,6 +14,7 @@ import com.ahmetaksunger.ecommerce.repository.SellerRepository;
 import com.ahmetaksunger.ecommerce.repository.PaymentTransactionRepository;
 import com.ahmetaksunger.ecommerce.service.rules.PaymentDetailRules;
 import com.ahmetaksunger.ecommerce.service.rules.WithdrawRules;
+import com.ahmetaksunger.ecommerce.service.transaction.PaymentTransactionService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,7 @@ public class SellerManager implements SellerService {
     private final WithdrawRules withdrawRules;
     private final PaymentTransactionRepository paymentTransactionRepository;
     private final MapperService mapperService;
+    private final PaymentTransactionService paymentTransactionService;
 
     /**
      * Updates the seller's total revenue by the amount and increment/decrement specified.
@@ -82,12 +84,7 @@ public class SellerManager implements SellerService {
         this.updateTotalRevenue(seller, withdrawRevenueRequest.getWithdrawAmount(), false);
 
         //Withdraw Transaction
-        PaymentTransaction transaction = PaymentTransaction.builder()
-                .seller(seller)
-                .amount(withdrawRevenueRequest.getWithdrawAmount())
-                .paymentDetail(paymentDetail)
-                .build();
-
+        var transaction = paymentTransactionService.createTransactionForWithdrawOperations(seller,paymentDetail,withdrawRevenueRequest.getWithdrawAmount());
 
         return mapperService.forResponse()
                 .map(paymentTransactionRepository.save(transaction), WithdrawSuccessResponse.class);
