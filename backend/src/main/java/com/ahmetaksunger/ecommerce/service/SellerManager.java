@@ -66,7 +66,7 @@ public class SellerManager implements SellerService {
      * @see WithdrawRules
      * @see #updateTotalRevenue(Seller, BigDecimal, boolean)
      */
-    @Transactional
+    @Transactional(dontRollbackOn = InsufficientRevenueException.class)
     @Override
     public WithdrawSuccessResponse withdraw(WithdrawRevenueRequest withdrawRevenueRequest, User loggedInUser) {
 
