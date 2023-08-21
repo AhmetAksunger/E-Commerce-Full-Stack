@@ -26,8 +26,7 @@ public class CartItemController {
     public ResponseEntity<CartVM> createCartItem(@RequestBody @Valid CreateCartItemRequest createCartItemRequest,
                                                  @CurrentUser User loggedInUser) {
 
-        return new ResponseEntity<>(cartItemService.create(createCartItemRequest.getCartId(),
-                createCartItemRequest.getProductId(), createCartItemRequest.getQuantity(), loggedInUser),
+        return new ResponseEntity<>(cartItemService.create(createCartItemRequest,loggedInUser),
                 HttpStatus.CREATED);
     }
 
