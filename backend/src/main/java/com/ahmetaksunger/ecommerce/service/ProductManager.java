@@ -5,10 +5,7 @@ import com.ahmetaksunger.ecommerce.dto.request.product.UpdateProductRequest;
 import com.ahmetaksunger.ecommerce.dto.response.*;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.ProductNotFoundException;
 import com.ahmetaksunger.ecommerce.mapper.MapperService;
-import com.ahmetaksunger.ecommerce.model.Category;
-import com.ahmetaksunger.ecommerce.model.Product;
-import com.ahmetaksunger.ecommerce.model.Seller;
-import com.ahmetaksunger.ecommerce.model.User;
+import com.ahmetaksunger.ecommerce.model.*;
 import com.ahmetaksunger.ecommerce.repository.ProductRepository;
 import com.ahmetaksunger.ecommerce.service.rules.ProductRules;
 import com.ahmetaksunger.ecommerce.spesification.ProductSpecification;
@@ -138,10 +135,17 @@ public class ProductManager implements ProductService {
         productRepository.deleteById(productId);
     }
 
+
+    /**
+     * Updates the product quantities by decrementing the quantities specified in the cart items
+     *
+     * @param cart {@link Cart}
+     */
     @Override
-    public void reduceQuantityForBoughtProducts(List<Product> boughtProducts) {
-        boughtProducts.forEach(product -> {
-            product.setQuantity(product.getQuantity() - 1);
+    public void reduceQuantityForPurchasedProducts(Cart cart) {
+        cart.getCartItems().forEach(cartItem -> {
+            var product = cartItem.getProduct();
+            product.setQuantity(product.getQuantity() - cartItem.getQuantity());
             productRepository.save(product);
         });
     }

@@ -52,7 +52,7 @@ public class OrderManager implements OrderService {
      *
      * <p>If all the rules pass:</p>
      * <p>1-) It creates an order and saves it to the database</p>
-     * <p>2-) It reduces the bought products' quantities by one</p>
+     * <p>2-) It reduces the bought products' quantities</p>
      * <p>3-) It increments the sellers' total revenues</p>
      * <p>4-) It deactivates the customer's used cart</p>
      * <p>5-) It creates a new cart for the customer</p>
@@ -64,7 +64,7 @@ public class OrderManager implements OrderService {
      * @see OrderRules
      * @see AddressRules
      * @see CartService
-     * @see ProductService#reduceQuantityForBoughtProducts(List)
+     * @see ProductService#reduceQuantityForPurchasedProducts(Cart)
      */
     @Override
     @Transactional(noRollbackFor = EntityOwnershipException.class)
@@ -93,11 +93,6 @@ public class OrderManager implements OrderService {
         orderRules.checkIfCartIsEmpty(cart);
         cartRules.checkIfCartActive(cart);
 
-        final List<Product> boughtProducts = cart.getCartItems()
-                .stream()
-                .map(CartItem::getProduct)
-                .toList();
-
         final Order order = Order.builder()
                 .total(total)
                 .cart(cart)
@@ -114,8 +109,8 @@ public class OrderManager implements OrderService {
 
         paymentTransactionRepository.save(transaction);
 
-        // Reducing quantities by one, for the bought products
-        productService.reduceQuantityForBoughtProducts(boughtProducts);
+        // Reducing quantities by purchased quantities, for the bought products
+        productService.reduceQuantityForPurchasedProducts(cart);
 
         // Incrementing the seller's total revenue
         HashMap<Long, BigDecimal> sellerTotalRevenue = this.calculateRevenuesForSellers(cart);
@@ -151,19 +146,14 @@ public class OrderManager implements OrderService {
 
         HashMap<Long, BigDecimal> sellerIdRevenueMap = new HashMap<>();
 
-        Map<Product, Integer> boughtProductsAndProductQuantities = cart.getCartItems()
-                .stream()
-                .collect(Collectors.toMap(CartItem::getProduct, CartItem::getQuantity));
+        cart.getCartItems().forEach(cartItem -> {
+            var product = cartItem.getProduct();
+            Long sellerId = product.getSeller().getId();
+            BigDecimal totalProductPrice = product.getPrice().multiply(BigDecimal.valueOf(cartItem.getQuantity()));
 
-        boughtProductsAndProductQuantities.forEach(
-                (product, quantity) -> {
-                    long sellerId = product.getSeller().getId();
-                    BigDecimal totalProductPrice = product.getPrice().multiply(BigDecimal.valueOf(quantity));
-
-                    sellerIdRevenueMap.compute(sellerId,
-                            (key, value) -> (value == null ? totalProductPrice : value.add(totalProductPrice)));
-
-                });
+            sellerIdRevenueMap.compute(sellerId,
+                    (key, value) -> (value == null ? totalProductPrice : value.add(totalProductPrice)));
+        });
         return sellerIdRevenueMap;
     }
 }
