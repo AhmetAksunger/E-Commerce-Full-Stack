@@ -38,4 +38,22 @@ public class PaymentTransaction extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private PaymentStatus status;
     private String failureReason;
+
+    public PaymentTransaction(Customer customer, BigDecimal amount, PaymentDetail paymentDetail, TransactionType transactionType, PaymentStatus status, String failureReason) {
+        this.customer = customer;
+        this.amount = amount;
+        this.paymentDetail = paymentDetail;
+        this.transactionType = transactionType;
+        this.status = status;
+        this.failureReason = failureReason;
+    }
+
+    public PaymentTransaction(Seller seller, BigDecimal amount, PaymentDetail paymentDetail, TransactionType transactionType, PaymentStatus status, String failureReason) {
+        this.seller = seller;
+        this.amount = amount;
+        this.paymentDetail = paymentDetail;
+        this.transactionType = transactionType;
+        this.status = status;
+        this.failureReason = failureReason;
+    }
 }

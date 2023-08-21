@@ -15,6 +15,7 @@ import com.ahmetaksunger.ecommerce.model.transaction.TransactionType;
 import com.ahmetaksunger.ecommerce.repository.PaymentDetailRepository;
 import com.ahmetaksunger.ecommerce.repository.PaymentTransactionRepository;
 import com.ahmetaksunger.ecommerce.repository.SellerRepository;
+import com.ahmetaksunger.ecommerce.service.factory.PaymentTransactionFactory;
 import com.ahmetaksunger.ecommerce.service.rules.PaymentDetailRules;
 import com.ahmetaksunger.ecommerce.service.rules.WithdrawRules;
 import jakarta.transaction.Transactional;
@@ -80,14 +81,12 @@ public class SellerManager implements SellerService {
         try {
             withdrawRules.checkIfSellerHasEnoughRevenueToWithdraw(seller, withdrawRevenueRequest.getWithdrawAmount());
         }catch (InsufficientRevenueException exception){
-            final PaymentTransaction transaction = PaymentTransaction.builder()
-                    .seller(seller)
-                    .amount(withdrawRevenueRequest.getWithdrawAmount())
-                    .paymentDetail(paymentDetail)
-                    .transactionType(TransactionType.WITHDRAW)
-                    .status(PaymentStatus.FAILED)
-                    .failureReason(exception.getMessage())
-                    .build();
+
+            var transaction = PaymentTransactionFactory.create(TransactionType.WITHDRAW,
+                    PaymentStatus.FAILED,
+                    seller,withdrawRevenueRequest.getWithdrawAmount(),
+                    paymentDetail, exception.getMessage());
+
             paymentTransactionRepository.save(transaction);
 
             throw new InsufficientRevenueException();
