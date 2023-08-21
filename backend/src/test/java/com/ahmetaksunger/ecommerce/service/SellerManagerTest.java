@@ -3,6 +3,8 @@ package com.ahmetaksunger.ecommerce.service;
 import com.ahmetaksunger.ecommerce.dto.request.withdraw.WithdrawRevenueRequest;
 import com.ahmetaksunger.ecommerce.dto.response.SellerVM;
 import com.ahmetaksunger.ecommerce.dto.response.WithdrawSuccessResponse;
+import com.ahmetaksunger.ecommerce.exception.ExceptionMessages;
+import com.ahmetaksunger.ecommerce.exception.InsufficientRevenueException;
 import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.PaymentDetailNotFoundException;
 import com.ahmetaksunger.ecommerce.mapper.MapperManager;
@@ -45,7 +47,7 @@ class SellerManagerTest {
         paymentDetailRules = Mockito.mock(PaymentDetailRules.class);
         withdrawRules = Mockito.mock(WithdrawRules.class);
         paymentTransactionRepository = Mockito.mock(PaymentTransactionRepository.class);
-        sellerManager = new SellerManager(sellerRepository, paymentDetailRepository, paymentDetailRules, withdrawRules, mapperService,paymentTransactionRepository);
+        sellerManager = new SellerManager(sellerRepository, paymentDetailRepository, paymentDetailRules, withdrawRules, mapperService, paymentTransactionRepository);
     }
 
     @DisplayName("When withdraw method is called with a valid request, " +
@@ -123,6 +125,39 @@ class SellerManagerTest {
         Assertions.assertThrows(PaymentDetailNotFoundException.class, () -> sellerManager.withdraw(request, new Seller()));
         Mockito.verifyNoInteractions(withdrawRules);
         Mockito.verifyNoInteractions(paymentTransactionRepository);
+    }
+
+    @DisplayName("When the seller doesnt have enough revenue, it should throw InsufficientRevenueException" +
+            " and save the failed payment transaction")
+    @Test
+    void whenSellerDoesntHaveEnoughRevenue_itShouldThrowInsufficientRevenueException_andSaveFailedPaymentTransaction() {
+
+        WithdrawRevenueRequest request = WithdrawRevenueRequest.builder()
+                .withdrawAmount(BigDecimal.valueOf(120))
+                .paymentDetailId(1L)
+                .build();
+
+        Seller seller = Mockito.mock(Seller.class);
+        PaymentDetail paymentDetail = Mockito.mock(PaymentDetail.class);
+
+        final PaymentTransaction transaction = PaymentTransaction.builder()
+                .seller(seller)
+                .amount(request.getWithdrawAmount())
+                .paymentDetail(paymentDetail)
+                .transactionType(TransactionType.WITHDRAW)
+                .status(PaymentStatus.FAILED)
+                .failureReason(ExceptionMessages.INSUFF_REVENUE.message())
+                .build();
+
+        Mockito.when(paymentDetailRepository.findById(request.getPaymentDetailId())).thenReturn(Optional.of(paymentDetail));
+        Mockito.doNothing().when(withdrawRules).checkIfWithdrawAmountValid(request.getWithdrawAmount());
+
+        Mockito.doThrow(new InsufficientRevenueException()).doNothing().
+                when(withdrawRules).checkIfSellerHasEnoughRevenueToWithdraw(seller, request.getWithdrawAmount());
+
+        Assertions.assertThrows(InsufficientRevenueException.class, () -> sellerManager.withdraw(request, seller));
+
+        Mockito.verify(paymentTransactionRepository, Mockito.times(1)).save(transaction);
     }
 
 }
