@@ -5,7 +5,7 @@ import com.ahmetaksunger.ecommerce.dto.response.SellerVM;
 import com.ahmetaksunger.ecommerce.dto.response.WithdrawSuccessResponse;
 import com.ahmetaksunger.ecommerce.exception.ExceptionMessages;
 import com.ahmetaksunger.ecommerce.exception.InsufficientRevenueException;
-import com.ahmetaksunger.ecommerce.exception.NotAllowedException.PaymentDetailOwnershipException;
+import com.ahmetaksunger.ecommerce.exception.NotAllowedException.EntityOwnershipException;
 import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.PaymentDetailNotFoundException;
 import com.ahmetaksunger.ecommerce.mapper.MapperManager;
@@ -104,7 +104,7 @@ class SellerManagerTest {
         Mockito.doNothing().when(withdrawRules).checkIfSellerHasEnoughRevenueToWithdraw(seller, request.getWithdrawAmount());
 
         Assertions.assertEquals(result, successResponse);
-        Mockito.verify(paymentDetailRules).verifyPaymentDetailBelongsToUser(paymentDetail, seller, PaymentDetailOwnershipException.class);
+        Mockito.verify(paymentDetailRules).verifyPaymentDetailBelongsToUser(paymentDetail, seller, EntityOwnershipException.class);
         Mockito.verify(withdrawRules).checkIfSellerHasEnoughRevenueToWithdraw(seller, request.getWithdrawAmount());
         Mockito.verify(withdrawRules).checkIfWithdrawAmountValid(request.getWithdrawAmount());
         Mockito.verify(paymentDetailRepository).findById(1L);
@@ -185,10 +185,10 @@ class SellerManagerTest {
 
         Mockito.when(paymentDetailRepository.findById(request.getPaymentDetailId())).thenReturn(Optional.of(paymentDetail));
         Mockito.doNothing().when(withdrawRules).checkIfWithdrawAmountValid(request.getWithdrawAmount());
-        Mockito.doThrow(new PaymentDetailOwnershipException())
-                .when(paymentDetailRules).verifyPaymentDetailBelongsToUser(paymentDetail,seller, PaymentDetailOwnershipException.class);
+        Mockito.doThrow(new EntityOwnershipException())
+                .when(paymentDetailRules).verifyPaymentDetailBelongsToUser(paymentDetail,seller, EntityOwnershipException.class);
 
-        Assertions.assertThrows(PaymentDetailOwnershipException.class,
+        Assertions.assertThrows(EntityOwnershipException.class,
                 () -> sellerManager.withdraw(request, seller));
         Mockito.verify(paymentTransactionRepository, Mockito.times(1)).save(transaction);
     }

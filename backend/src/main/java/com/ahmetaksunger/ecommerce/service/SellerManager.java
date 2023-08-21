@@ -3,8 +3,7 @@ package com.ahmetaksunger.ecommerce.service;
 import com.ahmetaksunger.ecommerce.dto.request.withdraw.WithdrawRevenueRequest;
 import com.ahmetaksunger.ecommerce.dto.response.WithdrawSuccessResponse;
 import com.ahmetaksunger.ecommerce.exception.InsufficientRevenueException;
-import com.ahmetaksunger.ecommerce.exception.NotAllowedException.PaymentDetailOwnershipException;
-import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
+import com.ahmetaksunger.ecommerce.exception.NotAllowedException.EntityOwnershipException;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.PaymentDetailNotFoundException;
 import com.ahmetaksunger.ecommerce.mapper.MapperService;
 import com.ahmetaksunger.ecommerce.model.PaymentDetail;
@@ -68,7 +67,7 @@ public class SellerManager implements SellerService {
      * @see WithdrawRules
      * @see #updateTotalRevenue(Seller, BigDecimal, boolean)
      */
-    @Transactional(dontRollbackOn = InsufficientRevenueException.class)
+    @Transactional(dontRollbackOn = {InsufficientRevenueException.class, EntityOwnershipException.class})
     @Override
     public WithdrawSuccessResponse withdraw(WithdrawRevenueRequest withdrawRevenueRequest, User loggedInUser) {
 
@@ -79,13 +78,13 @@ public class SellerManager implements SellerService {
         //Rules
         withdrawRules.checkIfWithdrawAmountValid(withdrawRevenueRequest.getWithdrawAmount());
         try {
-            paymentDetailRules.verifyPaymentDetailBelongsToUser(paymentDetail, seller, PaymentDetailOwnershipException.class);
+            paymentDetailRules.verifyPaymentDetailBelongsToUser(paymentDetail, seller, EntityOwnershipException.class);
             withdrawRules.checkIfSellerHasEnoughRevenueToWithdraw(seller, withdrawRevenueRequest.getWithdrawAmount());
-        }catch (InsufficientRevenueException | PaymentDetailOwnershipException exception){
+        } catch (InsufficientRevenueException | EntityOwnershipException exception) {
 
             var transaction = PaymentTransactionFactory.create(TransactionType.WITHDRAW,
                     PaymentStatus.FAILED,
-                    seller,withdrawRevenueRequest.getWithdrawAmount(),
+                    seller, withdrawRevenueRequest.getWithdrawAmount(),
                     paymentDetail, exception.getMessage());
 
             paymentTransactionRepository.save(transaction);
@@ -99,13 +98,10 @@ public class SellerManager implements SellerService {
         this.updateTotalRevenue(seller, withdrawRevenueRequest.getWithdrawAmount(), false);
 
         //Withdraw Transaction
-        final PaymentTransaction transaction = PaymentTransaction.builder()
-                .seller(seller)
-                .amount(withdrawRevenueRequest.getWithdrawAmount())
-                .paymentDetail(paymentDetail)
-                .transactionType(TransactionType.WITHDRAW)
-                .status(PaymentStatus.COMPLETED)
-                .build();
+        var transaction = PaymentTransactionFactory.create(TransactionType.WITHDRAW,
+                PaymentStatus.COMPLETED, seller,
+                withdrawRevenueRequest.getWithdrawAmount(),
+                paymentDetail, null);
 
         return mapperService.forResponse()
                 .map(paymentTransactionRepository.save(transaction), WithdrawSuccessResponse.class);
