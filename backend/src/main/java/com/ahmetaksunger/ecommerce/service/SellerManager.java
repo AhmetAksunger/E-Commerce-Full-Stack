@@ -107,8 +107,6 @@ public class SellerManager implements SellerService {
                 .status(PaymentStatus.COMPLETED)
                 .build();
 
-        paymentTransactionRepository.save(transaction);
-
         return mapperService.forResponse()
                 .map(paymentTransactionRepository.save(transaction), WithdrawSuccessResponse.class);
     }
