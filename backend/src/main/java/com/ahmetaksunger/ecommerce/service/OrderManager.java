@@ -2,7 +2,7 @@ package com.ahmetaksunger.ecommerce.service;
 
 import com.ahmetaksunger.ecommerce.dto.request.order.CreateOrderRequest;
 import com.ahmetaksunger.ecommerce.dto.response.OrderCompletedResponse;
-import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
+import com.ahmetaksunger.ecommerce.exception.NotAllowedException.EntityOwnershipException;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.AddressNotFoundException;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.CartNotFoundException;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.PaymentDetailNotFoundException;
@@ -12,6 +12,7 @@ import com.ahmetaksunger.ecommerce.model.transaction.PaymentStatus;
 import com.ahmetaksunger.ecommerce.model.transaction.PaymentTransaction;
 import com.ahmetaksunger.ecommerce.model.transaction.TransactionType;
 import com.ahmetaksunger.ecommerce.repository.*;
+import com.ahmetaksunger.ecommerce.service.factory.PaymentTransactionFactory;
 import com.ahmetaksunger.ecommerce.service.rules.AddressRules;
 import com.ahmetaksunger.ecommerce.service.rules.CartRules;
 import com.ahmetaksunger.ecommerce.service.rules.OrderRules;
@@ -66,7 +67,7 @@ public class OrderManager implements OrderService {
      * @see ProductService#reduceQuantityForBoughtProducts(List)
      */
     @Override
-    @Transactional
+    @Transactional(noRollbackFor = EntityOwnershipException.class)
     public OrderCompletedResponse create(CreateOrderRequest createOrderRequest, User loggedInUser) {
 
         final Customer customer = (Customer) loggedInUser;
@@ -75,19 +76,27 @@ public class OrderManager implements OrderService {
         final PaymentDetail paymentDetail = paymentDetailRepository.findById(createOrderRequest.getPaymentDetailId()).orElseThrow(PaymentDetailNotFoundException::new);
         final Address address = addressRepository.findById(createOrderRequest.getAddressId()).orElseThrow(AddressNotFoundException::new);
 
+        final BigDecimal total = PriceCalculator.calculateTotal(cart);
+
         //Rules
-        orderRules.verifyCartAndPaymentDetailBelongsToUser(cart, paymentDetail, customer);
+        try {
+            orderRules.verifyCartAndPaymentDetailBelongsToUser(cart, paymentDetail, customer);
+            addressRules.verifyAddressBelongsToUser(address, customer, EntityOwnershipException.class);
+        } catch (EntityOwnershipException exception) {
+            var transaction = PaymentTransactionFactory.create(TransactionType.PURCHASE, PaymentStatus.FAILED,
+                    customer, total, paymentDetail, exception.getMessage());
+            paymentTransactionRepository.save(transaction);
+
+            throw exception;
+        }
         orderRules.checkInsufficientStock(cart); // TODO: Optimistic - Pessimistic lock
         orderRules.checkIfCartIsEmpty(cart);
-        addressRules.verifyAddressBelongsToUser(address, customer, UnauthorizedException.class);
         cartRules.checkIfCartActive(cart);
 
         final List<Product> boughtProducts = cart.getCartItems()
                 .stream()
                 .map(CartItem::getProduct)
                 .toList();
-
-        final BigDecimal total = PriceCalculator.calculateTotal(cart);
 
         final Order order = Order.builder()
                 .total(total)
@@ -100,13 +109,8 @@ public class OrderManager implements OrderService {
         final Order dbOrder = orderRepository.save(order);
 
         // Creating a payment transaction for the bought products
-        PaymentTransaction transaction = PaymentTransaction.builder()
-                .customer(customer)
-                .amount(total)
-                .paymentDetail(paymentDetail)
-                .transactionType(TransactionType.PURCHASE)
-                .status(PaymentStatus.COMPLETED)
-                .build();
+        var transaction = PaymentTransactionFactory.create(TransactionType.PURCHASE,PaymentStatus.COMPLETED,
+                customer,total,paymentDetail,null);
 
         paymentTransactionRepository.save(transaction);
 
