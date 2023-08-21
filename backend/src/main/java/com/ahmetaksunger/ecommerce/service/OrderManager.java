@@ -146,19 +146,14 @@ public class OrderManager implements OrderService {
 
         HashMap<Long, BigDecimal> sellerIdRevenueMap = new HashMap<>();
 
-        Map<Product, Integer> boughtProductsAndProductQuantities = cart.getCartItems()
-                .stream()
-                .collect(Collectors.toMap(CartItem::getProduct, CartItem::getQuantity));
+        cart.getCartItems().forEach(cartItem -> {
+            var product = cartItem.getProduct();
+            Long sellerId = product.getSeller().getId();
+            BigDecimal totalProductPrice = product.getPrice().multiply(BigDecimal.valueOf(cartItem.getQuantity()));
 
-        boughtProductsAndProductQuantities.forEach(
-                (product, quantity) -> {
-                    long sellerId = product.getSeller().getId();
-                    BigDecimal totalProductPrice = product.getPrice().multiply(BigDecimal.valueOf(quantity));
-
-                    sellerIdRevenueMap.compute(sellerId,
-                            (key, value) -> (value == null ? totalProductPrice : value.add(totalProductPrice)));
-
-                });
+            sellerIdRevenueMap.compute(sellerId,
+                    (key, value) -> (value == null ? totalProductPrice : value.add(totalProductPrice)));
+        });
         return sellerIdRevenueMap;
     }
 }
