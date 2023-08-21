@@ -5,7 +5,7 @@ import com.ahmetaksunger.ecommerce.dto.request.product.UpdateProductRequest;
 import com.ahmetaksunger.ecommerce.dto.response.GetProductByIdResponse;
 import com.ahmetaksunger.ecommerce.dto.response.ProductOrderInfoDto;
 import com.ahmetaksunger.ecommerce.dto.response.ProductVM;
-import com.ahmetaksunger.ecommerce.model.Product;
+import com.ahmetaksunger.ecommerce.model.Cart;
 import com.ahmetaksunger.ecommerce.model.User;
 import org.springframework.data.domain.Page;
 
@@ -14,15 +14,18 @@ import java.util.List;
 
 public interface ProductService {
     ProductVM create(CreateProductRequest createProductRequest, User loggedInUser);
+
     ProductVM addCategoriesByIdsToProduct(long productId, List<Long> categoryIds, User loggedInUser);
-    ProductVM removeCategoriesByIdsFromProduct(long productId, List<Long> categoryIds,User loggedInUser);
+
+    ProductVM removeCategoriesByIdsFromProduct(long productId, List<Long> categoryIds, User loggedInUser);
+
     Page<ProductVM> getProducts(String sort, String order, String search, List<Long> category, BigDecimal minPrice,
                                 BigDecimal maxPrice,
                                 Integer page, Integer size);
 
     void delete(long productId, User loggedInUser);
 
-    void reduceQuantityForBoughtProducts(List<Product> boughtProducts);
+    void reduceQuantityForPurchasedProducts(Cart cart);
 
     GetProductByIdResponse getProductById(Long productId);
 
