@@ -1,4 +1,5 @@
 export const defaultAuthState = {
+    id:"",
     jwt:"",
     userType:"",
     fullName:"",
