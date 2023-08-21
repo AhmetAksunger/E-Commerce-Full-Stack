@@ -2,6 +2,7 @@ package com.ahmetaksunger.ecommerce.service.rules;
 
 import com.ahmetaksunger.ecommerce.exception.CartIsEmptyException;
 import com.ahmetaksunger.ecommerce.exception.InsufficientProductQuantityException;
+import com.ahmetaksunger.ecommerce.exception.NotAllowedException.EntityOwnershipException;
 import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
 import com.ahmetaksunger.ecommerce.model.*;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +18,8 @@ public class OrderRules {
     private final CartRules cartRules;
     public void verifyCartAndPaymentDetailBelongsToUser(Cart cart, PaymentDetail paymentDetail, User user){
 
-        cartRules.verifyCartBelongsToUser(cart,user, UnauthorizedException.class);
-        paymentDetailRules.verifyPaymentDetailBelongsToUser(paymentDetail,user, UnauthorizedException.class);
+        cartRules.verifyCartBelongsToUser(cart,user, EntityOwnershipException.class);
+        paymentDetailRules.verifyPaymentDetailBelongsToUser(paymentDetail,user, EntityOwnershipException.class);
 
     }
 

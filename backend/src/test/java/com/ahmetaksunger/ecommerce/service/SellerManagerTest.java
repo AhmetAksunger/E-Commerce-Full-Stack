@@ -3,16 +3,21 @@ package com.ahmetaksunger.ecommerce.service;
 import com.ahmetaksunger.ecommerce.dto.request.withdraw.WithdrawRevenueRequest;
 import com.ahmetaksunger.ecommerce.dto.response.SellerVM;
 import com.ahmetaksunger.ecommerce.dto.response.WithdrawSuccessResponse;
+import com.ahmetaksunger.ecommerce.exception.ExceptionMessages;
+import com.ahmetaksunger.ecommerce.exception.InsufficientRevenueException;
+import com.ahmetaksunger.ecommerce.exception.NotAllowedException.EntityOwnershipException;
 import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.PaymentDetailNotFoundException;
 import com.ahmetaksunger.ecommerce.mapper.MapperManager;
 import com.ahmetaksunger.ecommerce.mapper.MapperService;
 import com.ahmetaksunger.ecommerce.model.PaymentDetail;
 import com.ahmetaksunger.ecommerce.model.Seller;
-import com.ahmetaksunger.ecommerce.model.transaction.WithdrawTransaction;
+import com.ahmetaksunger.ecommerce.model.transaction.PaymentStatus;
+import com.ahmetaksunger.ecommerce.model.transaction.PaymentTransaction;
+import com.ahmetaksunger.ecommerce.model.transaction.TransactionType;
 import com.ahmetaksunger.ecommerce.repository.PaymentDetailRepository;
+import com.ahmetaksunger.ecommerce.repository.PaymentTransactionRepository;
 import com.ahmetaksunger.ecommerce.repository.SellerRepository;
-import com.ahmetaksunger.ecommerce.repository.WithdrawTransactionRepository;
 import com.ahmetaksunger.ecommerce.service.rules.PaymentDetailRules;
 import com.ahmetaksunger.ecommerce.service.rules.WithdrawRules;
 import org.junit.jupiter.api.Assertions;
@@ -23,7 +28,6 @@ import org.mockito.Mockito;
 import org.modelmapper.ModelMapper;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Optional;
 
 class SellerManagerTest {
@@ -33,8 +37,9 @@ class SellerManagerTest {
     private PaymentDetailRepository paymentDetailRepository;
     private PaymentDetailRules paymentDetailRules;
     private WithdrawRules withdrawRules;
-    private WithdrawTransactionRepository withdrawTransactionRepository;
-    private MapperService mapperService = new MapperManager(new ModelMapper());;
+    private PaymentTransactionRepository paymentTransactionRepository;
+    private MapperService mapperService = new MapperManager(new ModelMapper());
+    ;
 
     @BeforeEach
     void setUp() {
@@ -42,8 +47,8 @@ class SellerManagerTest {
         paymentDetailRepository = Mockito.mock(PaymentDetailRepository.class);
         paymentDetailRules = Mockito.mock(PaymentDetailRules.class);
         withdrawRules = Mockito.mock(WithdrawRules.class);
-        withdrawTransactionRepository = Mockito.mock(WithdrawTransactionRepository.class);
-        sellerManager = new SellerManager(sellerRepository, paymentDetailRepository, paymentDetailRules, withdrawRules, withdrawTransactionRepository, mapperService);
+        paymentTransactionRepository = Mockito.mock(PaymentTransactionRepository.class);
+        sellerManager = new SellerManager(sellerRepository, paymentDetailRepository, paymentDetailRules, withdrawRules, mapperService, paymentTransactionRepository);
     }
 
     @DisplayName("When withdraw method is called with a valid request, " +
@@ -72,10 +77,12 @@ class SellerManagerTest {
                 .user(seller)
                 .build();
 
-        WithdrawTransaction transaction = WithdrawTransaction.builder()
+        PaymentTransaction transaction = PaymentTransaction.builder()
                 .seller(seller)
                 .amount(request.getWithdrawAmount())
                 .paymentDetail(paymentDetail)
+                .transactionType(TransactionType.WITHDRAW)
+                .status(PaymentStatus.COMPLETED)
                 .build();
 
         WithdrawSuccessResponse successResponse = WithdrawSuccessResponse.builder()
@@ -89,15 +96,15 @@ class SellerManagerTest {
                 .build();
 
         Mockito.when(paymentDetailRepository.findById(1L)).thenReturn(Optional.of(paymentDetail));
-        Mockito.when(withdrawTransactionRepository.save(transaction)).thenReturn(transaction);
+        Mockito.when(paymentTransactionRepository.save(transaction)).thenReturn(transaction);
         WithdrawSuccessResponse result = sellerManager.withdraw(request, seller);
 
-        Mockito.doNothing().when(paymentDetailRules).verifyPaymentDetailBelongsToUser(paymentDetail,seller, UnauthorizedException.class);
+        Mockito.doNothing().when(paymentDetailRules).verifyPaymentDetailBelongsToUser(paymentDetail, seller, UnauthorizedException.class);
         Mockito.doNothing().when(withdrawRules).checkIfWithdrawAmountValid(request.getWithdrawAmount());
-        Mockito.doNothing().when(withdrawRules).checkIfSellerHasEnoughRevenueToWithdraw(seller,request.getWithdrawAmount());
+        Mockito.doNothing().when(withdrawRules).checkIfSellerHasEnoughRevenueToWithdraw(seller, request.getWithdrawAmount());
 
         Assertions.assertEquals(result, successResponse);
-        Mockito.verify(paymentDetailRules).verifyPaymentDetailBelongsToUser(paymentDetail, seller, UnauthorizedException.class);
+        Mockito.verify(paymentDetailRules).verifyPaymentDetailBelongsToUser(paymentDetail, seller, EntityOwnershipException.class);
         Mockito.verify(withdrawRules).checkIfSellerHasEnoughRevenueToWithdraw(seller, request.getWithdrawAmount());
         Mockito.verify(withdrawRules).checkIfWithdrawAmountValid(request.getWithdrawAmount());
         Mockito.verify(paymentDetailRepository).findById(1L);
@@ -116,9 +123,74 @@ class SellerManagerTest {
 
         Mockito.when(paymentDetailRepository.findById(1L)).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(PaymentDetailNotFoundException.class,() -> sellerManager.withdraw(request,new Seller()));
+        Assertions.assertThrows(PaymentDetailNotFoundException.class, () -> sellerManager.withdraw(request, new Seller()));
         Mockito.verifyNoInteractions(withdrawRules);
-        Mockito.verifyNoInteractions(withdrawTransactionRepository);
+        Mockito.verifyNoInteractions(paymentTransactionRepository);
+    }
+
+    @DisplayName("When the seller doesnt have enough revenue, it should throw InsufficientRevenueException" +
+            " and save the failed payment transaction")
+    @Test
+    void whenSellerDoesntHaveEnoughRevenue_itShouldThrowInsufficientRevenueException_andSaveFailedPaymentTransaction() {
+
+        WithdrawRevenueRequest request = WithdrawRevenueRequest.builder()
+                .withdrawAmount(BigDecimal.valueOf(120))
+                .paymentDetailId(1L)
+                .build();
+
+        Seller seller = Mockito.mock(Seller.class);
+        PaymentDetail paymentDetail = Mockito.mock(PaymentDetail.class);
+
+        final PaymentTransaction transaction = PaymentTransaction.builder()
+                .seller(seller)
+                .amount(request.getWithdrawAmount())
+                .paymentDetail(paymentDetail)
+                .transactionType(TransactionType.WITHDRAW)
+                .status(PaymentStatus.FAILED)
+                .failureReason(ExceptionMessages.INSUFF_REVENUE.message())
+                .build();
+
+        Mockito.when(paymentDetailRepository.findById(request.getPaymentDetailId())).thenReturn(Optional.of(paymentDetail));
+        Mockito.doNothing().when(withdrawRules).checkIfWithdrawAmountValid(request.getWithdrawAmount());
+
+        Mockito.doThrow(new InsufficientRevenueException()).doNothing().
+                when(withdrawRules).checkIfSellerHasEnoughRevenueToWithdraw(seller, request.getWithdrawAmount());
+
+        Assertions.assertThrows(InsufficientRevenueException.class, () -> sellerManager.withdraw(request, seller));
+
+        Mockito.verify(paymentTransactionRepository, Mockito.times(1)).save(transaction);
+    }
+
+    @DisplayName("When the payment detail doesnt belong to the seller, it should throw PaymentDetailOwnershipException" +
+            " and save the failed payment transaction")
+    @Test
+    void whenPaymentDetailDoesntBelongSeller_itShouldThrowPaymentDetailOwnershipException_andSaveFailedPaymentTransaction() {
+
+        WithdrawRevenueRequest request = WithdrawRevenueRequest.builder()
+                .withdrawAmount(BigDecimal.valueOf(120))
+                .paymentDetailId(1L)
+                .build();
+
+        Seller seller = Mockito.mock(Seller.class);
+        PaymentDetail paymentDetail = Mockito.mock(PaymentDetail.class);
+
+        final PaymentTransaction transaction = PaymentTransaction.builder()
+                .seller(seller)
+                .amount(request.getWithdrawAmount())
+                .paymentDetail(paymentDetail)
+                .transactionType(TransactionType.WITHDRAW)
+                .status(PaymentStatus.FAILED)
+                .failureReason(ExceptionMessages.UNAUTHORIZED.message())
+                .build();
+
+        Mockito.when(paymentDetailRepository.findById(request.getPaymentDetailId())).thenReturn(Optional.of(paymentDetail));
+        Mockito.doNothing().when(withdrawRules).checkIfWithdrawAmountValid(request.getWithdrawAmount());
+        Mockito.doThrow(new EntityOwnershipException())
+                .when(paymentDetailRules).verifyPaymentDetailBelongsToUser(paymentDetail,seller, EntityOwnershipException.class);
+
+        Assertions.assertThrows(EntityOwnershipException.class,
+                () -> sellerManager.withdraw(request, seller));
+        Mockito.verify(paymentTransactionRepository, Mockito.times(1)).save(transaction);
     }
 
 }
