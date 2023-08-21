@@ -5,6 +5,7 @@ import { Link } from "react-router-dom/";
 import { useSelector } from "react-redux";
 import MyAccount from "../utils/MyAccount";
 import NaviAuthButtons from "../utils/NaviAuthButtons";
+import Cart from "../utils/Cart";
 
 const Navi = () => {
   const authState = useSelector((state) => state.auth);
@@ -32,6 +33,7 @@ const Navi = () => {
             ) : (
               <Menu.Item>
                 <MyAccount />
+                <Cart />
               </Menu.Item>
             )}
           </Menu.Menu>
