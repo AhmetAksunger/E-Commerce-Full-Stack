@@ -3,6 +3,7 @@ package com.ahmetaksunger.ecommerce.service;
 import com.ahmetaksunger.ecommerce.dto.request.withdraw.WithdrawRevenueRequest;
 import com.ahmetaksunger.ecommerce.dto.response.WithdrawSuccessResponse;
 import com.ahmetaksunger.ecommerce.exception.InsufficientRevenueException;
+import com.ahmetaksunger.ecommerce.exception.NotAllowedException.PaymentDetailOwnershipException;
 import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.PaymentDetailNotFoundException;
 import com.ahmetaksunger.ecommerce.mapper.MapperService;
@@ -76,11 +77,11 @@ public class SellerManager implements SellerService {
                 .orElseThrow(PaymentDetailNotFoundException::new);
 
         //Rules
-        paymentDetailRules.verifyPaymentDetailBelongsToUser(paymentDetail, seller, UnauthorizedException.class);
         withdrawRules.checkIfWithdrawAmountValid(withdrawRevenueRequest.getWithdrawAmount());
         try {
+            paymentDetailRules.verifyPaymentDetailBelongsToUser(paymentDetail, seller, PaymentDetailOwnershipException.class);
             withdrawRules.checkIfSellerHasEnoughRevenueToWithdraw(seller, withdrawRevenueRequest.getWithdrawAmount());
-        }catch (InsufficientRevenueException exception){
+        }catch (InsufficientRevenueException | PaymentDetailOwnershipException exception){
 
             var transaction = PaymentTransactionFactory.create(TransactionType.WITHDRAW,
                     PaymentStatus.FAILED,
@@ -89,7 +90,7 @@ public class SellerManager implements SellerService {
 
             paymentTransactionRepository.save(transaction);
 
-            throw new InsufficientRevenueException();
+            throw exception;
         }
 
         // Simulating payment operations
