@@ -9,9 +9,7 @@ import java.math.BigDecimal;
 public class CartItemVM {
 
     private long id;
-    private long productId;
-    private String productName;
-    private BigDecimal productPrice;
+    private ProductVM product;
     private int quantity;
 
 }
