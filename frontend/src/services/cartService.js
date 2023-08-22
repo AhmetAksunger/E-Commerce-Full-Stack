@@ -1,6 +1,6 @@
 import axios from "./axiosConfig";
 
-export default class CartItemService {
+export default class CartService {
   /**
    *
    * @param {string} jwt JSON Web Token for authentication.
@@ -22,4 +22,21 @@ export default class CartItemService {
     };
     return axios.post("/api/v1/cart-items", data, config);
   }
+
+  /**
+   * 
+   * @param {string} jwt JSON Web Token for authentication.
+   * @param {number} id User Id
+   * @returns 
+   */
+  getCartByUserId(jwt,id){
+    const config = {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    };
+
+    return axios.get(`/api/v1/carts/users/${id}`,config);
+  }
+
 }

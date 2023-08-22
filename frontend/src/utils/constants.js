@@ -56,3 +56,23 @@ export const defaultProduct = {
       }
   ]
 };
+
+export const defaultCart = {
+  "id": 0,
+  "customer": {
+    "id": 0,
+    "fullName": "",
+    "phoneNumber": ""
+  },
+  "cartItems": [
+    {
+      "id": 0,
+      "productId": 0,
+      "productName": "",
+      "productPrice": 0,
+      "quantity": 0
+    },
+  ],
+  "total": 0
+}
+;

@@ -17,8 +17,8 @@ import {
   Table,
 } from "semantic-ui-react";
 import { defaultProduct } from "../utils/constants";
-import CartItemService from "../services/cartItemService";
 import { ToastContainer, toast } from "react-toastify";
+import CartService from "../services/cartService";
 
 const ProductDetail = () => {
   const { id: productId } = useParams();
@@ -38,7 +38,7 @@ const ProductDetail = () => {
   };
 
   const onClickAddToCart = () => {
-    let cartItemService = new CartItemService();
+    let cartItemService = new CartService();
     cartItemService
       .addCartItem(jwt, cartId, productId, 1)
       .then((response) => null);

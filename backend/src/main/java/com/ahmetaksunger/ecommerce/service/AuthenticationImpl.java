@@ -50,6 +50,7 @@ public class AuthenticationImpl implements AuthenticationService {
             Seller seller = sellerRepository.findById(user.getId()).orElseThrow();
             return SellerAuthenticationResponse
                     .builder()
+                    .id(seller.getId())
                     .companyName(seller.getCompanyName())
                     .contactNumber(seller.getContactNumber())
                     .logo(seller.getLogo())
@@ -87,6 +88,7 @@ public class AuthenticationImpl implements AuthenticationService {
 
         return SellerAuthenticationResponse
                 .builder()
+                .id(seller.getId())
                 .companyName(seller.getCompanyName())
                 .contactNumber(seller.getContactNumber())
                 .logo(seller.getLogo())
