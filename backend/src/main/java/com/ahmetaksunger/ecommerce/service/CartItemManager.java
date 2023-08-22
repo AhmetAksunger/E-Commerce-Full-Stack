@@ -78,4 +78,19 @@ public class CartItemManager implements CartItemService {
         cartItemRepository.deleteById(cartItemId);
         return mapperService.forResponse().map(cartItem.getCart(), CartVM.class);
     }
+
+    /**
+     * Deletes all the items in the cart
+     *
+     * @param cartId The cart id
+     * @param loggedInUser The logged-in user
+     */
+    @Override
+    public void deleteAllByCartId(final Long cartId, final User loggedInUser) {
+
+        //Rules
+        cartRules.verifyCartBelongsToUser(cartRepository.findById(cartId).orElseThrow(CartNotFoundException::new), loggedInUser, CartDeletionNotAllowedException.class);
+
+        cartItemRepository.deleteAllByCartId(cartId);
+    }
 }

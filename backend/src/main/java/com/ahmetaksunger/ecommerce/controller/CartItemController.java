@@ -34,4 +34,15 @@ public class CartItemController {
     public ResponseEntity<CartVM> deleteCartItem(@PathVariable long cartItemId, @CurrentUser User loggedInUser) {
         return ResponseEntity.ok(cartItemService.delete(cartItemId, loggedInUser));
     }
+
+    /**
+     * Delets all the items in the cart, with the method {@link CartItemService#deleteAllByCartId(Long, User)}
+     *
+     * @param cartId the cart id
+     * @param loggedInUser the logged-in user
+     */
+    @DeleteMapping("/cart/{cartId}/clear")
+    public void clearCart(@PathVariable Long cartId, @CurrentUser User loggedInUser) {
+        cartItemService.deleteAllByCartId(cartId, loggedInUser);
+    }
 }
