@@ -24,55 +24,79 @@ export const orderOptions = [
 ];
 
 export const sortOptions = [
-    {key: "asc", text:"Ascending", value: "asc", icon:"sort up"},
-    {key: "desc", text:"Descending", value: "desc", icon:"sort down"},
+  { key: "asc", text: "Ascending", value: "asc", icon: "sort up" },
+  { key: "desc", text: "Descending", value: "desc", icon: "sort down" },
 ];
 
 export const defaultProduct = {
-  "id": 0,
-  "name": "",
-  "price": 0.0,
-  "quantity": 0,
-  "orderCount": 0,
-  "logo": "",
-  "createdAt": 0,
-  "updatedAt": null,
-  "seller": {
-      "sellerId": 0,
-      "companyName": "",
-      "contactNumber": "",
-      "logo": ""
+  id: 0,
+  name: "",
+  price: 0.0,
+  quantity: 0,
+  orderCount: 0,
+  logo: "",
+  createdAt: 0,
+  updatedAt: null,
+  seller: {
+    sellerId: 0,
+    companyName: "",
+    contactNumber: "",
+    logo: "",
   },
-  "categories": [
-      {
-          "id": 0,
-          "name": "",
-          "description": ""
-      },
-      {
-          "id": 0,
-          "name": "",
-          "description": ""
-      }
-  ]
+  categories: [
+    {
+      id: 0,
+      name: "",
+      description: "",
+    },
+    {
+      id: 0,
+      name: "",
+      description: "",
+    },
+  ],
 };
 
 export const defaultCart = {
-  "id": 0,
-  "customer": {
-    "id": 0,
-    "fullName": "",
-    "phoneNumber": ""
+  id: 0,
+  customer: {
+    id: 0,
+    fullName: "",
+    phoneNumber: "",
   },
-  "cartItems": [
+  cartItems: [
     {
-      "id": 0,
-      "productId": 0,
-      "productName": "",
-      "productPrice": 0,
-      "quantity": 0
+      id: 0,
+      product: {
+        id: 0,
+        name: "",
+        price: 0,
+        quantity: 0,
+        orderCount: 0,
+        logo: "",
+        createdAt: 0,
+        updatedAt: 0,
+        seller: {
+          sellerId: 0,
+          companyName: "",
+          contactNumber: "",
+          logo: "",
+        },
+        categories: [
+          {
+            id: 0,
+            name: "",
+            description: "",
+          },
+          {
+            id: 0,
+            name: "",
+            description: "",
+          },
+        ],
+      },
+      quantity: 0,
     },
   ],
-  "total": 0
-}
-;
+  total: 0,
+};

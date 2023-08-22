@@ -38,11 +38,11 @@ const Cart = () => {
           {cart.cartItems.map((cartItem, idx) => (
             <Dropdown.Item
               as={Link}
-              to={`/products/${cartItem.productId}`}
+              to={`/products/${cartItem.product.id}`}
               image
             >
-              <img src="https://pigment.github.io/fake-logos/logos/medium/color/12.png" />
-              <span>{cartItem.productName}</span>
+              <img src={cartItem.product.logo} />
+              <span>{cartItem.product.name}</span>
               <div
                 style={{
                   textAlign: "center",
@@ -56,7 +56,7 @@ const Cart = () => {
                   marginTop: "1rem",
                   color: "teal",
                 }}
-              >{`${cartItem.productPrice}₺`}</div>
+              >{`${cartItem.product.price}₺`}</div>
             </Dropdown.Item>
           ))}
           <Dropdown.Divider />
