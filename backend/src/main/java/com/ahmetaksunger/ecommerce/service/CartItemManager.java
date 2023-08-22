@@ -16,6 +16,7 @@ import com.ahmetaksunger.ecommerce.repository.CartItemRepository;
 import com.ahmetaksunger.ecommerce.repository.CartRepository;
 import com.ahmetaksunger.ecommerce.repository.ProductRepository;
 import com.ahmetaksunger.ecommerce.service.rules.CartRules;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -77,5 +78,21 @@ public class CartItemManager implements CartItemService {
 
         cartItemRepository.deleteById(cartItemId);
         return mapperService.forResponse().map(cartItem.getCart(), CartVM.class);
+    }
+
+    /**
+     * Deletes all the items in the cart
+     *
+     * @param cartId The cart id
+     * @param loggedInUser The logged-in user
+     */
+    @Override
+    @Transactional
+    public void deleteAllByCartId(final Long cartId, final User loggedInUser) {
+
+        //Rules
+        cartRules.verifyCartBelongsToUser(cartRepository.findById(cartId).orElseThrow(CartNotFoundException::new), loggedInUser, CartDeletionNotAllowedException.class);
+
+        cartItemRepository.deleteAllByCartId(cartId);
     }
 }

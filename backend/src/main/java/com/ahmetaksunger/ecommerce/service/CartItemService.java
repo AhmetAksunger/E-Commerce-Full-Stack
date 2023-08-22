@@ -9,4 +9,6 @@ public interface CartItemService {
     CartVM create(CreateCartItemRequest createCartItemRequest,User loggedInUser);
 
     CartVM delete(long cartItemId, User loggedInUser);
+
+    void deleteAllByCartId(Long cartId, User loggedInUser);
 }
