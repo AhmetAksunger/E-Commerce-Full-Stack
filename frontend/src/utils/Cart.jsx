@@ -64,7 +64,7 @@ const Cart = () => {
             <strong style={{ color: "black" }}>Total: {cart.total}₺</strong>
           </Dropdown.Item>
           <Dropdown.Item>
-            <Button icon labelPosition="right">
+            <Button as={Link} to="/my-cart" icon labelPosition="right">
               Go to Cart
               <Icon name="right arrow" />
             </Button>

@@ -5,6 +5,7 @@ import Login from '../pages/Login';
 import Home from '../pages/Home';
 import NotFound from '../pages/NotFound';
 import ProductDetail from '../pages/ProductDetail';
+import MyCart from '../pages/MyCart';
 
 const Dashboard = () => {
     return (
@@ -13,6 +14,7 @@ const Dashboard = () => {
             <Route exact path="/login" component={Login}/>
             <Route exact path="/" component={Home} />
             <Route exact path="/products/:id" component={ProductDetail}/>
+            <Route exact path="/my-cart" component={MyCart} />
             <Route path="*" component={NotFound} />
         </Switch>
     );
