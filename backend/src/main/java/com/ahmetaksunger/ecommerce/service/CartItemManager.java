@@ -16,6 +16,7 @@ import com.ahmetaksunger.ecommerce.repository.CartItemRepository;
 import com.ahmetaksunger.ecommerce.repository.CartRepository;
 import com.ahmetaksunger.ecommerce.repository.ProductRepository;
 import com.ahmetaksunger.ecommerce.service.rules.CartRules;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -86,6 +87,7 @@ public class CartItemManager implements CartItemService {
      * @param loggedInUser The logged-in user
      */
     @Override
+    @Transactional
     public void deleteAllByCartId(final Long cartId, final User loggedInUser) {
 
         //Rules
