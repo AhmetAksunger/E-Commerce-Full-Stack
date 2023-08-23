@@ -12,8 +12,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CartVM {
-    private long id;
+    private Long id;
     private CustomerVM customer;
     private List<CartItemVM> cartItems;
+    private Integer totalProductCount;
     private BigDecimal total;
 }

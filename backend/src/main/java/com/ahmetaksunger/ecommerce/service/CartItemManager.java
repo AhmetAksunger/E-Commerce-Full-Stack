@@ -26,6 +26,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CartItemManager implements CartItemService {
 
+    private final CartService cartService;
     private final CartRepository cartRepository;
     private final ProductRepository productRepository;
     private final CartItemRepository cartItemRepository;
@@ -65,6 +66,7 @@ public class CartItemManager implements CartItemService {
 
         var response = mapperService.forResponse().map(dbCartItem.getCart(), CartVM.class);
         response.setTotal(PriceCalculator.calculateTotal(cart));
+        response.setTotalProductCount(cartService.calculateTotalProductCount(cart));
         return response;
     }
 
@@ -77,7 +79,9 @@ public class CartItemManager implements CartItemService {
         cartRules.verifyCartBelongsToUser(cartItem.getCart(), loggedInUser, CartDeletionNotAllowedException.class);
 
         cartItemRepository.deleteById(cartItemId);
-        return mapperService.forResponse().map(cartItem.getCart(), CartVM.class);
+        var response = mapperService.forResponse().map(cartItem.getCart(), CartVM.class);
+        response.setTotalProductCount(cartService.calculateTotalProductCount(cartItem.getCart()));
+        return response;
     }
 
     /**

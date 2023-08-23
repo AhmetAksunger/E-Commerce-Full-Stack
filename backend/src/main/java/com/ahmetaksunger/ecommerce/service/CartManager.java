@@ -47,6 +47,7 @@ public class CartManager implements CartService {
 
         var response = mapperService.forResponse().map(cart, CartVM.class);
         response.setTotal(PriceCalculator.calculateTotal(cart));
+        response.setTotalProductCount(this.calculateTotalProductCount(cart));
         return response;
     }
 
