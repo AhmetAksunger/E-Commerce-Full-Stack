@@ -37,7 +37,7 @@ public class CartItemController {
     }
 
     /**
-     * Delets all the items in the cart, with the method {@link CartItemService#deleteAllByCartId(Long, User)}
+     * Deletes all the items in the cart, with the method {@link CartItemService#deleteAllByCartId(Long, User)}
      *
      * @param cartId the cart id
      * @param loggedInUser the logged-in user
@@ -47,6 +47,14 @@ public class CartItemController {
         cartItemService.deleteAllByCartId(cartId, loggedInUser);
     }
 
+    /**
+     * Updates the specified cart item
+     *
+     * @param cartItemId Cart item id
+     * @param updateCartItemRequest {@link UpdateCartItemRequest}
+     * @param loggedInUser Logged-in suer
+     * @return Response Entity of CartVM
+     */
     @PutMapping("/{cartItemId}")
     public ResponseEntity<CartVM> updateCartItem(@PathVariable Long cartItemId,
                                                  @RequestBody @Valid UpdateCartItemRequest updateCartItemRequest,
