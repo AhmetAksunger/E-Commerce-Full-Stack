@@ -1,6 +1,7 @@
 package com.ahmetaksunger.ecommerce.controller;
 
 import com.ahmetaksunger.ecommerce.dto.request.cartItem.CreateCartItemRequest;
+import com.ahmetaksunger.ecommerce.dto.request.cartItem.UpdateCartItemRequest;
 import com.ahmetaksunger.ecommerce.dto.response.CartVM;
 import com.ahmetaksunger.ecommerce.model.User;
 import com.ahmetaksunger.ecommerce.security.CurrentUser;
@@ -44,5 +45,12 @@ public class CartItemController {
     @DeleteMapping("/cart/{cartId}/clear")
     public void clearCart(@PathVariable Long cartId, @CurrentUser User loggedInUser) {
         cartItemService.deleteAllByCartId(cartId, loggedInUser);
+    }
+
+    @PutMapping("/{cartItemId}")
+    public ResponseEntity<CartVM> updateCartItem(@PathVariable Long cartItemId,
+                                                 @RequestBody @Valid UpdateCartItemRequest updateCartItemRequest,
+                                                 @CurrentUser User loggedInUser) {
+        return ResponseEntity.ok(cartItemService.update(cartItemId, updateCartItemRequest, loggedInUser));
     }
 }
