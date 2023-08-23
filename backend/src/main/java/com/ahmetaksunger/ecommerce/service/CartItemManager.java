@@ -50,6 +50,9 @@ public class CartItemManager implements CartItemService {
 
         if (optionalCartItem.isPresent()) {
             CartItem cartItem = optionalCartItem.get();
+
+            cartRules.checkIfQuantityIsValid(createCartItemRequest.getQuantity() + cartItem.getQuantity(), product);
+
             cartItem.setQuantity(cartItem.getQuantity() + createCartItemRequest.getQuantity());
             var response = mapperService.forResponse().map(cartItemRepository.save(cartItem).getCart(), CartVM.class);
             response.setTotal(PriceCalculator.calculateTotal(cart));
@@ -105,9 +108,9 @@ public class CartItemManager implements CartItemService {
     /**
      * Updates the cart-item with the given {@link UpdateCartItemRequest}
      *
-     * @param cartItemId            cart item id
+     * @param cartItemId cart item id
      * @param updateCartItemRequest {@link UpdateCartItemRequest}
-     * @param loggedInUser          Logged-in user
+     * @param loggedInUser Logged-in user
      * @return {@link CartVM}
      */
     @Override
