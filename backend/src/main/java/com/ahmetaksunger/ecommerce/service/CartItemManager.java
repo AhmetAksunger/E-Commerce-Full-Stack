@@ -1,6 +1,7 @@
 package com.ahmetaksunger.ecommerce.service;
 
 import com.ahmetaksunger.ecommerce.dto.request.cartItem.CreateCartItemRequest;
+import com.ahmetaksunger.ecommerce.dto.request.cartItem.UpdateCartItemRequest;
 import com.ahmetaksunger.ecommerce.dto.response.CartVM;
 import com.ahmetaksunger.ecommerce.exception.NotAllowedException.CartDeletionNotAllowedException;
 import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
@@ -47,8 +48,11 @@ public class CartItemManager implements CartItemService {
         Optional<CartItem> optionalCartItem = cartItemRepository
                 .findByCartIdAndProductId(createCartItemRequest.getCartId(), createCartItemRequest.getProductId());
 
-        if(optionalCartItem.isPresent()) {
+        if (optionalCartItem.isPresent()) {
             CartItem cartItem = optionalCartItem.get();
+
+            cartRules.checkIfQuantityIsValid(createCartItemRequest.getQuantity() + cartItem.getQuantity(), product);
+
             cartItem.setQuantity(cartItem.getQuantity() + createCartItemRequest.getQuantity());
             var response = mapperService.forResponse().map(cartItemRepository.save(cartItem).getCart(), CartVM.class);
             response.setTotal(PriceCalculator.calculateTotal(cart));
@@ -80,6 +84,7 @@ public class CartItemManager implements CartItemService {
 
         cartItemRepository.deleteById(cartItemId);
         var response = mapperService.forResponse().map(cartItem.getCart(), CartVM.class);
+        response.setTotal(PriceCalculator.calculateTotal(cartItem.getCart()));
         response.setTotalProductCount(cartService.calculateTotalProductCount(cartItem.getCart()));
         return response;
     }
@@ -87,7 +92,7 @@ public class CartItemManager implements CartItemService {
     /**
      * Deletes all the items in the cart
      *
-     * @param cartId The cart id
+     * @param cartId       The cart id
      * @param loggedInUser The logged-in user
      */
     @Override
@@ -98,5 +103,32 @@ public class CartItemManager implements CartItemService {
         cartRules.verifyCartBelongsToUser(cartRepository.findById(cartId).orElseThrow(CartNotFoundException::new), loggedInUser, CartDeletionNotAllowedException.class);
 
         cartItemRepository.deleteAllByCartId(cartId);
+    }
+
+    /**
+     * Updates the cart-item with the given {@link UpdateCartItemRequest}
+     *
+     * @param cartItemId cart item id
+     * @param updateCartItemRequest {@link UpdateCartItemRequest}
+     * @param loggedInUser Logged-in user
+     * @return {@link CartVM}
+     */
+    @Override
+    public CartVM update(final Long cartItemId, final UpdateCartItemRequest updateCartItemRequest, final User loggedInUser) {
+
+        CartItem cartItem = cartItemRepository.findById(cartItemId).orElseThrow(CartItemNotFound::new);
+
+        //Rules
+        cartRules.verifyCartBelongsToUser(cartItem.getCart(), loggedInUser, UnauthorizedException.class);
+        cartRules.checkIfQuantityIsValid(updateCartItemRequest.getQuantity(), cartItem.getProduct());
+        cartRules.checkIfCartActive(cartItem.getCart());
+
+        cartItem.setQuantity(updateCartItemRequest.getQuantity());
+
+        CartItem updatedCartItem = cartItemRepository.save(cartItem);
+        var response = mapperService.forResponse().map(updatedCartItem.getCart(), CartVM.class);
+        response.setTotal(PriceCalculator.calculateTotal(updatedCartItem.getCart()));
+        response.setTotalProductCount(cartService.calculateTotalProductCount(updatedCartItem.getCart()));
+        return response;
     }
 }
