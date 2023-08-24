@@ -39,4 +39,23 @@ export default class CartService {
     return axios.get(`/api/v1/carts/users/${id}`,config);
   }
 
+  /**
+   * 
+   * Updates the quantity of the specified cart item
+   * 
+   * @param {string} jwt JSON Web Token for authentication.
+   * @param {number} cartItemId Cart Item Id
+   * @param {number} quantity Quantity
+   * @returns Axios Promise
+   */
+  updateCartItem(jwt,cartItemId,quantity){
+    const config = {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    };
+
+    return axios.put(`/api/v1/cart-items/${cartItemId}`,{quantity},config);
+  }
+
 }
