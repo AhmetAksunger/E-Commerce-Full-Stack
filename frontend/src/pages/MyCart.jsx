@@ -89,7 +89,7 @@ const MyCart = () => {
                         <Icon name="plus" />
                       </Button>
                       <Label size="large" basic content={cartItem.quantity} style={{margin:"0"}}/>
-                      <Button color="red" size="mini" style={{ margin: "0",height:"31.93px" }}>
+                      <Button color="red" size="mini" style={{ margin: "0",height:"31.93px" }} onClick={() => updateCartItem(cartItem.id,cartItem.quantity - 1)}>
                         <Icon name="minus" />
                       </Button>
                     </div>
