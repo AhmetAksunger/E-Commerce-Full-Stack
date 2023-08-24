@@ -10,7 +10,6 @@ import {
   Header,
   Icon,
   Image,
-  Input,
   Label,
   Segment,
 } from "semantic-ui-react";
@@ -31,12 +30,12 @@ const MyCart = () => {
       .then((response) => setCart(response.data));
   };
 
-  const addCartItem = (productId, quantity) => {
+  const updateCartItem = (cartItemId,quantity) => {
     let cartService = new CartService();
     cartService
-      .addCartItem(jwt, cartId, productId, quantity)
-      .then((response) => setCart(response.data));
-  };
+    .updateCartItem(jwt,cartItemId,quantity)
+    .then((response) => setCart(response.data));
+  }
 
   return (
     <Grid>
@@ -86,11 +85,11 @@ const MyCart = () => {
                   </Grid.Column>
                   <GridColumn width={4}>
                     <div style={{ display: "flex", alignItems: "center" }}>
-                      <Button color="green" size="mini" style={{ margin: "0",height:"37.6px"}} onClick={() => addCartItem(cartItem.product.id,1)}>
+                      <Button color="green" size="mini" style={{ margin: "0",height:"31.93px"}} onClick={() => updateCartItem(cartItem.id,cartItem.quantity + 1)}>
                         <Icon name="plus" />
                       </Button>
-                      <Input disabled style={{ width: "50px" }} value="1" />
-                      <Button color="red" size="mini" style={{ margin: "0",height:"37.6px" }}>
+                      <Label size="large" basic content={cartItem.quantity} style={{margin:"0"}}/>
+                      <Button color="red" size="mini" style={{ margin: "0",height:"31.93px" }}>
                         <Icon name="minus" />
                       </Button>
                     </div>
