@@ -79,6 +79,10 @@ const MyCart = () => {
     }
   };
 
+  const deleteCartItem = (cartItemId) => {
+    cartService.deleteCartItem(jwt,cartItemId)
+    .then((response) => setCart(response.data));
+  }
   return (
     <Grid>
       <Header as="h2" textAlign="left">
@@ -190,11 +194,11 @@ const MyCart = () => {
                   </Grid.Column>
                   <Grid.Column width={3}>
                     <Header color="orange" textAlign="center">
-                      {cartItem.product.price * cartItem.quantity}₺
+                      {Math.round(cartItem.product.price * cartItem.quantity)}₺
                     </Header>
                   </Grid.Column>
                   <Grid.Column width={1}>
-                    <Icon name="trash alternate" />
+                    <Icon name="trash alternate" style={{cursor:"pointer"}} onClick={() => deleteCartItem(cartItem.id)}/>
                   </Grid.Column>
                 </Grid>
               </Card.Content>
