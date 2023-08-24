@@ -33,7 +33,7 @@ const Cart = () => {
         onClick={() => getCartByUserId()}
       >
         <Dropdown.Menu>
-          <Dropdown.Header>My Cart</Dropdown.Header>
+          <Dropdown.Header>{`My Cart(${cart.totalProductCount} Products)`}</Dropdown.Header>
           <Dropdown.Divider />
           {cart.cartItems.map((cartItem, idx) => (
             <Dropdown.Item
