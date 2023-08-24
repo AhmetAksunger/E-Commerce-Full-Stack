@@ -4,10 +4,7 @@ import com.ahmetaksunger.ecommerce.dto.response.CartVM;
 import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.CartNotFoundException;
 import com.ahmetaksunger.ecommerce.mapper.MapperService;
-import com.ahmetaksunger.ecommerce.model.Cart;
-import com.ahmetaksunger.ecommerce.model.CartStatus;
-import com.ahmetaksunger.ecommerce.model.Customer;
-import com.ahmetaksunger.ecommerce.model.User;
+import com.ahmetaksunger.ecommerce.model.*;
 import com.ahmetaksunger.ecommerce.repository.CartRepository;
 import com.ahmetaksunger.ecommerce.service.rules.CartRules;
 import lombok.RequiredArgsConstructor;
@@ -50,11 +47,12 @@ public class CartManager implements CartService {
 
         var response = mapperService.forResponse().map(cart, CartVM.class);
         response.setTotal(PriceCalculator.calculateTotal(cart));
+        response.setTotalProductCount(this.calculateTotalProductCount(cart));
         return response;
     }
 
     /**
-     *  Activates the cart by setting the {@link CartStatus} ACTIVE
+     * Activates the cart by setting the {@link CartStatus} ACTIVE
      *
      * @param cart Cart
      */
@@ -66,12 +64,27 @@ public class CartManager implements CartService {
 
     /**
      * Deactivates the cart by setting the {@link CartStatus} INACTIVE
+     *
      * @param cart Cart
      */
     @Override
     public void deactivateCart(Cart cart) {
         cart.setStatus(CartStatus.INACTIVE);
         cartRepository.save(cart);
+    }
+
+    /**
+     * Calculates the total product count, for the given cart
+     *
+     * @param cart Cart
+     * @return Total product count
+     */
+    @Override
+    public Integer calculateTotalProductCount(Cart cart) {
+        return cart.getCartItems()
+                .stream()
+                .mapToInt(CartItem::getQuantity)
+                .sum();
     }
 
 }

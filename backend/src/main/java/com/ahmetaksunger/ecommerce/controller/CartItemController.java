@@ -1,6 +1,7 @@
 package com.ahmetaksunger.ecommerce.controller;
 
 import com.ahmetaksunger.ecommerce.dto.request.cartItem.CreateCartItemRequest;
+import com.ahmetaksunger.ecommerce.dto.request.cartItem.UpdateCartItemRequest;
 import com.ahmetaksunger.ecommerce.dto.response.CartVM;
 import com.ahmetaksunger.ecommerce.model.User;
 import com.ahmetaksunger.ecommerce.security.CurrentUser;
@@ -36,7 +37,7 @@ public class CartItemController {
     }
 
     /**
-     * Delets all the items in the cart, with the method {@link CartItemService#deleteAllByCartId(Long, User)}
+     * Deletes all the items in the cart, with the method {@link CartItemService#deleteAllByCartId(Long, User)}
      *
      * @param cartId the cart id
      * @param loggedInUser the logged-in user
@@ -44,5 +45,20 @@ public class CartItemController {
     @DeleteMapping("/cart/{cartId}/clear")
     public void clearCart(@PathVariable Long cartId, @CurrentUser User loggedInUser) {
         cartItemService.deleteAllByCartId(cartId, loggedInUser);
+    }
+
+    /**
+     * Updates the specified cart item
+     *
+     * @param cartItemId Cart item id
+     * @param updateCartItemRequest {@link UpdateCartItemRequest}
+     * @param loggedInUser Logged-in suer
+     * @return Response Entity of CartVM
+     */
+    @PutMapping("/{cartItemId}")
+    public ResponseEntity<CartVM> updateCartItem(@PathVariable Long cartItemId,
+                                                 @RequestBody @Valid UpdateCartItemRequest updateCartItemRequest,
+                                                 @CurrentUser User loggedInUser) {
+        return ResponseEntity.ok(cartItemService.update(cartItemId, updateCartItemRequest, loggedInUser));
     }
 }
