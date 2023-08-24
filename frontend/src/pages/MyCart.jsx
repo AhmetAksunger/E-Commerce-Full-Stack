@@ -22,22 +22,29 @@ const MyCart = () => {
   const [isMaxQuantity, setIsMaxQuantity] = useState([]);
   const [isMinQuantity, setIsMinQuantity] = useState([]);
 
+  let cartService = new CartService();
+
   useEffect(() => {
     getCartByUserId();
   }, []);
 
   const getCartByUserId = () => {
-    let cartService = new CartService();
     cartService
       .getCartByUserId(jwt, userId)
       .then((response) => setCart(response.data));
   };
 
   const updateCartItem = (cartItemId, quantity) => {
-    let cartService = new CartService();
     cartService
       .updateCartItem(jwt, cartItemId, quantity)
-      .then((response) => setCart(response.data));
+      .then((response) => setCart(response.data))
+      .catch((error) => {
+        if(error.response.data.productsWithInsufficientStock){
+          setIsMaxQuantity((previousState) => [...previousState,cartItemId])
+        }else{
+          setIsMinQuantity((previousState) => [...previousState,cartItemId])
+        }
+      });
   };
 
   const handleIncrementQuantity = (
@@ -74,10 +81,10 @@ const MyCart = () => {
 
   return (
     <Grid>
-              <Header as="h2" textAlign="left">
-          <Icon name="shopping cart" />
-          <Header.Content>{`My Cart (${cart.totalProductCount} Products)`}</Header.Content>
-        </Header>
+      <Header as="h2" textAlign="left">
+        <Icon name="shopping cart" />
+        <Header.Content>{`My Cart (${cart.totalProductCount} Products)`}</Header.Content>
+      </Header>
       <Grid.Column width={12}>
         <Segment placeholder>
           {cart.cartItems.map((cartItem, idx) => (
@@ -187,7 +194,7 @@ const MyCart = () => {
                     </Header>
                   </Grid.Column>
                   <Grid.Column width={1}>
-                  <Icon name="trash alternate" />
+                    <Icon name="trash alternate" />
                   </Grid.Column>
                 </Grid>
               </Card.Content>
