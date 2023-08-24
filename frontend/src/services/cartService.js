@@ -58,4 +58,20 @@ export default class CartService {
     return axios.put(`/api/v1/cart-items/${cartItemId}`,{quantity},config);
   }
 
+  /**
+   * Deletes the specified cart item
+   * 
+   * @param {string} jwt JSON Web Token for authentication.
+   * @param {number} cartItemId Cart Item Id
+   * @returns Axios Promise
+   */
+  deleteCartItem(jwt,cartItemId){
+    const config = {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+      },
+    };
+
+    return axios.delete(`/api/v1/cart-items/${cartItemId}`,config);
+  }
 }
