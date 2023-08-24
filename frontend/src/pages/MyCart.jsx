@@ -7,6 +7,7 @@ import {
   Card,
   Grid,
   GridColumn,
+  Header,
   Icon,
   Image,
   Input,
@@ -40,6 +41,10 @@ const MyCart = () => {
   return (
     <Grid>
       <Grid.Column width={12}>
+        <Header as='h2' textAlign="left">
+          <Icon name="shopping cart" />
+          <Header.Content>{`My Cart (${cart.totalProductCount} Products)`}</Header.Content>
+        </Header>
         <Segment placeholder>
           {cart.cartItems.map((cartItem, idx) => (
             <Card fluid color="orange">
