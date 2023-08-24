@@ -74,11 +74,11 @@ const MyCart = () => {
 
   return (
     <Grid>
-      <Grid.Column width={12}>
-        <Header as="h2" textAlign="left">
+              <Header as="h2" textAlign="left">
           <Icon name="shopping cart" />
           <Header.Content>{`My Cart (${cart.totalProductCount} Products)`}</Header.Content>
         </Header>
+      <Grid.Column width={12}>
         <Segment placeholder>
           {cart.cartItems.map((cartItem, idx) => (
             <Card fluid color="orange">
@@ -105,20 +105,20 @@ const MyCart = () => {
                   alignItems: "center",
                 }}
               >
-                <Grid centered columns={3} verticalAlign="middle">
+                <Grid centered columns={5} verticalAlign="middle">
                   <Grid.Column width={4}>
                     <div style={{ textAlign: "left" }}>
                       <Image src={cartItem.product.logo} />
                     </div>
                   </Grid.Column>
-                  <Grid.Column width={8}>
+                  <Grid.Column width={5}>
                     <div style={{ textAlign: "left" }}>
                       <p style={{ fontSize: "1.2rem" }} basic>
                         {cartItem.product.name}
                       </p>
                     </div>
                   </Grid.Column>
-                  <GridColumn width={4}>
+                  <Grid.Column width={3}>
                     {isMaxQuantity.includes(cartItem.id) && (
                       <div style={{ textAlign: "center" }}>
                         <Label
@@ -180,7 +180,15 @@ const MyCart = () => {
                         <Icon name="minus" />
                       </Button>
                     </div>
-                  </GridColumn>
+                  </Grid.Column>
+                  <Grid.Column width={3}>
+                    <Header color="orange" textAlign="center">
+                      {cartItem.product.price * cartItem.quantity}₺
+                    </Header>
+                  </Grid.Column>
+                  <Grid.Column width={1}>
+                  <Icon name="trash alternate" />
+                  </Grid.Column>
                 </Grid>
               </Card.Content>
             </Card>
