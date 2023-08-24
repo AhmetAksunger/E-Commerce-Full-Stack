@@ -19,6 +19,9 @@ const MyCart = () => {
 
   const [cart, setCart] = useState(defaultCart);
 
+  const [isMaxQuantity, setIsMaxQuantity] = useState([]);
+  const [isMinQuantity, setIsMinQuantity] = useState([]);
+
   useEffect(() => {
     getCartByUserId();
   }, []);
@@ -30,17 +33,49 @@ const MyCart = () => {
       .then((response) => setCart(response.data));
   };
 
-  const updateCartItem = (cartItemId,quantity) => {
+  const updateCartItem = (cartItemId, quantity) => {
     let cartService = new CartService();
     cartService
-    .updateCartItem(jwt,cartItemId,quantity)
-    .then((response) => setCart(response.data));
-  }
+      .updateCartItem(jwt, cartItemId, quantity)
+      .then((response) => setCart(response.data));
+  };
+
+  const handleIncrementQuantity = (
+    cartItemId,
+    currentQuantity,
+    maxQuantity
+  ) => {
+    setIsMinQuantity((previousState) =>
+      previousState.filter((id) => id !== cartItemId)
+    );
+    if (currentQuantity === maxQuantity - 1) {
+      updateCartItem(cartItemId, currentQuantity + 1);
+      setIsMaxQuantity((previousState) => [...previousState, cartItemId]);
+    } else {
+      updateCartItem(cartItemId, currentQuantity + 1);
+    }
+  };
+
+  const handleDecrementQuantity = (
+    cartItemId,
+    currentQuantity,
+    minQuantity = 1
+  ) => {
+    setIsMaxQuantity((previousState) =>
+      previousState.filter((id) => id !== cartItemId)
+    );
+    if (currentQuantity === minQuantity + 1) {
+      updateCartItem(cartItemId, currentQuantity - 1);
+      setIsMinQuantity((previousState) => [...previousState, cartItemId]);
+    } else {
+      updateCartItem(cartItemId, currentQuantity - 1);
+    }
+  };
 
   return (
     <Grid>
       <Grid.Column width={12}>
-        <Header as='h2' textAlign="left">
+        <Header as="h2" textAlign="left">
           <Icon name="shopping cart" />
           <Header.Content>{`My Cart (${cart.totalProductCount} Products)`}</Header.Content>
         </Header>
@@ -84,12 +119,64 @@ const MyCart = () => {
                     </div>
                   </Grid.Column>
                   <GridColumn width={4}>
+                    {isMaxQuantity.includes(cartItem.id) && (
+                      <div style={{ textAlign: "center" }}>
+                        <Label
+                          content={`Max. order amount: ${cartItem.product.quantity}`}
+                          basic
+                          color="red"
+                          pointing="below"
+                        />
+                      </div>
+                    )}
+
+                    {isMinQuantity.includes(cartItem.id) && (
+                      <div style={{ textAlign: "center" }}>
+                        <Label
+                          content={`Min. order amount: 1`}
+                          basic
+                          color="red"
+                          pointing="below"
+                        />
+                      </div>
+                    )}
+
                     <div style={{ display: "flex", alignItems: "center" }}>
-                      <Button color="green" size="mini" style={{ margin: "0",height:"31.93px"}} onClick={() => updateCartItem(cartItem.id,cartItem.quantity + 1)}>
+                      <Button
+                        key={`${cartItem.id}incr`}
+                        disabled={isMaxQuantity.includes(cartItem.id)}
+                        color="green"
+                        size="mini"
+                        style={{ margin: "0", height: "31.93px" }}
+                        onClick={() =>
+                          handleIncrementQuantity(
+                            cartItem.id,
+                            cartItem.quantity,
+                            cartItem.product.quantity
+                          )
+                        }
+                      >
                         <Icon name="plus" />
                       </Button>
-                      <Label size="large" basic content={cartItem.quantity} style={{margin:"0"}}/>
-                      <Button color="red" size="mini" style={{ margin: "0",height:"31.93px" }} onClick={() => updateCartItem(cartItem.id,cartItem.quantity - 1)}>
+                      <Label
+                        size="large"
+                        basic
+                        content={cartItem.quantity}
+                        style={{ margin: "0" }}
+                      />
+                      <Button
+                        key={`${cartItem.id}decr`}
+                        disabled={isMinQuantity.includes(cartItem.id)}
+                        color="red"
+                        size="mini"
+                        style={{ margin: "0", height: "31.93px" }}
+                        onClick={() =>
+                          handleDecrementQuantity(
+                            cartItem.id,
+                            cartItem.quantity
+                          )
+                        }
+                      >
                         <Icon name="minus" />
                       </Button>
                     </div>
