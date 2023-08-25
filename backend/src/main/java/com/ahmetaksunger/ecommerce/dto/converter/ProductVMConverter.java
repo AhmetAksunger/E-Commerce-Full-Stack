@@ -17,13 +17,15 @@ public class ProductVMConverter {
 
     private final ProductRepository productRepository;
     private final MapperService mapperService;
-    public ProductVM convert(Product from){
+
+    public ProductVM convert(Product from) {
 
         var orderCount = productRepository.getOrderCountByProductId(from.getId());
 
         return ProductVM.builder()
                 .id(from.getId())
                 .name(from.getName())
+                .description(from.getDescription())
                 .price(from.getPrice())
                 .quantity(from.getQuantity())
                 .orderCount(orderCount == null ? 0 : orderCount)
