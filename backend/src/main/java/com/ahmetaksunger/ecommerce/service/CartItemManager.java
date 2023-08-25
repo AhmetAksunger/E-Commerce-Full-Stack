@@ -1,5 +1,6 @@
 package com.ahmetaksunger.ecommerce.service;
 
+import com.ahmetaksunger.ecommerce.dto.converter.CartVMConverter;
 import com.ahmetaksunger.ecommerce.dto.request.cartItem.CreateCartItemRequest;
 import com.ahmetaksunger.ecommerce.dto.request.cartItem.UpdateCartItemRequest;
 import com.ahmetaksunger.ecommerce.dto.response.CartVM;
@@ -8,7 +9,6 @@ import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedExc
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.CartItemNotFound;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.CartNotFoundException;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.ProductNotFoundException;
-import com.ahmetaksunger.ecommerce.mapper.MapperService;
 import com.ahmetaksunger.ecommerce.model.Cart;
 import com.ahmetaksunger.ecommerce.model.CartItem;
 import com.ahmetaksunger.ecommerce.model.Product;
@@ -27,12 +27,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CartItemManager implements CartItemService {
 
-    private final CartService cartService;
     private final CartRepository cartRepository;
     private final ProductRepository productRepository;
     private final CartItemRepository cartItemRepository;
     private final CartRules cartRules;
-    private final MapperService mapperService;
+    private final CartVMConverter cartVMConverter;
 
     @Override
     public CartVM create(final CreateCartItemRequest createCartItemRequest, User loggedInUser) {
@@ -54,9 +53,7 @@ public class CartItemManager implements CartItemService {
             cartRules.checkIfQuantityIsValid(createCartItemRequest.getQuantity() + cartItem.getQuantity(), product);
 
             cartItem.setQuantity(cartItem.getQuantity() + createCartItemRequest.getQuantity());
-            var response = mapperService.forResponse().map(cartItemRepository.save(cartItem).getCart(), CartVM.class);
-            response.setTotal(PriceCalculator.calculateTotal(cart));
-            return response;
+            return cartVMConverter.convert(cartItemRepository.save(cartItem).getCart());
         }
 
         CartItem cartItem = CartItem
@@ -68,10 +65,7 @@ public class CartItemManager implements CartItemService {
 
         CartItem dbCartItem = cartItemRepository.save(cartItem);
 
-        var response = mapperService.forResponse().map(dbCartItem.getCart(), CartVM.class);
-        response.setTotal(PriceCalculator.calculateTotal(cart));
-        response.setTotalProductCount(cartService.calculateTotalProductCount(cart));
-        return response;
+        return cartVMConverter.convert(dbCartItem.getCart());
     }
 
     @Override
@@ -83,10 +77,8 @@ public class CartItemManager implements CartItemService {
         cartRules.verifyCartBelongsToUser(cartItem.getCart(), loggedInUser, CartDeletionNotAllowedException.class);
 
         cartItemRepository.deleteById(cartItemId);
-        var response = mapperService.forResponse().map(cartItem.getCart(), CartVM.class);
-        response.setTotal(PriceCalculator.calculateTotal(cartItem.getCart()));
-        response.setTotalProductCount(cartService.calculateTotalProductCount(cartItem.getCart()));
-        return response;
+
+        return cartVMConverter.convert(cartItem.getCart());
     }
 
     /**
@@ -108,9 +100,9 @@ public class CartItemManager implements CartItemService {
     /**
      * Updates the cart-item with the given {@link UpdateCartItemRequest}
      *
-     * @param cartItemId cart item id
+     * @param cartItemId            cart item id
      * @param updateCartItemRequest {@link UpdateCartItemRequest}
-     * @param loggedInUser Logged-in user
+     * @param loggedInUser          Logged-in user
      * @return {@link CartVM}
      */
     @Override
@@ -126,9 +118,7 @@ public class CartItemManager implements CartItemService {
         cartItem.setQuantity(updateCartItemRequest.getQuantity());
 
         CartItem updatedCartItem = cartItemRepository.save(cartItem);
-        var response = mapperService.forResponse().map(updatedCartItem.getCart(), CartVM.class);
-        response.setTotal(PriceCalculator.calculateTotal(updatedCartItem.getCart()));
-        response.setTotalProductCount(cartService.calculateTotalProductCount(updatedCartItem.getCart()));
-        return response;
+
+        return cartVMConverter.convert(updatedCartItem.getCart());
     }
 }

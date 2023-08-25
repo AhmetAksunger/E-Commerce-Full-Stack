@@ -33,5 +33,5 @@ public interface ProductService {
 
     ProductVM updateProduct(Long productId, UpdateProductRequest updateProductRequest, User loggedInUser);
 
-    List<ProductOrderInfoDto> getTop10MostOrderedProducts();
+    List<ProductVM> getTop10MostOrderedProducts();
 }

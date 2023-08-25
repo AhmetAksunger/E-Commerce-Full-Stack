@@ -1,7 +1,7 @@
 package com.ahmetaksunger.ecommerce.dto.response;
 
-import com.ahmetaksunger.ecommerce.model.Seller;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,10 +12,12 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class ProductVM {
 
     private long id;
     private String name;
+    private String description;
     private BigDecimal price;
     private Integer quantity;
     private Long orderCount;
