@@ -1,5 +1,6 @@
 package com.ahmetaksunger.ecommerce.service;
 
+import com.ahmetaksunger.ecommerce.dto.converter.ProductVMConverter;
 import com.ahmetaksunger.ecommerce.dto.request.product.CreateProductRequest;
 import com.ahmetaksunger.ecommerce.dto.request.product.UpdateProductRequest;
 import com.ahmetaksunger.ecommerce.dto.response.*;
@@ -27,6 +28,7 @@ public class ProductManager implements ProductService {
 
     private final ProductRepository productRepository;
     private final MapperService mapperService;
+    private final ProductVMConverter productVMConverter;
     private final CategoryService categoryService;
     private final ProductRules productRules;
 
@@ -37,9 +39,8 @@ public class ProductManager implements ProductService {
         product.setSeller((Seller) loggedInUser);
         List<Category> categories = categoryService.getCategoriesByIds(createProductRequest.getCategoryIds());
         product.setCategories(categories);
-        var response = mapperService.forResponse().map(productRepository.save(product), ProductVM.class);
-        response.setSeller(mapperService.forResponse().map(product.getSeller(), SellerVM.class));
-        return response;
+
+        return productVMConverter.convert(productRepository.save(product));
     }
 
     @Override
@@ -57,8 +58,7 @@ public class ProductManager implements ProductService {
                         .toList()
         );
         product.setCategories(dbCategories);
-        product.setUpdatedAt(new Date());
-        return mapperService.forResponse().map(productRepository.save(product), ProductVM.class);
+        return productVMConverter.convert(productRepository.save(product));
     }
 
     @Override
@@ -76,8 +76,7 @@ public class ProductManager implements ProductService {
                         toList()
         );
         product.setCategories(dbCategories);
-        product.setUpdatedAt(new Date());
-        return mapperService.forResponse().map(productRepository.save(product), ProductVM.class);
+        return productVMConverter.convert(productRepository.save(product));
     }
 
     /**
@@ -123,7 +122,7 @@ public class ProductManager implements ProductService {
         }
 
         return productRepository.findAll(specification, pageable)
-                .map(product -> mapperService.forResponse().map(product, ProductVM.class));
+                .map(productVMConverter::convert);
     }
 
     @Override
@@ -222,7 +221,7 @@ public class ProductManager implements ProductService {
             product.setLogo(updateProductRequest.getLogo());
         }
 
-        return mapperService.forResponse().map(productRepository.save(product), ProductVM.class);
+        return productVMConverter.convert(productRepository.save(product));
     }
 
     /**

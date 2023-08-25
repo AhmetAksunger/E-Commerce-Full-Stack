@@ -4,8 +4,10 @@ import com.ahmetaksunger.ecommerce.dto.converter.CartVMConverter;
 import com.ahmetaksunger.ecommerce.dto.response.CartVM;
 import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.CartNotFoundException;
-import com.ahmetaksunger.ecommerce.mapper.MapperService;
-import com.ahmetaksunger.ecommerce.model.*;
+import com.ahmetaksunger.ecommerce.model.Cart;
+import com.ahmetaksunger.ecommerce.model.CartStatus;
+import com.ahmetaksunger.ecommerce.model.Customer;
+import com.ahmetaksunger.ecommerce.model.User;
 import com.ahmetaksunger.ecommerce.repository.CartRepository;
 import com.ahmetaksunger.ecommerce.service.rules.CartRules;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +19,6 @@ public class CartManager implements CartService {
 
     private final CartRepository cartRepository;
     private final CartRules cartRules;
-    private final MapperService mapperService;
     private final CartVMConverter cartVMConverter;
 
     @Override
@@ -71,6 +72,5 @@ public class CartManager implements CartService {
         cart.setStatus(CartStatus.INACTIVE);
         cartRepository.save(cart);
     }
-
 
 }
