@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import {
   Button,
   Card,
+  Divider,
   Grid,
   GridColumn,
   Header,
@@ -39,10 +40,10 @@ const MyCart = () => {
       .updateCartItem(jwt, cartItemId, quantity)
       .then((response) => setCart(response.data))
       .catch((error) => {
-        if(error.response.data.productsWithInsufficientStock){
-          setIsMaxQuantity((previousState) => [...previousState,cartItemId])
-        }else{
-          setIsMinQuantity((previousState) => [...previousState,cartItemId])
+        if (error.response.data.productsWithInsufficientStock) {
+          setIsMaxQuantity((previousState) => [...previousState, cartItemId]);
+        } else {
+          setIsMinQuantity((previousState) => [...previousState, cartItemId]);
         }
       });
   };
@@ -80,9 +81,10 @@ const MyCart = () => {
   };
 
   const deleteCartItem = (cartItemId) => {
-    cartService.deleteCartItem(jwt,cartItemId)
-    .then((response) => setCart(response.data));
-  }
+    cartService
+      .deleteCartItem(jwt, cartItemId)
+      .then((response) => setCart(response.data));
+  };
   return (
     <Grid>
       <Header as="h2" textAlign="left">
@@ -90,7 +92,6 @@ const MyCart = () => {
         <Header.Content>{`My Cart (${cart.totalProductCount} Products)`}</Header.Content>
       </Header>
       <Grid.Column width={12}>
-        <Segment placeholder>
           {cart.cartItems.map((cartItem, idx) => (
             <Card fluid color="orange">
               <Card.Content>
@@ -194,20 +195,34 @@ const MyCart = () => {
                   </Grid.Column>
                   <Grid.Column width={3}>
                     <Header color="orange" textAlign="center">
-                      {Math.round(cartItem.product.price * cartItem.quantity)}₺
+                      {cartItem.total}₺
                     </Header>
                   </Grid.Column>
                   <Grid.Column width={1}>
-                    <Icon name="trash alternate" style={{cursor:"pointer"}} onClick={() => deleteCartItem(cartItem.id)}/>
+                    <Icon
+                      name="trash alternate"
+                      style={{ cursor: "pointer" }}
+                      onClick={() => deleteCartItem(cartItem.id)}
+                    />
                   </Grid.Column>
                 </Grid>
               </Card.Content>
             </Card>
           ))}
-        </Segment>
       </Grid.Column>
       <Grid.Column width={4}>
-        <Segment placeholder>4</Segment>
+          <Card color="orange" style={{width:"100%"}}>
+            <Card.Content>
+              <Card.Header>
+                Products {`(${cart.totalProductCount})`}
+              </Card.Header>
+              <Divider />
+              <Card.Description>
+                <Header as="h1">{cart.total}₺</Header>
+                <Button color="orange" size="big" style={{width:"100%"}}>Order</Button>
+              </Card.Description>
+            </Card.Content>
+          </Card>
       </Grid.Column>
     </Grid>
   );

@@ -96,6 +96,7 @@ export const defaultCart = {
         ],
       },
       quantity: 0,
+      total: 0
     },
   ],
   totalProductCount: 0,
