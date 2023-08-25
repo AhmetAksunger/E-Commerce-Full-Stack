@@ -5,7 +5,7 @@ import com.ahmetaksunger.ecommerce.dto.response.CustomerVM;
 import com.ahmetaksunger.ecommerce.mapper.MapperService;
 import com.ahmetaksunger.ecommerce.model.Cart;
 import com.ahmetaksunger.ecommerce.service.CartService;
-import com.ahmetaksunger.ecommerce.service.PriceCalculator;
+import com.ahmetaksunger.ecommerce.service.CartCalculator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +24,7 @@ public class CartVMConverter {
                 .customer(mapperService.forResponse().map(from.getCustomer(), CustomerVM.class))
                 .cartItems(from.getCartItems().stream().map(cartItemVMConverter::convert).collect(Collectors.toList()))
                 .totalProductCount(cartService.calculateTotalProductCount(from))
-                .total(PriceCalculator.calculateTotal(from))
+                .total(CartCalculator.calculateTotal(from))
                 .build();
     }
 }

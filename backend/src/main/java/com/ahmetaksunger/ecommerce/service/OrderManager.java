@@ -9,7 +9,6 @@ import com.ahmetaksunger.ecommerce.exception.NotFoundException.PaymentDetailNotF
 import com.ahmetaksunger.ecommerce.mapper.MapperService;
 import com.ahmetaksunger.ecommerce.model.*;
 import com.ahmetaksunger.ecommerce.model.transaction.PaymentStatus;
-import com.ahmetaksunger.ecommerce.model.transaction.PaymentTransaction;
 import com.ahmetaksunger.ecommerce.model.transaction.TransactionType;
 import com.ahmetaksunger.ecommerce.repository.*;
 import com.ahmetaksunger.ecommerce.service.factory.PaymentTransactionFactory;
@@ -22,9 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -76,7 +72,7 @@ public class OrderManager implements OrderService {
         final PaymentDetail paymentDetail = paymentDetailRepository.findById(createOrderRequest.getPaymentDetailId()).orElseThrow(PaymentDetailNotFoundException::new);
         final Address address = addressRepository.findById(createOrderRequest.getAddressId()).orElseThrow(AddressNotFoundException::new);
 
-        final BigDecimal total = PriceCalculator.calculateTotal(cart);
+        final BigDecimal total = CartCalculator.calculateTotal(cart);
 
         //Rules
         try {

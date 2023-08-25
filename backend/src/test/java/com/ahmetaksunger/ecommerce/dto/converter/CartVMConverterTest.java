@@ -9,7 +9,7 @@ import com.ahmetaksunger.ecommerce.model.CartItem;
 import com.ahmetaksunger.ecommerce.model.CartStatus;
 import com.ahmetaksunger.ecommerce.model.Customer;
 import com.ahmetaksunger.ecommerce.service.CartService;
-import com.ahmetaksunger.ecommerce.service.PriceCalculator;
+import com.ahmetaksunger.ecommerce.service.CartCalculator;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,13 +28,13 @@ class CartVMConverterTest {
     private CartVMConverter cartVMConverter;
     private CartService cartService;
     private CartItemVMConverter cartItemVMConverter;
-    private static MockedStatic<PriceCalculator> mockedStatic;
+    private static MockedStatic<CartCalculator> mockedStatic;
     @BeforeEach
     void setUp() {
         mapperService = Mockito.mock(MapperService.class);
         modelMapper = Mockito.mock(ModelMapper.class);
         cartService = Mockito.mock(CartService.class);
-        mockedStatic = Mockito.mockStatic(PriceCalculator.class);
+        mockedStatic = Mockito.mockStatic(CartCalculator.class);
         cartItemVMConverter = Mockito.mock(CartItemVMConverter.class);
         cartVMConverter = new CartVMConverter(mapperService,cartService,cartItemVMConverter);
     }
@@ -63,7 +63,7 @@ class CartVMConverterTest {
         Mockito.when(modelMapper.map(customer, CustomerVM.class)).thenReturn(customerVM);
         Mockito.when(cartItemVMConverter.convert(cartItem)).thenReturn(cartItemVM);
         Mockito.when(cartService.calculateTotalProductCount(cart)).thenReturn(5);
-        Mockito.when(PriceCalculator.calculateTotal(cart)).thenReturn(BigDecimal.TEN);
+        Mockito.when(CartCalculator.calculateTotal(cart)).thenReturn(BigDecimal.TEN);
 
         CartVM result = cartVMConverter.convert(cart);
 

@@ -6,7 +6,7 @@ import com.ahmetaksunger.ecommerce.model.CartItem;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-public class PriceCalculator {
+public class CartCalculator {
 
     public static BigDecimal calculateTotal(Cart cart){
         BigDecimal total = cart.getCartItems()

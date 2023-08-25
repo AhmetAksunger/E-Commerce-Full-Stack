@@ -1,9 +1,7 @@
 package com.ahmetaksunger.ecommerce.config;
 
-import com.ahmetaksunger.ecommerce.dto.response.ProductOrderInfo;
 import com.ahmetaksunger.ecommerce.model.*;
 import com.ahmetaksunger.ecommerce.repository.*;
-import com.ahmetaksunger.ecommerce.service.PriceCalculator;
 import com.github.javafaker.Faker;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
