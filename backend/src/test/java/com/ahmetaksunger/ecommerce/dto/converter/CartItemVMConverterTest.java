@@ -6,9 +6,11 @@ import com.ahmetaksunger.ecommerce.model.Cart;
 import com.ahmetaksunger.ecommerce.model.CartItem;
 import com.ahmetaksunger.ecommerce.model.Product;
 import com.ahmetaksunger.ecommerce.service.PriceCalculator;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.math.BigDecimal;
@@ -18,11 +20,18 @@ class CartItemVMConverterTest {
     private ProductVMConverter productVMConverter;
     private CartItemVMConverter cartItemVMConverter;
 
+    private static MockedStatic<PriceCalculator> mockedStatic;
+
     @BeforeEach
     void setUp() {
         productVMConverter = Mockito.mock(ProductVMConverter.class);
         cartItemVMConverter = new CartItemVMConverter(productVMConverter);
-        Mockito.mockStatic(PriceCalculator.class);
+        mockedStatic = Mockito.mockStatic(PriceCalculator.class);
+    }
+
+    @AfterAll
+    static void afterAll() {
+        mockedStatic.close();
     }
 
     @Test

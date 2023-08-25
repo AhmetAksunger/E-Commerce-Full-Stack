@@ -10,6 +10,7 @@ import com.ahmetaksunger.ecommerce.model.CartStatus;
 import com.ahmetaksunger.ecommerce.model.Customer;
 import com.ahmetaksunger.ecommerce.service.CartService;
 import com.ahmetaksunger.ecommerce.service.PriceCalculator;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,14 +28,20 @@ class CartVMConverterTest {
     private CartVMConverter cartVMConverter;
     private CartService cartService;
     private CartItemVMConverter cartItemVMConverter;
+    private static MockedStatic<PriceCalculator> mockedStatic;
     @BeforeEach
     void setUp() {
         mapperService = Mockito.mock(MapperService.class);
         modelMapper = Mockito.mock(ModelMapper.class);
         cartService = Mockito.mock(CartService.class);
-        Mockito.mockStatic(PriceCalculator.class);
+        mockedStatic = Mockito.mockStatic(PriceCalculator.class);
         cartItemVMConverter = Mockito.mock(CartItemVMConverter.class);
         cartVMConverter = new CartVMConverter(mapperService,cartService,cartItemVMConverter);
+    }
+
+    @AfterAll
+    static void afterAll() {
+        mockedStatic.close();
     }
 
     @Test
