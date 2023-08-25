@@ -1,13 +1,14 @@
 package com.ahmetaksunger.ecommerce.service;
 
+import com.ahmetaksunger.ecommerce.dto.converter.CartVMConverter;
 import com.ahmetaksunger.ecommerce.dto.request.cartItem.CreateCartItemRequest;
+import com.ahmetaksunger.ecommerce.dto.request.cartItem.UpdateCartItemRequest;
 import com.ahmetaksunger.ecommerce.dto.response.CartVM;
 import com.ahmetaksunger.ecommerce.exception.NotAllowedException.CartDeletionNotAllowedException;
 import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.CartItemNotFound;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.CartNotFoundException;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.ProductNotFoundException;
-import com.ahmetaksunger.ecommerce.mapper.MapperService;
 import com.ahmetaksunger.ecommerce.model.Cart;
 import com.ahmetaksunger.ecommerce.model.CartItem;
 import com.ahmetaksunger.ecommerce.model.Product;
@@ -30,7 +31,7 @@ public class CartItemManager implements CartItemService {
     private final ProductRepository productRepository;
     private final CartItemRepository cartItemRepository;
     private final CartRules cartRules;
-    private final MapperService mapperService;
+    private final CartVMConverter cartVMConverter;
 
     @Override
     public CartVM create(final CreateCartItemRequest createCartItemRequest, User loggedInUser) {
@@ -46,12 +47,13 @@ public class CartItemManager implements CartItemService {
         Optional<CartItem> optionalCartItem = cartItemRepository
                 .findByCartIdAndProductId(createCartItemRequest.getCartId(), createCartItemRequest.getProductId());
 
-        if(optionalCartItem.isPresent()) {
+        if (optionalCartItem.isPresent()) {
             CartItem cartItem = optionalCartItem.get();
+
+            cartRules.checkIfQuantityIsValid(createCartItemRequest.getQuantity() + cartItem.getQuantity(), product);
+
             cartItem.setQuantity(cartItem.getQuantity() + createCartItemRequest.getQuantity());
-            var response = mapperService.forResponse().map(cartItemRepository.save(cartItem).getCart(), CartVM.class);
-            response.setTotal(PriceCalculator.calculateTotal(cart));
-            return response;
+            return cartVMConverter.convert(cartItemRepository.save(cartItem).getCart());
         }
 
         CartItem cartItem = CartItem
@@ -63,9 +65,7 @@ public class CartItemManager implements CartItemService {
 
         CartItem dbCartItem = cartItemRepository.save(cartItem);
 
-        var response = mapperService.forResponse().map(dbCartItem.getCart(), CartVM.class);
-        response.setTotal(PriceCalculator.calculateTotal(cart));
-        return response;
+        return cartVMConverter.convert(dbCartItem.getCart());
     }
 
     @Override
@@ -77,13 +77,14 @@ public class CartItemManager implements CartItemService {
         cartRules.verifyCartBelongsToUser(cartItem.getCart(), loggedInUser, CartDeletionNotAllowedException.class);
 
         cartItemRepository.deleteById(cartItemId);
-        return mapperService.forResponse().map(cartItem.getCart(), CartVM.class);
+
+        return cartVMConverter.convert(cartItem.getCart());
     }
 
     /**
      * Deletes all the items in the cart
      *
-     * @param cartId The cart id
+     * @param cartId       The cart id
      * @param loggedInUser The logged-in user
      */
     @Override
@@ -94,5 +95,30 @@ public class CartItemManager implements CartItemService {
         cartRules.verifyCartBelongsToUser(cartRepository.findById(cartId).orElseThrow(CartNotFoundException::new), loggedInUser, CartDeletionNotAllowedException.class);
 
         cartItemRepository.deleteAllByCartId(cartId);
+    }
+
+    /**
+     * Updates the cart-item with the given {@link UpdateCartItemRequest}
+     *
+     * @param cartItemId            cart item id
+     * @param updateCartItemRequest {@link UpdateCartItemRequest}
+     * @param loggedInUser          Logged-in user
+     * @return {@link CartVM}
+     */
+    @Override
+    public CartVM update(final Long cartItemId, final UpdateCartItemRequest updateCartItemRequest, final User loggedInUser) {
+
+        CartItem cartItem = cartItemRepository.findById(cartItemId).orElseThrow(CartItemNotFound::new);
+
+        //Rules
+        cartRules.verifyCartBelongsToUser(cartItem.getCart(), loggedInUser, UnauthorizedException.class);
+        cartRules.checkIfQuantityIsValid(updateCartItemRequest.getQuantity(), cartItem.getProduct());
+        cartRules.checkIfCartActive(cartItem.getCart());
+
+        cartItem.setQuantity(updateCartItemRequest.getQuantity());
+
+        CartItem updatedCartItem = cartItemRepository.save(cartItem);
+
+        return cartVMConverter.convert(updatedCartItem.getCart());
     }
 }

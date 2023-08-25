@@ -1,9 +1,9 @@
 package com.ahmetaksunger.ecommerce.service;
 
+import com.ahmetaksunger.ecommerce.dto.converter.CartVMConverter;
 import com.ahmetaksunger.ecommerce.dto.response.CartVM;
 import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.CartNotFoundException;
-import com.ahmetaksunger.ecommerce.mapper.MapperService;
 import com.ahmetaksunger.ecommerce.model.Cart;
 import com.ahmetaksunger.ecommerce.model.CartStatus;
 import com.ahmetaksunger.ecommerce.model.Customer;
@@ -19,7 +19,7 @@ public class CartManager implements CartService {
 
     private final CartRepository cartRepository;
     private final CartRules cartRules;
-    private final MapperService mapperService;
+    private final CartVMConverter cartVMConverter;
 
     @Override
     public Cart create(User user) {
@@ -48,13 +48,11 @@ public class CartManager implements CartService {
         //Rules
         cartRules.verifyCartBelongsToUser(cart, loggedInUser, UnauthorizedException.class);
 
-        var response = mapperService.forResponse().map(cart, CartVM.class);
-        response.setTotal(PriceCalculator.calculateTotal(cart));
-        return response;
+        return cartVMConverter.convert(cart);
     }
 
     /**
-     *  Activates the cart by setting the {@link CartStatus} ACTIVE
+     * Activates the cart by setting the {@link CartStatus} ACTIVE
      *
      * @param cart Cart
      */
@@ -66,6 +64,7 @@ public class CartManager implements CartService {
 
     /**
      * Deactivates the cart by setting the {@link CartStatus} INACTIVE
+     *
      * @param cart Cart
      */
     @Override

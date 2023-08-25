@@ -33,9 +33,6 @@ public class Product extends BaseEntity{
     @Column(name = "quantity", nullable = false)
     private int quantity;
 
-    @Column(name = "all_time_order_amount", nullable = true)
-    private Integer allTimeOrderAmount = 0;
-
     @Column(name = "logo",nullable = false)
     private String logo;
 

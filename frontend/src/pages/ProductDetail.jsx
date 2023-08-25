@@ -28,7 +28,7 @@ const ProductDetail = () => {
 
   useEffect(() => {
     getProductById();
-  }, []);
+  }, [productId]);
 
   const getProductById = () => {
     let productService = new ProductService();

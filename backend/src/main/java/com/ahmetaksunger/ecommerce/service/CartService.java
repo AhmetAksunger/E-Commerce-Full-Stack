@@ -18,4 +18,5 @@ public interface CartService {
     void activateCart(Cart cart);
 
     void deactivateCart(Cart cart);
+
 }

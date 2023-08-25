@@ -33,16 +33,16 @@ const Cart = () => {
         onClick={() => getCartByUserId()}
       >
         <Dropdown.Menu>
-          <Dropdown.Header>My Cart</Dropdown.Header>
+          <Dropdown.Header>{`My Cart(${cart.totalProductCount} Products)`}</Dropdown.Header>
           <Dropdown.Divider />
           {cart.cartItems.map((cartItem, idx) => (
             <Dropdown.Item
               as={Link}
-              to={`/products/${cartItem.productId}`}
+              to={`/products/${cartItem.product.id}`}
               image
             >
-              <img src="https://pigment.github.io/fake-logos/logos/medium/color/12.png" />
-              <span>{cartItem.productName}</span>
+              <img src={cartItem.product.logo} />
+              <span>{cartItem.product.name}</span>
               <div
                 style={{
                   textAlign: "center",
@@ -56,7 +56,7 @@ const Cart = () => {
                   marginTop: "1rem",
                   color: "teal",
                 }}
-              >{`${cartItem.productPrice}₺`}</div>
+              >{`${cartItem.product.price}₺`}</div>
             </Dropdown.Item>
           ))}
           <Dropdown.Divider />
@@ -64,7 +64,7 @@ const Cart = () => {
             <strong style={{ color: "black" }}>Total: {cart.total}₺</strong>
           </Dropdown.Item>
           <Dropdown.Item>
-            <Button icon labelPosition="right">
+            <Button as={Link} to="/my-cart" icon labelPosition="right">
               Go to Cart
               <Icon name="right arrow" />
             </Button>
