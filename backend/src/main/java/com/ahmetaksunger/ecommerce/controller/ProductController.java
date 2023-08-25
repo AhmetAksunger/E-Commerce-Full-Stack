@@ -152,12 +152,12 @@ public class ProductController {
 
     /**
      * Retrieves the top ten most ordered products from the {@link ProductManager#getTop10MostOrderedProducts()}
-     * And returns a {@link ResponseEntity<List<ProductOrderInfoDto>}
-     * @return Returns a {@link ResponseEntity<List<ProductOrderInfoDto>}
+     * And returns a {@link ResponseEntity<List<ProductVM>}
+     * @return Returns a {@link ResponseEntity<List<ProductVM>}
      */
     @GetMapping("/most-ordered")
     @PreAuthorize("hasAuthority('CUSTOMER')")
-    public ResponseEntity<List<ProductOrderInfoDto>> getMostOrderedProducts(){
+    public ResponseEntity<List<ProductVM>> getMostOrderedProducts(){
         return ResponseEntity.ok(productService.getTop10MostOrderedProducts());
     }
 

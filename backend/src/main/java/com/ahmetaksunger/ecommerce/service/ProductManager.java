@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -226,19 +227,16 @@ public class ProductManager implements ProductService {
 
     /**
      * Retrieves the top ten most ordered products from the {@link ProductRepository#getTop10MostOrderedProducts()}
-     * Maps them to a list of {@link ProductOrderInfoDto}, and returns.
+     * Maps them to a list of {@link ProductVM}, and returns.
      *
-     * @return {@link List<ProductOrderInfoDto>}
+     * @return {@link List<ProductVM>}
      */
     @Override
-    public List<ProductOrderInfoDto> getTop10MostOrderedProducts() {
+    public List<ProductVM> getTop10MostOrderedProducts() {
         List<ProductOrderInfo> productOrderInfos = productRepository.getTop10MostOrderedProducts();
 
         return productOrderInfos.stream()
-                .map(productOrderInfo -> mapperService
-                        .forResponse()
-                        .map(productOrderInfo, ProductOrderInfoDto.class))
-                .toList();
+                .map(productVMConverter::convert).collect(Collectors.toList());
     }
 
 }
