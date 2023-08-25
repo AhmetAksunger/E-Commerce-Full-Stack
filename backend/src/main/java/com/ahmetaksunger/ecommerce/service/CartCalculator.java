@@ -19,4 +19,17 @@ public class CartCalculator {
     public static BigDecimal calculateTotalForCartItem(CartItem cartItem){
         return cartItem.getProduct().getPrice().multiply(BigDecimal.valueOf(cartItem.getQuantity()));
     }
+
+    /**
+     * Calculates the total product count, for the given cart
+     *
+     * @param cart Cart
+     * @return Total product count
+     */
+    public static Integer calculateTotalProductCount(Cart cart) {
+        return cart.getCartItems()
+                .stream()
+                .mapToInt(CartItem::getQuantity)
+                .sum();
+    }
 }

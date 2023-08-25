@@ -26,17 +26,15 @@ class CartVMConverterTest {
     private MapperService mapperService;
     private ModelMapper modelMapper;
     private CartVMConverter cartVMConverter;
-    private CartService cartService;
     private CartItemVMConverter cartItemVMConverter;
     private static MockedStatic<CartCalculator> mockedStatic;
     @BeforeEach
     void setUp() {
         mapperService = Mockito.mock(MapperService.class);
         modelMapper = Mockito.mock(ModelMapper.class);
-        cartService = Mockito.mock(CartService.class);
         mockedStatic = Mockito.mockStatic(CartCalculator.class);
         cartItemVMConverter = Mockito.mock(CartItemVMConverter.class);
-        cartVMConverter = new CartVMConverter(mapperService,cartService,cartItemVMConverter);
+        cartVMConverter = new CartVMConverter(mapperService,cartItemVMConverter);
     }
 
     @AfterAll
@@ -62,7 +60,7 @@ class CartVMConverterTest {
         Mockito.when(mapperService.forResponse()).thenReturn(modelMapper);
         Mockito.when(modelMapper.map(customer, CustomerVM.class)).thenReturn(customerVM);
         Mockito.when(cartItemVMConverter.convert(cartItem)).thenReturn(cartItemVM);
-        Mockito.when(cartService.calculateTotalProductCount(cart)).thenReturn(5);
+        Mockito.when(CartCalculator.calculateTotalProductCount(cart)).thenReturn(5);
         Mockito.when(CartCalculator.calculateTotal(cart)).thenReturn(BigDecimal.TEN);
 
         CartVM result = cartVMConverter.convert(cart);

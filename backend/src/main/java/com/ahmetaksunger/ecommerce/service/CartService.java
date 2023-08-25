@@ -19,5 +19,4 @@ public interface CartService {
 
     void deactivateCart(Cart cart);
 
-    Integer calculateTotalProductCount(Cart cart);
 }

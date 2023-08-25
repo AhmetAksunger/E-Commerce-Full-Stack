@@ -72,18 +72,5 @@ public class CartManager implements CartService {
         cartRepository.save(cart);
     }
 
-    /**
-     * Calculates the total product count, for the given cart
-     *
-     * @param cart Cart
-     * @return Total product count
-     */
-    @Override
-    public Integer calculateTotalProductCount(Cart cart) {
-        return cart.getCartItems()
-                .stream()
-                .mapToInt(CartItem::getQuantity)
-                .sum();
-    }
 
 }
