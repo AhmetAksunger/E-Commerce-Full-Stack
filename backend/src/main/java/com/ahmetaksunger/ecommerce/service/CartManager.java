@@ -9,6 +9,7 @@ import com.ahmetaksunger.ecommerce.model.CartStatus;
 import com.ahmetaksunger.ecommerce.model.Customer;
 import com.ahmetaksunger.ecommerce.model.User;
 import com.ahmetaksunger.ecommerce.repository.CartRepository;
+import com.ahmetaksunger.ecommerce.service.rules.BaseRules;
 import com.ahmetaksunger.ecommerce.service.rules.CartRules;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,7 +36,7 @@ public class CartManager implements CartService {
     public void delete(long cartId, User loggedInUser) {
 
         //Rules
-        cartRules.checkIfCanDelete(cartId, loggedInUser);
+        cartRules.checkIfCanDelete(cartRepository.findById(cartId).orElseThrow(CartNotFoundException::new), loggedInUser);
 
         cartRepository.deleteById(cartId);
     }
@@ -46,7 +47,7 @@ public class CartManager implements CartService {
         Cart cart = cartRepository.findActiveCartsByCustomerId(customerId).orElseThrow(CartNotFoundException::new);
 
         //Rules
-        cartRules.verifyCartBelongsToUser(cart, loggedInUser, UnauthorizedException.class);
+        BaseRules.checkIfIdsNotMatch(customerId,loggedInUser);
 
         return cartVMConverter.convert(cart);
     }

@@ -6,9 +6,9 @@ import lombok.SneakyThrows;
 
 public abstract class BaseRules<T> {
 
-    public abstract AddressRules checkIfCanUpdate(T entity, User user);
+    public abstract BaseRules<T> checkIfCanUpdate(T entity, User user);
 
-    public abstract AddressRules checkIfCanDelete(T entity, User user);
+    public abstract BaseRules<T> checkIfCanDelete(T entity, User user);
 
     /**
      * Checks if the entity belongs to user
@@ -17,11 +17,16 @@ public abstract class BaseRules<T> {
      * @param user           The user
      * @param exceptionClass The exception class to be thrown
      */
-    @SneakyThrows
     protected abstract void verifyEntityBelongsToUser(T entity, User user,
                                                       Class<? extends UnauthorizedException> exceptionClass);
 
-
+    /**
+     * Checks if the entity belongs to user
+     *
+     * @param entity THe entity
+     * @param user The user
+     */
+    public abstract void verifyEntityBelongsToUser(T entity, User user);
     /**
      * Checks if ids match, if not throws Unauthorized Exception
      * @param id The id

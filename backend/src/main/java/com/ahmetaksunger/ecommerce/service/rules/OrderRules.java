@@ -18,7 +18,7 @@ public class OrderRules {
     private final CartRules cartRules;
     public void verifyCartAndPaymentDetailBelongsToUser(Cart cart, PaymentDetail paymentDetail, User user){
 
-        cartRules.verifyCartBelongsToUser(cart,user, EntityOwnershipException.class);
+        cartRules.verifyEntityBelongsToUser(cart,user);
         paymentDetailRules.verifyPaymentDetailBelongsToUser(paymentDetail,user, EntityOwnershipException.class);
 
     }

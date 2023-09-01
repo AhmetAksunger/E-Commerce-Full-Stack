@@ -12,6 +12,11 @@ public class CountryValidator implements ConstraintValidator<ValidCountry, Strin
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
+
+        if(value == null){
+            return true;
+        }
+
         for (Country country:Country.values()) {
             if(value.equals(country.name()) || value.equals(country.value())){
                 return true;
