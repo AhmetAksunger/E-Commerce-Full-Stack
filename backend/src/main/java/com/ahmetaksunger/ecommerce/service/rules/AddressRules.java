@@ -1,44 +1,34 @@
 package com.ahmetaksunger.ecommerce.service.rules;
 
 import com.ahmetaksunger.ecommerce.exception.NotAllowedException.AddressDeletionNotAllowedException;
-import com.ahmetaksunger.ecommerce.exception.NotFoundException.AddressNotFoundException;
-import org.springframework.stereotype.Component;
-
 import com.ahmetaksunger.ecommerce.exception.NotAllowedException.AddressUpdateNotAllowedException;
 import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
 import com.ahmetaksunger.ecommerce.model.Address;
 import com.ahmetaksunger.ecommerce.model.User;
-import com.ahmetaksunger.ecommerce.repository.AddressRepository;
-
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class AddressRules {
+public class AddressRules extends BaseRules<Address> {
 
-	private final AddressRepository addressRepository;
-        
-    public void checkIfCanUpdate(long addressId,User user) {
-
-    	Address address = addressRepository.findById(addressId).orElseThrow(()-> new AddressNotFoundException());
-    	this.verifyAddressBelongsToUser(address,user,AddressUpdateNotAllowedException.class);
+    public AddressRules checkIfCanUpdate(Address address, User user) {
+        verifyEntityBelongsToUser(address, user, AddressUpdateNotAllowedException.class);
+        return this;
     }
 
-	public void checkIfCanDelete(long addressId, User user){
+    public AddressRules checkIfCanDelete(Address address, User user) {
+        verifyEntityBelongsToUser(address, user, AddressDeletionNotAllowedException.class);
+        return this;
+    }
 
-		Address address = addressRepository.findById(addressId).orElseThrow(()-> new AddressNotFoundException());
-		this.verifyAddressBelongsToUser(address,user, AddressDeletionNotAllowedException.class);
-	}
-	// TODO: One user can have at most 3 addresses
-	public void verifyAddressBelongsToUser(Address address, User user,
-											Class<? extends UnauthorizedException> exceptionClass){
-		if(address.getUser().getId() != user.getId()) {
-			try {
-				throw exceptionClass.getDeclaredConstructor().newInstance();
-			} catch (Exception e) {
-				throw new UnauthorizedException(e.getMessage());
-			}
-		}
-	}
+    @SneakyThrows
+    @Override
+    protected void verifyEntityBelongsToUser(Address entity, User user, Class<? extends UnauthorizedException> exceptionClass) {
+        if (entity.getUser().getId() != user.getId()) {
+            throw exceptionClass.getDeclaredConstructor().newInstance();
+        }
+    }
 
 }
