@@ -1,13 +1,10 @@
 package com.ahmetaksunger.ecommerce.service;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.AddressNotFoundException;
 import com.ahmetaksunger.ecommerce.service.rules.BaseRules;
-import com.ahmetaksunger.ecommerce.service.rules.GeneralRules;
 import org.springframework.stereotype.Service;
 
 import com.ahmetaksunger.ecommerce.dto.request.address.CreateAddressRequest;

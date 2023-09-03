@@ -3,15 +3,18 @@ package com.ahmetaksunger.ecommerce.dto.response;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
-@Getter @Setter
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CartItemVM {
+@Getter
+@Setter
+@Builder
+public class GetOrdersResponse {
 
     private Long id;
-    private ProductVM product;
-    private Integer quantity;
     private BigDecimal total;
+    private List<CartItemVM> orderedProducts;
+    private AddressVM address;
+
 }
