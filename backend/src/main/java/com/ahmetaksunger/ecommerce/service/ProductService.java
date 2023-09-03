@@ -1,6 +1,7 @@
 package com.ahmetaksunger.ecommerce.service;
 
 import com.ahmetaksunger.ecommerce.dto.request.product.CreateProductRequest;
+import com.ahmetaksunger.ecommerce.dto.request.product.ProductListRequest;
 import com.ahmetaksunger.ecommerce.dto.request.product.UpdateProductRequest;
 import com.ahmetaksunger.ecommerce.dto.response.GetProductByIdResponse;
 import com.ahmetaksunger.ecommerce.dto.response.ProductOrderInfoDto;
@@ -19,9 +20,7 @@ public interface ProductService {
 
     ProductVM removeCategoriesByIdsFromProduct(long productId, List<Long> categoryIds, User loggedInUser);
 
-    Page<ProductVM> getProducts(String sort, String order, String search, List<Long> category, BigDecimal minPrice,
-                                BigDecimal maxPrice,
-                                Integer page, Integer size);
+    Page<ProductVM> getProducts(ProductListRequest productListRequest);
 
     void delete(long productId, User loggedInUser);
 

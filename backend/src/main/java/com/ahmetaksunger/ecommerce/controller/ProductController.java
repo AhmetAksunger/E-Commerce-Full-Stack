@@ -1,6 +1,7 @@
 package com.ahmetaksunger.ecommerce.controller;
 
 import com.ahmetaksunger.ecommerce.dto.request.product.CreateProductRequest;
+import com.ahmetaksunger.ecommerce.dto.request.product.ProductListRequest;
 import com.ahmetaksunger.ecommerce.dto.request.product.UpdateProductRequest;
 import com.ahmetaksunger.ecommerce.dto.response.GetProductByIdResponse;
 import com.ahmetaksunger.ecommerce.dto.response.ProductOrderInfoDto;
@@ -10,6 +11,7 @@ import com.ahmetaksunger.ecommerce.security.CurrentUser;
 import com.ahmetaksunger.ecommerce.service.ProductManager;
 import com.ahmetaksunger.ecommerce.service.ProductService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -57,40 +59,16 @@ public class ProductController {
 
 
     /**
-     * Retrieves paginated models of products based on the specified criteria.
-     * {@link com.ahmetaksunger.ecommerce.service.ProductManager#getProducts(String, String, String, List, BigDecimal, BigDecimal, Integer, Integer)}
+     * Retrieves paginated models of products based on the {@link ProductListRequest}.
      *
-     * @param sort        sort products-> [asc,desc]
-     * @param order       order products -> [createdAt,updatedAt,name,price]
-     * @param search      search term -> searches by product name, category name and company name
-     * @param categoryIds filter products by category ids
-     * @param minPrice    minimum price for products
-     * @param maxPrice    maximum price for products
-     * @param page        page number
-     * @param size        size number
      * @return Response Entity with paginated ProductVM(Product View Model)
      */
-    @GetMapping()
+    @PostMapping("/get")
     @PreAuthorize("hasAnyAuthority('SELLER','CUSTOMER')")
 
-    public ResponseEntity<Page<ProductVM>> getProducts(@RequestParam(name = "sort",required = false,defaultValue = "asc")
-                                                       String sort,
-                                                       @RequestParam(name = "order",required = false,defaultValue = "createdAt")
-                                                       String order,
-                                                       @RequestParam(name = "search",required = false)
-                                                       String search,
-                                                       @RequestParam(name = "categoryIds",required = false)
-                                                       List<Long> categoryIds,
-                                                       @RequestParam(name = "minPrice",required = false)
-                                                       BigDecimal minPrice,
-                                                       @RequestParam(name = "maxPrice",required = false)
-                                                       BigDecimal maxPrice,
-                                                       @RequestParam(name = "page",required = false,defaultValue = "0")
-                                                       Integer page,
-                                                       @RequestParam(name = "size",required = false,defaultValue = "5")
-                                                       Integer size){
+    public ResponseEntity<Page<ProductVM>> getProducts(@RequestBody @Valid ProductListRequest listRequest){
 
-        return ResponseEntity.ok(productService.getProducts(sort,order,search,categoryIds,minPrice,maxPrice,page,size));
+        return ResponseEntity.ok(productService.getProducts(listRequest));
     }
 
     @DeleteMapping("/{productId}")

@@ -2,6 +2,7 @@ package com.ahmetaksunger.ecommerce.service;
 
 import com.ahmetaksunger.ecommerce.dto.converter.ProductVMConverter;
 import com.ahmetaksunger.ecommerce.dto.request.product.CreateProductRequest;
+import com.ahmetaksunger.ecommerce.dto.request.product.ProductListRequest;
 import com.ahmetaksunger.ecommerce.dto.request.product.UpdateProductRequest;
 import com.ahmetaksunger.ecommerce.dto.response.GetProductByIdResponse;
 import com.ahmetaksunger.ecommerce.dto.response.ProductOrderInfo;
@@ -86,46 +87,15 @@ public class ProductManager implements ProductService {
     /**
      * Retrieves paginated list of products based on the specified filters.
      *
-     * @param sort        A field to sort, valid values are: [asc, desc].
-     *                    See {@link ProductRules#checkIfSortParamIsValid(String)}
-     * @param order       A field to order, valid values are: [name,price,createdAt,updatedAt]
-     *                    See {@link ProductRules#checkIfOrderParamIsValid(String)}
-     * @param search      A field to search name,category or company name
-     * @param categoryIds List of category IDs
-     * @param minPrice    Minimum price
-     * @param maxPrice    Maximum price
-     * @param page        Page number
-     * @param size        Element amount on each page
-     * @return
      */
     @Override
-    public Page<ProductVM> getProducts(String sort, String order,
-                                       String search, List<Long> categoryIds, BigDecimal minPrice,
-                                       BigDecimal maxPrice, Integer page, Integer size) {
+    public Page<ProductVM> getProducts(ProductListRequest listRequest) {
 
         //Rules
-        productRules.checkIfSortParamIsValid(sort)
-                .checkIfOrderParamIsValid(order);
+        productRules.checkIfSortParamIsValid(listRequest.getSorting().getSort());
 
-        Specification<Product> specification = Specification.where(null);
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.valueOf(sort.toUpperCase()), order));
-
-        if (search != null && !search.isEmpty()) {
-            specification = specification.and(ProductSpecification.searchByKeyword(search));
-        }
-
-        if (categoryIds != null && !categoryIds.isEmpty()) {
-            specification = specification.and(ProductSpecification.withCategoryIds(categoryIds));
-        }
-        if (minPrice != null) {
-            specification = specification.and(ProductSpecification.withPriceGreaterThanOrEqualTo(minPrice));
-        }
-        if (maxPrice != null) {
-            specification = specification.and(ProductSpecification.withPriceLessThanOrEqualTo(maxPrice));
-        }
-
-        return productRepository.findAll(specification, pageable)
+        return productRepository.findAll(listRequest.toSpecification(), listRequest.toPageable())
                 .map(productVMConverter::convert);
     }
 
