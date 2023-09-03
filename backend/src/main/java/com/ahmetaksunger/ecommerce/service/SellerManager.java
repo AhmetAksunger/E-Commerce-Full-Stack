@@ -78,7 +78,7 @@ public class SellerManager implements SellerService {
         //Rules
         withdrawRules.checkIfWithdrawAmountValid(withdrawRevenueRequest.getWithdrawAmount());
         try {
-            paymentDetailRules.verifyPaymentDetailBelongsToUser(paymentDetail, seller, EntityOwnershipException.class);
+            paymentDetailRules.verifyEntityBelongsToUser(paymentDetail, seller);
             withdrawRules.checkIfSellerHasEnoughRevenueToWithdraw(seller, withdrawRevenueRequest.getWithdrawAmount());
         } catch (InsufficientRevenueException | EntityOwnershipException exception) {
 

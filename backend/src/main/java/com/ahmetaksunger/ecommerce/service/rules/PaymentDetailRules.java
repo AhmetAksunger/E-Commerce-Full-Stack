@@ -1,37 +1,64 @@
 package com.ahmetaksunger.ecommerce.service.rules;
 
+import com.ahmetaksunger.ecommerce.exception.NotAllowedException.EntityOwnershipException;
 import com.ahmetaksunger.ecommerce.exception.NotAllowedException.PaymentDetailDeletionNotAllowedException;
 import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
-import com.ahmetaksunger.ecommerce.exception.NotFoundException.PaymentDetailNotFoundException;
 import com.ahmetaksunger.ecommerce.model.PaymentDetail;
 import com.ahmetaksunger.ecommerce.model.User;
-import com.ahmetaksunger.ecommerce.repository.PaymentDetailRepository;
-import lombok.RequiredArgsConstructor;
-import org.aopalliance.intercept.Invocation;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 
-import java.lang.reflect.InvocationTargetException;
-
 @Component
-@RequiredArgsConstructor
-public class PaymentDetailRules {
+public class PaymentDetailRules extends BaseRules<PaymentDetail> {
 
-    private final PaymentDetailRepository paymentDetailRepository;
-
-    public void checkIfCanDelete(long paymentDetailId, User user) {
-        var paymentDetail = paymentDetailRepository.findById(paymentDetailId).orElseThrow(PaymentDetailNotFoundException::new);
-        this.verifyPaymentDetailBelongsToUser(paymentDetail, user, PaymentDetailDeletionNotAllowedException.class);
+    @Override
+    public BaseRules<PaymentDetail> checkIfCanUpdate(PaymentDetail entity, User user) {
+        return null;
     }
 
-    public void verifyPaymentDetailBelongsToUser(PaymentDetail paymentDetail, User user,
-                                                 Class<? extends UnauthorizedException> exceptionClass) {
-        if (paymentDetail.getUser().getId() != user.getId()) {
-            try {
-                throw exceptionClass.getDeclaredConstructor().newInstance();
-            } catch (ReflectiveOperationException e) {
-                throw new UnauthorizedException(e.getMessage());
-            }
+    /**
+     * Throws a {@link PaymentDetailDeletionNotAllowedException} if
+     * the entity doesn't belong to user
+     *
+     * @param entity The entity
+     * @param user   The user
+     * @return this
+     */
+    @Override
+    public BaseRules<PaymentDetail> checkIfCanDelete(PaymentDetail entity, User user) {
+        verifyEntityBelongsToUser(entity, user, PaymentDetailDeletionNotAllowedException.class);
+        return this;
+    }
+
+    /**
+     * Checks if the payment detail belongs to user,
+     * if not throws the specified exception class
+     *
+     * @param entity         The entity
+     * @param user           The user
+     * @param exceptionClass The exception class to be thrown
+     */
+    @SneakyThrows
+    @Override
+    protected BaseRules<PaymentDetail> verifyEntityBelongsToUser(PaymentDetail entity, User user, Class<? extends UnauthorizedException> exceptionClass) {
+        if (entity.getUser().getId() != user.getId()) {
+            throw exceptionClass.getDeclaredConstructor().newInstance();
         }
+        return this;
     }
 
+    /**
+     * Checks if the cart belongs to user,
+     * if not throws the {@link EntityOwnershipException}
+     *
+     * @param entity THe entity
+     * @param user   The user
+     */
+    @Override
+    public BaseRules<PaymentDetail> verifyEntityBelongsToUser(PaymentDetail entity, User user) {
+        if (entity.getUser().getId() != user.getId()) {
+            throw new EntityOwnershipException();
+        }
+        return this;
+    }
 }

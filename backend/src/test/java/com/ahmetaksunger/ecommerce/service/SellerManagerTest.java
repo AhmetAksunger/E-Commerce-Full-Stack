@@ -99,12 +99,12 @@ class SellerManagerTest {
         Mockito.when(paymentTransactionRepository.save(transaction)).thenReturn(transaction);
         WithdrawSuccessResponse result = sellerManager.withdraw(request, seller);
 
-        Mockito.doNothing().when(paymentDetailRules).verifyPaymentDetailBelongsToUser(paymentDetail, seller, UnauthorizedException.class);
+        Mockito.when(paymentDetailRules.verifyEntityBelongsToUser(paymentDetail,seller)).thenReturn(paymentDetailRules);
         Mockito.doNothing().when(withdrawRules).checkIfWithdrawAmountValid(request.getWithdrawAmount());
         Mockito.doNothing().when(withdrawRules).checkIfSellerHasEnoughRevenueToWithdraw(seller, request.getWithdrawAmount());
 
         Assertions.assertEquals(result, successResponse);
-        Mockito.verify(paymentDetailRules).verifyPaymentDetailBelongsToUser(paymentDetail, seller, EntityOwnershipException.class);
+        Mockito.verify(paymentDetailRules).verifyEntityBelongsToUser(paymentDetail, seller);
         Mockito.verify(withdrawRules).checkIfSellerHasEnoughRevenueToWithdraw(seller, request.getWithdrawAmount());
         Mockito.verify(withdrawRules).checkIfWithdrawAmountValid(request.getWithdrawAmount());
         Mockito.verify(paymentDetailRepository).findById(1L);
@@ -186,7 +186,7 @@ class SellerManagerTest {
         Mockito.when(paymentDetailRepository.findById(request.getPaymentDetailId())).thenReturn(Optional.of(paymentDetail));
         Mockito.doNothing().when(withdrawRules).checkIfWithdrawAmountValid(request.getWithdrawAmount());
         Mockito.doThrow(new EntityOwnershipException())
-                .when(paymentDetailRules).verifyPaymentDetailBelongsToUser(paymentDetail,seller, EntityOwnershipException.class);
+                .when(paymentDetailRules).verifyEntityBelongsToUser(paymentDetail,seller);
 
         Assertions.assertThrows(EntityOwnershipException.class,
                 () -> sellerManager.withdraw(request, seller));

@@ -2,6 +2,7 @@ package com.ahmetaksunger.ecommerce.service;
 
 import com.ahmetaksunger.ecommerce.dto.request.payment.CreatePaymentDetailRequest;
 import com.ahmetaksunger.ecommerce.dto.response.PaymentDetailVM;
+import com.ahmetaksunger.ecommerce.exception.NotFoundException.PaymentDetailNotFoundException;
 import com.ahmetaksunger.ecommerce.mapper.MapperService;
 import com.ahmetaksunger.ecommerce.model.PaymentDetail;
 import com.ahmetaksunger.ecommerce.model.User;
@@ -33,7 +34,8 @@ public class PaymentDetailManager implements PaymentDetailService {
     @Override
     public void delete(long paymentDetailId, User user) {
         // Rules
-        paymentDetailRules.checkIfCanDelete(paymentDetailId, user);
+        paymentDetailRules.checkIfCanDelete(paymentDetailRepository.findById(paymentDetailId).orElseThrow(PaymentDetailNotFoundException::new),
+                user);
 
         paymentDetailRepository.deleteById(paymentDetailId);
     }
