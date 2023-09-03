@@ -17,18 +17,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductRules extends BaseRules<Product> {
 
-    private final List<String> validSortParams = List.of("asc", "desc");
     private final List<String> validOrderParams = List.of("name", "price", "createdAt", "updatedAt");
 
     /**
      * <p>Checks if the sort parameter given is valid</p>
      *
      * @param sort The given sort param
-     * @see ProductRules#validSortParams
+     * @see ProductRules#validOrderParams
      */
     public ProductRules checkIfSortParamIsValid(String sort) {
-        if (!this.validSortParams.contains(sort.toLowerCase())) {
-            throw new InvalidRequestParamException("Invalid sort parameter",this.validSortParams);
+        if (!this.validOrderParams.contains(sort)) {
+            throw new InvalidRequestParamException("Invalid sort parameter",this.validOrderParams);
         }
         return this;
     }
@@ -39,6 +38,7 @@ public class ProductRules extends BaseRules<Product> {
      * @param order THe given order param
      * @see ProductRules#validOrderParams
      */
+    @Deprecated
     public ProductRules checkIfOrderParamIsValid(String order) {
         if (!this.validOrderParams.contains(order)) {
             throw new InvalidRequestParamException("Invalid order parameter.", this.validOrderParams);
