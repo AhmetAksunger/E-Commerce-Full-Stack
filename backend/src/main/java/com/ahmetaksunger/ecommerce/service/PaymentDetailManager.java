@@ -7,7 +7,7 @@ import com.ahmetaksunger.ecommerce.mapper.MapperService;
 import com.ahmetaksunger.ecommerce.model.PaymentDetail;
 import com.ahmetaksunger.ecommerce.model.User;
 import com.ahmetaksunger.ecommerce.repository.PaymentDetailRepository;
-import com.ahmetaksunger.ecommerce.service.rules.GeneralRules;
+import com.ahmetaksunger.ecommerce.service.rules.BaseRules;
 import com.ahmetaksunger.ecommerce.service.rules.PaymentDetailRules;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -43,7 +43,7 @@ public class PaymentDetailManager implements PaymentDetailService {
     @Override
     public List<PaymentDetailVM> getPaymentDetailsByUserId(long userId, User loggedInUser) {
         //Rules
-        GeneralRules.checkIfIdsMatch(userId, loggedInUser);
+        BaseRules.checkIfIdsNotMatch(userId, loggedInUser);
 
         List<PaymentDetail> paymentDetails = paymentDetailRepository.getByUserId(userId);
 
