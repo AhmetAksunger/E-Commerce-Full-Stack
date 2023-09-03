@@ -1,7 +1,9 @@
 package com.ahmetaksunger.ecommerce.service;
 
+import com.ahmetaksunger.ecommerce.dto.converter.GetOrdersResponseConverter;
 import com.ahmetaksunger.ecommerce.dto.request.order.CreateOrderRequest;
 import com.ahmetaksunger.ecommerce.dto.response.OrderCompletedResponse;
+import com.ahmetaksunger.ecommerce.dto.response.GetOrdersResponse;
 import com.ahmetaksunger.ecommerce.exception.NotAllowedException.EntityOwnershipException;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.AddressNotFoundException;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.CartNotFoundException;
@@ -12,11 +14,11 @@ import com.ahmetaksunger.ecommerce.model.transaction.PaymentStatus;
 import com.ahmetaksunger.ecommerce.model.transaction.TransactionType;
 import com.ahmetaksunger.ecommerce.repository.*;
 import com.ahmetaksunger.ecommerce.service.factory.PaymentTransactionFactory;
-import com.ahmetaksunger.ecommerce.service.rules.AddressRules;
-import com.ahmetaksunger.ecommerce.service.rules.CartRules;
-import com.ahmetaksunger.ecommerce.service.rules.OrderRules;
-import com.ahmetaksunger.ecommerce.service.rules.PaymentDetailRules;
+import com.ahmetaksunger.ecommerce.service.rules.*;
+import com.ahmetaksunger.ecommerce.util.ECommercePaging;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +42,7 @@ public class OrderManager implements OrderService {
     private final CartRules cartRules;
     private final PaymentTransactionRepository paymentTransactionRepository;
     private final PaymentDetailRules paymentDetailRules;
+    private final GetOrdersResponseConverter getOrdersResponseConverter;
 
     /**
      * <p> - Verifies that the specified cart, payment detail, and address belong to the customer.</p>
@@ -76,8 +79,8 @@ public class OrderManager implements OrderService {
 
         // BEGINNING OF RULES
         try {
-            cartRules.verifyEntityBelongsToUser(cart,loggedInUser);
-            paymentDetailRules.verifyEntityBelongsToUser(paymentDetail,loggedInUser);
+            cartRules.verifyEntityBelongsToUser(cart, loggedInUser);
+            paymentDetailRules.verifyEntityBelongsToUser(paymentDetail, loggedInUser);
             addressRules.verifyEntityBelongsToUser(address, customer);
         } catch (EntityOwnershipException exception) {
             var transaction = PaymentTransactionFactory.create(TransactionType.PURCHASE, PaymentStatus.FAILED,
@@ -129,6 +132,24 @@ public class OrderManager implements OrderService {
         var response = mapperService.forResponse().map(dbOrder, OrderCompletedResponse.class);
         response.setNewCartId(newCart.getId());
         return response;
+    }
+
+    /**
+     * Retrieves a paginated list of orders associated with a specific customer, sorted by creation date in descending order.
+     *
+     * @param customerId   The unique identifier of the customer whose orders are to be retrieved.
+     * @param loggedInUser The user making the request.
+     * @param paging       An instance of {@link ECommercePaging} containing paging information (page number and page size).
+     * @return A {@link Page} of {@link GetOrdersResponse} objects representing the orders for the specified customer.
+     */
+    @Override
+    public Page<GetOrdersResponse> getOrdersByCustomerId(Long customerId, User loggedInUser, ECommercePaging paging) {
+        // Rules
+        BaseRules.checkIfIdsNotMatch(customerId, loggedInUser);
+
+        Sort sortByCreatedAtDesc = Sort.by(Sort.Order.desc("createdAt"));
+        Page<Order> pageOfOrders = orderRepository.getOrdersByCustomerId(customerId, paging.toPageable(sortByCreatedAtDesc));
+        return pageOfOrders.map(getOrdersResponseConverter::convert);
     }
 
     /**
