@@ -1,6 +1,5 @@
 package com.ahmetaksunger.ecommerce.util;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.domain.Sort;
@@ -10,9 +9,10 @@ import org.springframework.data.domain.Sort;
 public class ECommerceSortingRequest {
 
     private Sorting sorting;
+
     @Getter
     @Setter
-    public static class Sorting{
+    public static class Sorting {
         private String sort;
 
         private Sort.Direction direction;
@@ -24,7 +24,16 @@ public class ECommerceSortingRequest {
      *
      * @return A {@link Sort} object representing the sorting criteria specified in this instance.
      */
-    public Sort toSort(){
-        return Sort.by(sorting.getDirection(),sorting.getSort());
+    public Sort toSort() {
+
+        if (sorting == null) {
+            return Sort.unsorted();
+        }
+
+        if (sorting.getDirection() != null) {
+            return Sort.by(sorting.getDirection(), sorting.getSort());
+        }
+
+        return Sort.by(sorting.getSort());
     }
 }

@@ -34,7 +34,7 @@ public class ECommercePagingRequest extends ECommerceSortingRequest {
      * @return A Pageable object with the specified page and size.
      */
     public Pageable toPageable() {
-        return PageRequest.of(pagination.getPage(), pagination.getSize());
+        return PageRequest.of(pagination.getPage(), pagination.getSize(),toSort());
     }
 
     /**
