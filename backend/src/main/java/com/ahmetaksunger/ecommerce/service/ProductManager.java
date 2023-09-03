@@ -3,7 +3,9 @@ package com.ahmetaksunger.ecommerce.service;
 import com.ahmetaksunger.ecommerce.dto.converter.ProductVMConverter;
 import com.ahmetaksunger.ecommerce.dto.request.product.CreateProductRequest;
 import com.ahmetaksunger.ecommerce.dto.request.product.UpdateProductRequest;
-import com.ahmetaksunger.ecommerce.dto.response.*;
+import com.ahmetaksunger.ecommerce.dto.response.GetProductByIdResponse;
+import com.ahmetaksunger.ecommerce.dto.response.ProductOrderInfo;
+import com.ahmetaksunger.ecommerce.dto.response.ProductVM;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.ProductNotFoundException;
 import com.ahmetaksunger.ecommerce.mapper.MapperService;
 import com.ahmetaksunger.ecommerce.model.*;
@@ -19,7 +21,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,10 +48,11 @@ public class ProductManager implements ProductService {
     @Override
     public ProductVM addCategoriesByIdsToProduct(long productId, List<Long> categoryIds, User loggedInUser) {
 
-        //Rules
-        productRules.checkIfCanUpdate(productId, loggedInUser);
-
         Product product = productRepository.findById(productId).orElseThrow(() -> new ProductNotFoundException());
+
+        //Rules
+        productRules.checkIfCanUpdate(product, loggedInUser);
+
         List<Category> dbCategories = product.getCategories();
         List<Category> categoriesToBeAdded = categoryService.getCategoriesByIds(categoryIds);
         dbCategories.addAll(
@@ -65,10 +67,11 @@ public class ProductManager implements ProductService {
     @Override
     public ProductVM removeCategoriesByIdsFromProduct(long productId, List<Long> categoryIds, User loggedInUser) {
 
-        //Rules
-        productRules.checkIfCanUpdate(productId, loggedInUser);
-
         Product product = productRepository.findById(productId).orElseThrow(() -> new ProductNotFoundException());
+
+        //Rules
+        productRules.checkIfCanUpdate(product, loggedInUser);
+
         List<Category> dbCategories = product.getCategories();
         List<Category> categoriesToBeRemoved = categoryService.getCategoriesByIds(categoryIds);
         dbCategories.removeAll(
@@ -101,8 +104,8 @@ public class ProductManager implements ProductService {
                                        BigDecimal maxPrice, Integer page, Integer size) {
 
         //Rules
-        productRules.checkIfSortParamIsValid(sort);
-        productRules.checkIfOrderParamIsValid(order);
+        productRules.checkIfSortParamIsValid(sort)
+                .checkIfOrderParamIsValid(order);
 
         Specification<Product> specification = Specification.where(null);
 
@@ -130,7 +133,8 @@ public class ProductManager implements ProductService {
     public void delete(long productId, User loggedInUser) {
 
         //Rules
-        productRules.checkIfCanDelete(productId, loggedInUser);
+        productRules.checkIfCanDelete(productRepository.findById(productId)
+                .orElseThrow(ProductNotFoundException::new), loggedInUser);
 
         productRepository.deleteById(productId);
     }
@@ -202,10 +206,11 @@ public class ProductManager implements ProductService {
     @Override
     public ProductVM updateProduct(Long productId, UpdateProductRequest updateProductRequest, User loggedInUser) {
 
-        //Rules
-        productRules.checkIfCanUpdate(productId, loggedInUser);
-
         Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
+
+        //Rules
+        productRules.checkIfCanUpdate(product, loggedInUser);
+
         if (updateProductRequest.getName() != null) {
             product.setName(updateProductRequest.getName());
         }
