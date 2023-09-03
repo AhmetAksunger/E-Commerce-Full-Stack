@@ -1,6 +1,7 @@
 package com.ahmetaksunger.ecommerce.service.rules;
 
 import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
+import com.ahmetaksunger.ecommerce.model.Order;
 import com.ahmetaksunger.ecommerce.model.User;
 import lombok.SneakyThrows;
 
@@ -17,8 +18,8 @@ public abstract class BaseRules<T> {
      * @param user           The user
      * @param exceptionClass The exception class to be thrown
      */
-    protected abstract void verifyEntityBelongsToUser(T entity, User user,
-                                                      Class<? extends UnauthorizedException> exceptionClass);
+    protected abstract BaseRules<T> verifyEntityBelongsToUser(T entity, User user,
+                                                                  Class<? extends UnauthorizedException> exceptionClass);
 
     /**
      * Checks if the entity belongs to user
@@ -26,7 +27,7 @@ public abstract class BaseRules<T> {
      * @param entity THe entity
      * @param user The user
      */
-    public abstract void verifyEntityBelongsToUser(T entity, User user);
+    public abstract BaseRules<T> verifyEntityBelongsToUser(T entity, User user);
     /**
      * Checks if ids match, if not throws Unauthorized Exception
      * @param id The id

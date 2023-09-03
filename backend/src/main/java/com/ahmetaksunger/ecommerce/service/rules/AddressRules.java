@@ -17,8 +17,9 @@ public class AddressRules extends BaseRules<Address> {
     /**
      * Throws an {@link AddressUpdateNotAllowedException} if the entity id and user id
      * don't match.
+     *
      * @param address The entity
-     * @param user The user
+     * @param user    The user
      * @return this
      */
     @Override
@@ -30,8 +31,9 @@ public class AddressRules extends BaseRules<Address> {
     /**
      * Throws an {@link AddressDeletionNotAllowedException} if the entity id and user id
      * don't match.
+     *
      * @param address The entity
-     * @param user The user
+     * @param user    The user
      * @return this
      */
     @Override
@@ -43,29 +45,33 @@ public class AddressRules extends BaseRules<Address> {
     /**
      * Checks if Address belongs to user,
      * if not throws the specified exception class
+     *
      * @param entity         The entity
      * @param user           The user
      * @param exceptionClass The exception class to be thrown
      */
     @SneakyThrows
     @Override
-    protected void verifyEntityBelongsToUser(Address entity, User user, Class<? extends UnauthorizedException> exceptionClass) {
+    protected BaseRules<Address> verifyEntityBelongsToUser(Address entity, User user, Class<? extends UnauthorizedException> exceptionClass) {
         if (entity.getUser().getId() != user.getId()) {
             throw exceptionClass.getDeclaredConstructor().newInstance();
         }
+        return this;
     }
 
     /**
      * Checks if the Address belongs to user,
      * if not throws {@link EntityOwnershipException}
+     *
      * @param entity THe entity
-     * @param user The user
+     * @param user   The user
      */
     @Override
-    public void verifyEntityBelongsToUser(Address entity, User user) {
+    public BaseRules<Address> verifyEntityBelongsToUser(Address entity, User user) {
         if (entity.getUser().getId() != user.getId()) {
             throw new EntityOwnershipException();
         }
+        return this;
     }
 
 }
