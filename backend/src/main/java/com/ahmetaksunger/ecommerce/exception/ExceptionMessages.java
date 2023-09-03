@@ -22,7 +22,8 @@ public enum ExceptionMessages {
     INSUFF_REVENUE("Seller doesn't have enough revenue to withdraw."),
     INVALID_WITHDRAW_AMOUNT("Invalid withdraw amount"),
     INVALID_CART("Invalid cart"),
-    CART_IS_EMPTY("Cart is empty");
+    CART_IS_EMPTY("Cart is empty"),
+    CART_UPDATE_NOT_ALLOWED("User is not allowed to update this cart");
 
     private String message;
     public String message(){

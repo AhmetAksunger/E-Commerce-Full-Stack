@@ -25,7 +25,7 @@ public class Order extends BaseEntity{
     @ManyToOne
     private Customer customer;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.DETACH)
     private Address address;
 
     @OneToOne

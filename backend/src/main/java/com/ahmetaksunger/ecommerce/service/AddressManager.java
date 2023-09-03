@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Locale;
 
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.AddressNotFoundException;
+import com.ahmetaksunger.ecommerce.service.rules.BaseRules;
 import com.ahmetaksunger.ecommerce.service.rules.GeneralRules;
 import org.springframework.stereotype.Service;
 
@@ -42,11 +43,11 @@ public class AddressManager implements AddressService{
 	@Override
 	public AddressVM update(long addressId, UpdateAddressRequest updateAddressRequest, User user) {
 		
-		//Rules
-		addressRules.checkIfCanUpdate(addressId, user);
-		
 		Address address = addressRepository.findById(addressId).orElseThrow(()-> new AddressNotFoundException());
-					
+
+        //Rules
+        addressRules.checkIfCanUpdate(address, user);
+
 	   if (updateAddressRequest.getAddress() != null) {
 	        address.setAddress(updateAddressRequest.getAddress());
 	    }
@@ -66,7 +67,8 @@ public class AddressManager implements AddressService{
     @Override
     public void delete(long addressId, User loggedInUser) {
         //Rules
-        addressRules.checkIfCanDelete(addressId,loggedInUser);
+        addressRules.checkIfCanDelete(addressRepository.findById(addressId)
+                .orElseThrow(AddressNotFoundException::new),loggedInUser);
 
         addressRepository.deleteById(addressId);
     }
@@ -75,7 +77,7 @@ public class AddressManager implements AddressService{
     public List<AddressVM> getAddressesByUserId(long id,User user) {
 
         //Rules
-        GeneralRules.checkIfIdsMatch(id,user);
+        BaseRules.checkIfIdsNotMatch(id,user);
 
         List<Address> addresses = addressRepository.getByUserId(id);
         return addresses.stream()

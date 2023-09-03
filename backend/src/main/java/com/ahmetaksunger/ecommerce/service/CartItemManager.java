@@ -5,7 +5,6 @@ import com.ahmetaksunger.ecommerce.dto.request.cartItem.CreateCartItemRequest;
 import com.ahmetaksunger.ecommerce.dto.request.cartItem.UpdateCartItemRequest;
 import com.ahmetaksunger.ecommerce.dto.response.CartVM;
 import com.ahmetaksunger.ecommerce.exception.NotAllowedException.CartDeletionNotAllowedException;
-import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.CartItemNotFound;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.CartNotFoundException;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.ProductNotFoundException;
@@ -16,6 +15,7 @@ import com.ahmetaksunger.ecommerce.model.User;
 import com.ahmetaksunger.ecommerce.repository.CartItemRepository;
 import com.ahmetaksunger.ecommerce.repository.CartRepository;
 import com.ahmetaksunger.ecommerce.repository.ProductRepository;
+import com.ahmetaksunger.ecommerce.service.rules.BaseRules;
 import com.ahmetaksunger.ecommerce.service.rules.CartRules;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -40,9 +40,10 @@ public class CartItemManager implements CartItemService {
         Product product = productRepository.findById(createCartItemRequest.getProductId()).orElseThrow(ProductNotFoundException::new);
 
         //Rules
-        cartRules.verifyCartBelongsToUser(cart, loggedInUser, UnauthorizedException.class);
-        cartRules.checkIfQuantityIsValid(createCartItemRequest.getQuantity(), product);
-        cartRules.checkIfCartActive(cart);
+        BaseRules.checkIfIdsNotMatch(createCartItemRequest.getCartId(), loggedInUser);
+        cartRules
+                .checkIfQuantityIsValid(createCartItemRequest.getQuantity(), product)
+                .checkIfCartActive(cart);
 
         Optional<CartItem> optionalCartItem = cartItemRepository
                 .findByCartIdAndProductId(createCartItemRequest.getCartId(), createCartItemRequest.getProductId());
@@ -74,7 +75,7 @@ public class CartItemManager implements CartItemService {
         CartItem cartItem = cartItemRepository.findById(cartItemId).orElseThrow(CartItemNotFound::new);
 
         //Rules
-        cartRules.verifyCartBelongsToUser(cartItem.getCart(), loggedInUser, CartDeletionNotAllowedException.class);
+        cartRules.checkIfCanDelete(cartItem.getCart(), loggedInUser);
 
         cartItemRepository.deleteById(cartItemId);
 
@@ -92,7 +93,7 @@ public class CartItemManager implements CartItemService {
     public void deleteAllByCartId(final Long cartId, final User loggedInUser) {
 
         //Rules
-        cartRules.verifyCartBelongsToUser(cartRepository.findById(cartId).orElseThrow(CartNotFoundException::new), loggedInUser, CartDeletionNotAllowedException.class);
+        cartRules.checkIfCanDelete(cartRepository.findById(cartId).orElseThrow(CartNotFoundException::new), loggedInUser);
 
         cartItemRepository.deleteAllByCartId(cartId);
     }
@@ -111,9 +112,9 @@ public class CartItemManager implements CartItemService {
         CartItem cartItem = cartItemRepository.findById(cartItemId).orElseThrow(CartItemNotFound::new);
 
         //Rules
-        cartRules.verifyCartBelongsToUser(cartItem.getCart(), loggedInUser, UnauthorizedException.class);
-        cartRules.checkIfQuantityIsValid(updateCartItemRequest.getQuantity(), cartItem.getProduct());
-        cartRules.checkIfCartActive(cartItem.getCart());
+        cartRules.checkIfCanUpdate(cartItem.getCart(), loggedInUser)
+                .checkIfQuantityIsValid(updateCartItemRequest.getQuantity(), cartItem.getProduct())
+                .checkIfCartActive(cartItem.getCart());
 
         cartItem.setQuantity(updateCartItemRequest.getQuantity());
 
