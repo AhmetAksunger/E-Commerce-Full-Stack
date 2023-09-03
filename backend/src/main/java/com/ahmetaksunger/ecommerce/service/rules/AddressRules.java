@@ -14,11 +14,27 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class AddressRules extends BaseRules<Address> {
 
+    /**
+     * Throws an {@link AddressUpdateNotAllowedException} if the entity id and user id
+     * don't match.
+     * @param address The entity
+     * @param user The user
+     * @return this
+     */
+    @Override
     public AddressRules checkIfCanUpdate(Address address, User user) {
         verifyEntityBelongsToUser(address, user, AddressUpdateNotAllowedException.class);
         return this;
     }
 
+    /**
+     * Throws an {@link AddressDeletionNotAllowedException} if the entity id and user id
+     * don't match.
+     * @param address The entity
+     * @param user The user
+     * @return this
+     */
+    @Override
     public AddressRules checkIfCanDelete(Address address, User user) {
         verifyEntityBelongsToUser(address, user, AddressDeletionNotAllowedException.class);
         return this;

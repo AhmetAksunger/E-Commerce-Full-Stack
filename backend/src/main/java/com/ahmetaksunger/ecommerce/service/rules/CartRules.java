@@ -2,10 +2,7 @@ package com.ahmetaksunger.ecommerce.service.rules;
 
 import com.ahmetaksunger.ecommerce.exception.InsufficientProductQuantityException;
 import com.ahmetaksunger.ecommerce.exception.InvalidCartException;
-import com.ahmetaksunger.ecommerce.exception.NotAllowedException.CartDeletionNotAllowedException;
-import com.ahmetaksunger.ecommerce.exception.NotAllowedException.CartUpdateNotAllowedException;
-import com.ahmetaksunger.ecommerce.exception.NotAllowedException.EntityOwnershipException;
-import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
+import com.ahmetaksunger.ecommerce.exception.NotAllowedException.*;
 import com.ahmetaksunger.ecommerce.model.Cart;
 import com.ahmetaksunger.ecommerce.model.CartStatus;
 import com.ahmetaksunger.ecommerce.model.Product;
@@ -18,13 +15,24 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class CartRules extends BaseRules<Cart> {
 
-    public CartRules checkIfQuantityIsValid(int quantity, Product product) {
+    /**
+     * Checks if the quantity specified in the cart for a product is valid
+     * @param quantity THe quantity specified in the cart for a product
+     * @param product The product
+     * @return this
+     */
+    public CartRules checkIfQuantityIsValid(Integer quantity, Product product) {
         if (quantity > product.getQuantity()) {
             throw new InsufficientProductQuantityException(product);
         }
         return this;
     }
 
+    /**
+     * Checks if the cart is active
+     * @param cart The cart
+     * @return this
+     */
     public CartRules checkIfCartActive(Cart cart) {
         if (cart.getStatus().equals(CartStatus.INACTIVE)) {
             throw new InvalidCartException();
@@ -32,12 +40,26 @@ public class CartRules extends BaseRules<Cart> {
         return this;
     }
 
+    /**
+     * Throws an {@link CartUpdateNotAllowedException} if the entity id and user id
+     * don't match.
+     * @param entity The entity
+     * @param user The user
+     * @return this
+     */
     @Override
     public CartRules checkIfCanUpdate(Cart entity, User user) {
         verifyEntityBelongsToUser(entity,user, CartUpdateNotAllowedException.class);
-        return null;
+        return this;
     }
 
+    /**
+     * Throws an {@link CartDeletionNotAllowedException} if the entity id and user id
+     * don't match.
+     * @param entity The entity
+     * @param user The user
+     * @return this
+     */
     @Override
     public CartRules checkIfCanDelete(Cart entity, User user) {
         verifyEntityBelongsToUser(entity, user, CartDeletionNotAllowedException.class);
