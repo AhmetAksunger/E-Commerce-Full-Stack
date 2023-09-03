@@ -77,7 +77,7 @@ public class OrderManager implements OrderService {
         // BEGINNING OF RULES
         try {
             cartRules.verifyEntityBelongsToUser(cart,loggedInUser);
-            // TODO: PAYMENT DETAIL VERIFY ENTITY BELONGS TO USER
+            paymentDetailRules.verifyEntityBelongsToUser(paymentDetail,loggedInUser);
             addressRules.verifyEntityBelongsToUser(address, customer);
         } catch (EntityOwnershipException exception) {
             var transaction = PaymentTransactionFactory.create(TransactionType.PURCHASE, PaymentStatus.FAILED,
