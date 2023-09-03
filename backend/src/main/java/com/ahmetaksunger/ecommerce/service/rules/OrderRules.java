@@ -53,7 +53,8 @@ public class OrderRules extends BaseRules<Order> {
 
     /**
      * Throws an {@link UnauthorizedException} if the customer id and user id don't match
-     * (Since there's no usage of this method for the order entity, there's no specific exception class to throw)
+     * (Since there's no usage of this method for the order entity,
+     * there's no specific exception class to throw)
      *
      * @param entity The entity
      * @param user   The entity
@@ -61,9 +62,7 @@ public class OrderRules extends BaseRules<Order> {
      */
     @Override
     public BaseRules<Order> checkIfCanUpdate(Order entity, User user) {
-        if (entity.getCustomer().getId() != user.getId()) {
-            throw new UnauthorizedException();
-        }
+        verifyEntityBelongsToUser(entity,user,UnauthorizedException.class);
         return this;
     }
 
@@ -77,9 +76,7 @@ public class OrderRules extends BaseRules<Order> {
      */
     @Override
     public BaseRules<Order> checkIfCanDelete(Order entity, User user) {
-        if (entity.getCustomer().getId() != user.getId()) {
-            throw new UnauthorizedException();
-        }
+        verifyEntityBelongsToUser(entity,user,UnauthorizedException.class);
         return this;
     }
 
