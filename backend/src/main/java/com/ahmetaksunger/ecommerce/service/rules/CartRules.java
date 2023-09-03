@@ -83,7 +83,7 @@ public class CartRules extends BaseRules<Cart> {
      */
     @SneakyThrows
     @Override
-    protected BaseRules<Cart> verifyEntityBelongsToUser(Cart entity, User user, Class<? extends UnauthorizedException> exceptionClass) {
+    protected CartRules verifyEntityBelongsToUser(Cart entity, User user, Class<? extends UnauthorizedException> exceptionClass) {
         if (entity.getCustomer().getId() != user.getId()) {
             throw exceptionClass.getDeclaredConstructor().newInstance();
         }
@@ -98,7 +98,7 @@ public class CartRules extends BaseRules<Cart> {
      * @param user   The user
      */
     @Override
-    public BaseRules<Cart> verifyEntityBelongsToUser(Cart entity, User user) {
+    public CartRules verifyEntityBelongsToUser(Cart entity, User user) {
         if (entity.getCustomer().getId() != user.getId()) {
             throw new EntityOwnershipException();
         }

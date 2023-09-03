@@ -52,7 +52,7 @@ public class AddressRules extends BaseRules<Address> {
      */
     @SneakyThrows
     @Override
-    protected BaseRules<Address> verifyEntityBelongsToUser(Address entity, User user, Class<? extends UnauthorizedException> exceptionClass) {
+    protected AddressRules verifyEntityBelongsToUser(Address entity, User user, Class<? extends UnauthorizedException> exceptionClass) {
         if (entity.getUser().getId() != user.getId()) {
             throw exceptionClass.getDeclaredConstructor().newInstance();
         }
@@ -67,7 +67,7 @@ public class AddressRules extends BaseRules<Address> {
      * @param user   The user
      */
     @Override
-    public BaseRules<Address> verifyEntityBelongsToUser(Address entity, User user) {
+    public AddressRules verifyEntityBelongsToUser(Address entity, User user) {
         if (entity.getUser().getId() != user.getId()) {
             throw new EntityOwnershipException();
         }

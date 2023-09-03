@@ -15,6 +15,7 @@ import com.ahmetaksunger.ecommerce.service.factory.PaymentTransactionFactory;
 import com.ahmetaksunger.ecommerce.service.rules.AddressRules;
 import com.ahmetaksunger.ecommerce.service.rules.CartRules;
 import com.ahmetaksunger.ecommerce.service.rules.OrderRules;
+import com.ahmetaksunger.ecommerce.service.rules.PaymentDetailRules;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +29,6 @@ public class OrderManager implements OrderService {
 
     private final OrderRepository orderRepository;
     private final CartRepository cartRepository;
-    private final CartItemRepository cartItemRepository;
     private final PaymentDetailRepository paymentDetailRepository;
     private final OrderRules orderRules;
     private final MapperService mapperService;
@@ -39,7 +39,7 @@ public class OrderManager implements OrderService {
     private final CartService cartService;
     private final CartRules cartRules;
     private final PaymentTransactionRepository paymentTransactionRepository;
-
+    private final PaymentDetailRules paymentDetailRules;
 
     /**
      * <p> - Verifies that the specified cart, payment detail, and address belong to the customer.</p>
@@ -74,9 +74,10 @@ public class OrderManager implements OrderService {
 
         final BigDecimal total = CartCalculator.calculateTotal(cart);
 
-        //Rules
+        // BEGINNING OF RULES
         try {
-            orderRules.verifyCartAndPaymentDetailBelongsToUser(cart, paymentDetail, customer);
+            cartRules.verifyEntityBelongsToUser(cart,loggedInUser);
+            // TODO: PAYMENT DETAIL VERIFY ENTITY BELONGS TO USER
             addressRules.verifyEntityBelongsToUser(address, customer);
         } catch (EntityOwnershipException exception) {
             var transaction = PaymentTransactionFactory.create(TransactionType.PURCHASE, PaymentStatus.FAILED,
@@ -85,9 +86,10 @@ public class OrderManager implements OrderService {
 
             throw exception;
         }
-        orderRules.checkInsufficientStock(cart); // TODO: Optimistic - Pessimistic lock
-        orderRules.checkIfCartIsEmpty(cart);
+        orderRules.checkInsufficientStock(cart)
+                .checkIfCartIsEmpty(cart); // TODO: Optimistic - Pessimistic lock
         cartRules.checkIfCartActive(cart);
+        // END OF RULES
 
         final Order order = Order.builder()
                 .total(total)
@@ -100,8 +102,8 @@ public class OrderManager implements OrderService {
         final Order dbOrder = orderRepository.save(order);
 
         // Creating a payment transaction for the bought products
-        var transaction = PaymentTransactionFactory.create(TransactionType.PURCHASE,PaymentStatus.COMPLETED,
-                customer,total,paymentDetail,null);
+        var transaction = PaymentTransactionFactory.create(TransactionType.PURCHASE, PaymentStatus.COMPLETED,
+                customer, total, paymentDetail, null);
 
         paymentTransactionRepository.save(transaction);
 
