@@ -15,7 +15,7 @@ import com.ahmetaksunger.ecommerce.model.transaction.TransactionType;
 import com.ahmetaksunger.ecommerce.repository.*;
 import com.ahmetaksunger.ecommerce.service.factory.PaymentTransactionFactory;
 import com.ahmetaksunger.ecommerce.service.rules.*;
-import com.ahmetaksunger.ecommerce.util.ECommercePaging;
+import com.ahmetaksunger.ecommerce.util.ECommercePagingRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -139,11 +139,11 @@ public class OrderManager implements OrderService {
      *
      * @param customerId   The unique identifier of the customer whose orders are to be retrieved.
      * @param loggedInUser The user making the request.
-     * @param paging       An instance of {@link ECommercePaging} containing paging information (page number and page size).
+     * @param paging       An instance of {@link ECommercePagingRequest} containing paging information (page number and page size).
      * @return A {@link Page} of {@link GetOrdersResponse} objects representing the orders for the specified customer.
      */
     @Override
-    public Page<GetOrdersResponse> getOrdersByCustomerId(Long customerId, User loggedInUser, ECommercePaging paging) {
+    public Page<GetOrdersResponse> getOrdersByCustomerId(Long customerId, User loggedInUser, ECommercePagingRequest paging) {
         // Rules
         BaseRules.checkIfIdsNotMatch(customerId, loggedInUser);
 

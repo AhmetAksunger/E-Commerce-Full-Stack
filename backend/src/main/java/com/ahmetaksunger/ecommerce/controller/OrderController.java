@@ -6,7 +6,7 @@ import com.ahmetaksunger.ecommerce.dto.response.OrderCompletedResponse;
 import com.ahmetaksunger.ecommerce.model.User;
 import com.ahmetaksunger.ecommerce.security.CurrentUser;
 import com.ahmetaksunger.ecommerce.service.OrderService;
-import com.ahmetaksunger.ecommerce.util.ECommercePaging;
+import com.ahmetaksunger.ecommerce.util.ECommercePagingRequest;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ public class OrderController {
     @PostMapping("/customer/{customerId}")
     public ResponseEntity<Page<GetOrdersResponse>> getOrdersByCustomerId(@PathVariable Long customerId,
                                                                          @CurrentUser User loggedInUser,
-                                                                         @RequestBody @Valid ECommercePaging paging){
+                                                                         @RequestBody @Valid ECommercePagingRequest paging){
         return ResponseEntity.ok(orderService.getOrdersByCustomerId(customerId,loggedInUser,paging));
     }
 }
