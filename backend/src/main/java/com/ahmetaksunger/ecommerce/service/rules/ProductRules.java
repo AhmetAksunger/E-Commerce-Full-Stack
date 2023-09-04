@@ -1,10 +1,12 @@
 package com.ahmetaksunger.ecommerce.service.rules;
 
+import com.ahmetaksunger.ecommerce.exception.InvalidProductException;
 import com.ahmetaksunger.ecommerce.exception.InvalidRequestParamException;
 import com.ahmetaksunger.ecommerce.exception.NotAllowedException.EntityOwnershipException;
 import com.ahmetaksunger.ecommerce.exception.NotAllowedException.ProductDeletionNotAllowedException;
 import com.ahmetaksunger.ecommerce.exception.NotAllowedException.ProductUpdateNotAllowedException;
 import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
+import com.ahmetaksunger.ecommerce.model.EntityStatus;
 import com.ahmetaksunger.ecommerce.model.Product;
 import com.ahmetaksunger.ecommerce.model.User;
 import com.ahmetaksunger.ecommerce.util.ECommerceSortingRequest;
@@ -20,6 +22,19 @@ import java.util.Optional;
 public class ProductRules extends BaseRules<Product> {
 
     private final List<String> validOrderParams = List.of("name", "price", "createdAt", "updatedAt");
+
+    /**
+     * Checks if product is {@link EntityStatus#INACTIVE}.
+     * If so, throws {@link InvalidProductException}
+     * @param product THe product
+     * @return this
+     */
+    public ProductRules checkIfProductActive(Product product){
+        if (product.getStatus().equals(EntityStatus.INACTIVE)){
+            throw new InvalidProductException();
+        }
+        return this;
+    }
 
     /**
      *
