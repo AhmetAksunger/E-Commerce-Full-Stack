@@ -26,14 +26,13 @@ public class ECommerceSortingRequest {
      */
     public Sort toSort() {
 
-        if (sorting == null) {
-            return Sort.unsorted();
+        if (sorting != null && sorting.sort != null) {
+            if(sorting.direction != null){
+                return Sort.by(sorting.direction,sorting.sort);
+            }
+            return Sort.by(sorting.sort);
         }
 
-        if (sorting.getDirection() != null) {
-            return Sort.by(sorting.getDirection(), sorting.getSort());
-        }
-
-        return Sort.by(sorting.getSort());
+        return Sort.unsorted();
     }
 }
