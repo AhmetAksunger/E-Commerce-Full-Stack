@@ -7,11 +7,13 @@ import com.ahmetaksunger.ecommerce.exception.NotAllowedException.ProductUpdateNo
 import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
 import com.ahmetaksunger.ecommerce.model.Product;
 import com.ahmetaksunger.ecommerce.model.User;
+import com.ahmetaksunger.ecommerce.util.ECommerceSortingRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -20,15 +22,29 @@ public class ProductRules extends BaseRules<Product> {
     private final List<String> validOrderParams = List.of("name", "price", "createdAt", "updatedAt");
 
     /**
-     * <p>Checks if the sort parameter given is valid</p>
      *
-     * @param sort The given sort param
-     * @see ProductRules#validOrderParams
+     * <p>If sorting is null, returns the current instance</p>
+     * <p>Else, converts the sort field of sorting to nullable optional
+     * by using {@link Optional#ofNullable(Object)}</p>
+     *
+     * <p>Then checks if optional sort is in valid order params, if not throws {@link InvalidRequestParamException}</p>
+     * @param sorting Optional Sorting
+     * @return this
      */
-    public ProductRules checkIfSortParamIsValid(String sort) {
-        if (!this.validOrderParams.contains(sort)) {
-            throw new InvalidRequestParamException("Invalid sort parameter",this.validOrderParams);
+    public ProductRules checkIfSortParamIsValid(Optional<ECommerceSortingRequest.Sorting> sorting) {
+
+        if (sorting.isEmpty()) {
+            return this;
         }
+
+        Optional<String> optionalSort = Optional.ofNullable(sorting.get().getSort());
+
+        optionalSort
+                .filter(s -> !this.validOrderParams.contains(s))
+                .ifPresent(s -> {
+                    throw new InvalidRequestParamException("Invalid sort parameter", this.validOrderParams);
+                });
+
         return this;
     }
 

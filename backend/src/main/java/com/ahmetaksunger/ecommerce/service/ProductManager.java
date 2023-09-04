@@ -12,17 +12,15 @@ import com.ahmetaksunger.ecommerce.mapper.MapperService;
 import com.ahmetaksunger.ecommerce.model.*;
 import com.ahmetaksunger.ecommerce.repository.ProductRepository;
 import com.ahmetaksunger.ecommerce.service.rules.ProductRules;
-import com.ahmetaksunger.ecommerce.spesification.ProductSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -86,13 +84,12 @@ public class ProductManager implements ProductService {
 
     /**
      * Retrieves paginated list of products based on the specified filters.
-     *
      */
     @Override
     public Page<ProductVM> getProducts(ProductListRequest listRequest) {
 
         //Rules
-        productRules.checkIfSortParamIsValid(listRequest.getSorting().getSort());
+        productRules.checkIfSortParamIsValid(Optional.ofNullable(listRequest.getSorting()));
 
 
         return productRepository.findAll(listRequest.toSpecification(), listRequest.toPageable())
