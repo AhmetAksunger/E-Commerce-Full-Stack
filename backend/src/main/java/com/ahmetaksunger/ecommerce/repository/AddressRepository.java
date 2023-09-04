@@ -4,9 +4,12 @@ import com.ahmetaksunger.ecommerce.model.Address;
 import com.ahmetaksunger.ecommerce.model.Customer;
 import com.ahmetaksunger.ecommerce.model.Seller;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
 public interface AddressRepository extends JpaRepository<Address,Long> {
-    List<Address> getByUserId(long id);
+
+    @Query("SELECT a FROM Address a WHERE a.user.id=:id AND a.status='ACTIVE'")
+    List<Address> getActiveAddressByUserId(long id);
 }

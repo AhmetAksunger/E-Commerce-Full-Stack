@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Locale;
 
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.AddressNotFoundException;
+import com.ahmetaksunger.ecommerce.model.EntityStatus;
 import com.ahmetaksunger.ecommerce.service.rules.BaseRules;
 import org.springframework.stereotype.Service;
 
@@ -61,14 +62,27 @@ public class AddressManager implements AddressService{
 		return mapperService.forResponse().map(addressRepository.save(address), AddressVM.class);
 	}
 
+    /**
+     * Retrieves the entity by the specified entity id,
+     * checks if the user has permissions to delete the entity,
+     * if so sets the status of the entity {@link EntityStatus#INACTIVE}
+     * @param addressId The specified address id
+     * @param loggedInUser Logged-in user
+     * @see AddressRules#checkIfCanDelete(Address, User)
+     */
     @Override
     public void delete(long addressId, User loggedInUser) {
-        //Rules
-        addressRules.checkIfCanDelete(addressRepository.findById(addressId)
-                .orElseThrow(AddressNotFoundException::new),loggedInUser);
 
-        addressRepository.deleteById(addressId);
+        Address address = addressRepository.findById(addressId)
+                .orElseThrow(AddressNotFoundException::new);
+
+        //Rules
+        addressRules.checkIfCanDelete(address,loggedInUser);
+
+        address.setStatus(EntityStatus.INACTIVE);
+        addressRepository.save(address);
     }
+
 
     @Override
     public List<AddressVM> getAddressesByUserId(long id,User user) {
@@ -76,7 +90,7 @@ public class AddressManager implements AddressService{
         //Rules
         BaseRules.checkIfIdsNotMatch(id,user);
 
-        List<Address> addresses = addressRepository.getByUserId(id);
+        List<Address> addresses = addressRepository.getActiveAddressByUserId(id);
         return addresses.stream()
                 .map(address -> mapperService.forResponse().map(address,AddressVM.class))
                 .toList();
