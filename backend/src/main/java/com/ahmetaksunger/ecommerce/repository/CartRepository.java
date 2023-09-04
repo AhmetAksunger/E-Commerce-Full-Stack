@@ -1,7 +1,6 @@
 package com.ahmetaksunger.ecommerce.repository;
 
 import com.ahmetaksunger.ecommerce.model.Cart;
-import com.ahmetaksunger.ecommerce.model.CartStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

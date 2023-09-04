@@ -2,10 +2,9 @@ package com.ahmetaksunger.ecommerce.service;
 
 import com.ahmetaksunger.ecommerce.dto.converter.CartVMConverter;
 import com.ahmetaksunger.ecommerce.dto.response.CartVM;
-import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.CartNotFoundException;
 import com.ahmetaksunger.ecommerce.model.Cart;
-import com.ahmetaksunger.ecommerce.model.CartStatus;
+import com.ahmetaksunger.ecommerce.model.EntityStatus;
 import com.ahmetaksunger.ecommerce.model.Customer;
 import com.ahmetaksunger.ecommerce.model.User;
 import com.ahmetaksunger.ecommerce.repository.CartRepository;
@@ -53,24 +52,24 @@ public class CartManager implements CartService {
     }
 
     /**
-     * Activates the cart by setting the {@link CartStatus} ACTIVE
+     * Activates the cart by setting the {@link EntityStatus} ACTIVE
      *
      * @param cart Cart
      */
     @Override
     public void activateCart(Cart cart) {
-        cart.setStatus(CartStatus.ACTIVE);
+        cart.setStatus(EntityStatus.ACTIVE);
         cartRepository.save(cart);
     }
 
     /**
-     * Deactivates the cart by setting the {@link CartStatus} INACTIVE
+     * Deactivates the cart by setting the {@link EntityStatus} INACTIVE
      *
      * @param cart Cart
      */
     @Override
     public void deactivateCart(Cart cart) {
-        cart.setStatus(CartStatus.INACTIVE);
+        cart.setStatus(EntityStatus.INACTIVE);
         cartRepository.save(cart);
     }
 

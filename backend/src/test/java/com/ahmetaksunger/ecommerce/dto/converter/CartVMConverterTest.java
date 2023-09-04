@@ -6,9 +6,8 @@ import com.ahmetaksunger.ecommerce.dto.response.CustomerVM;
 import com.ahmetaksunger.ecommerce.mapper.MapperService;
 import com.ahmetaksunger.ecommerce.model.Cart;
 import com.ahmetaksunger.ecommerce.model.CartItem;
-import com.ahmetaksunger.ecommerce.model.CartStatus;
+import com.ahmetaksunger.ecommerce.model.EntityStatus;
 import com.ahmetaksunger.ecommerce.model.Customer;
-import com.ahmetaksunger.ecommerce.service.CartService;
 import com.ahmetaksunger.ecommerce.service.CartCalculator;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -54,7 +53,7 @@ class CartVMConverterTest {
                 .id(1L)
                 .customer(customer)
                 .cartItems(List.of(cartItem))
-                .status(CartStatus.ACTIVE)
+                .status(EntityStatus.ACTIVE)
                 .build();
 
         Mockito.when(mapperService.forResponse()).thenReturn(modelMapper);

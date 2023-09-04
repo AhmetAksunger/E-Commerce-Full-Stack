@@ -7,7 +7,7 @@ import com.ahmetaksunger.ecommerce.exception.NotAllowedException.CartUpdateNotAl
 import com.ahmetaksunger.ecommerce.exception.NotAllowedException.EntityOwnershipException;
 import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
 import com.ahmetaksunger.ecommerce.model.Cart;
-import com.ahmetaksunger.ecommerce.model.CartStatus;
+import com.ahmetaksunger.ecommerce.model.EntityStatus;
 import com.ahmetaksunger.ecommerce.model.Product;
 import com.ahmetaksunger.ecommerce.model.User;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +39,7 @@ public class CartRules extends BaseRules<Cart> {
      * @return this
      */
     public CartRules checkIfCartActive(Cart cart) {
-        if (cart.getStatus().equals(CartStatus.INACTIVE)) {
+        if (cart.getStatus().equals(EntityStatus.INACTIVE)) {
             throw new InvalidCartException();
         }
         return this;

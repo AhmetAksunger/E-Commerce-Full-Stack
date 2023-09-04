@@ -30,6 +30,9 @@ public class PaymentDetail {
     @Column(name = "expiration_date", nullable = false)
     private String expirationDate;
 
+    @Enumerated(EnumType.STRING)
+    private EntityStatus status;
+
     @ManyToOne()
     private User user;
 
