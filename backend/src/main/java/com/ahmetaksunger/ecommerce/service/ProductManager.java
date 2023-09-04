@@ -50,7 +50,8 @@ public class ProductManager implements ProductService {
         Product product = productRepository.findById(productId).orElseThrow(() -> new ProductNotFoundException());
 
         //Rules
-        productRules.checkIfCanUpdate(product, loggedInUser);
+        productRules.checkIfCanUpdate(product, loggedInUser)
+                .checkIfProductActive(product);
 
         List<Category> dbCategories = product.getCategories();
         List<Category> categoriesToBeAdded = categoryService.getCategoriesByIds(categoryIds);
@@ -69,7 +70,8 @@ public class ProductManager implements ProductService {
         Product product = productRepository.findById(productId).orElseThrow(() -> new ProductNotFoundException());
 
         //Rules
-        productRules.checkIfCanUpdate(product, loggedInUser);
+        productRules.checkIfCanUpdate(product, loggedInUser)
+                .checkIfProductActive(product);
 
         List<Category> dbCategories = product.getCategories();
         List<Category> categoriesToBeRemoved = categoryService.getCategoriesByIds(categoryIds);
@@ -151,7 +153,7 @@ public class ProductManager implements ProductService {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 
-        return productRepository.findBySellerId(sellerId, pageable)
+        return productRepository.findActiveProductsBySellerId(sellerId, pageable)
                 .map(product -> {
                     GetProductByIdResponse response = mapperService.forResponse().map(product, GetProductByIdResponse.class);
                     var orderCount = productRepository.getOrderCountByProductId(product.getId());
@@ -176,7 +178,8 @@ public class ProductManager implements ProductService {
         Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
 
         //Rules
-        productRules.checkIfCanUpdate(product, loggedInUser);
+        productRules.checkIfCanUpdate(product, loggedInUser)
+                .checkIfProductActive(product);
 
         if (updateProductRequest.getName() != null) {
             product.setName(updateProductRequest.getName());
@@ -198,14 +201,14 @@ public class ProductManager implements ProductService {
     }
 
     /**
-     * Retrieves the top ten most ordered products from the {@link ProductRepository#getTop10MostOrderedProducts()}
+     * Retrieves the top ten most ordered products from the {@link ProductRepository#getTop10MostOrderedActiveProducts()} ()}
      * Maps them to a list of {@link ProductVM}, and returns.
      *
      * @return {@link List<ProductVM>}
      */
     @Override
     public List<ProductVM> getTop10MostOrderedProducts() {
-        List<ProductOrderInfo> productOrderInfos = productRepository.getTop10MostOrderedProducts();
+        List<ProductOrderInfo> productOrderInfos = productRepository.getTop10MostOrderedActiveProducts();
 
         return productOrderInfos.stream()
                 .map(productVMConverter::convert).collect(Collectors.toList());
