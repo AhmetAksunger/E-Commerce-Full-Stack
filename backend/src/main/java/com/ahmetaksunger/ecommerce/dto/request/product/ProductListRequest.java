@@ -31,7 +31,7 @@ public class ProductListRequest extends ECommercePagingRequest implements EComme
     @Override
     public Specification<Product> toSpecification() {
 
-        Specification<Product> specification = Specification.where(null);
+        Specification<Product> specification = ProductSpecification.withActiveStatus();
 
         if (filter.getSearch() != null && !filter.getSearch().isEmpty()) {
             specification = specification.and(ProductSpecification.searchByKeyword(filter.getSearch()));
@@ -43,8 +43,8 @@ public class ProductListRequest extends ECommercePagingRequest implements EComme
         if (filter.getMinPrice() != null) {
             specification = specification.and(ProductSpecification.withPriceGreaterThanOrEqualTo(filter.getMinPrice()));
         }
-        if (filter.getMinPrice() != null) {
-            specification = specification.and(ProductSpecification.withPriceLessThanOrEqualTo(filter.getMinPrice()));
+        if (filter.getMaxPrice() != null) {
+            specification = specification.and(ProductSpecification.withPriceLessThanOrEqualTo(filter.getMaxPrice()));
         }
 
         return specification;

@@ -2,6 +2,7 @@ package com.ahmetaksunger.ecommerce.spesification;
 
 
 import com.ahmetaksunger.ecommerce.model.Category;
+import com.ahmetaksunger.ecommerce.model.EntityStatus;
 import com.ahmetaksunger.ecommerce.model.Product;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Join;
@@ -75,4 +76,12 @@ public class ProductSpecification {
                 root.join("categories").get("id").in(categoryIds);
     }
 
+    /**
+     * Creates a specification that filters products by ACTIVE status
+     *
+     * @return the specification
+     */
+    public static Specification<Product> withActiveStatus(){
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("status"), EntityStatus.ACTIVE);
+    }
 }
