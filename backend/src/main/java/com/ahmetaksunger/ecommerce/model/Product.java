@@ -36,8 +36,9 @@ public class Product extends BaseEntity{
     @Column(name = "logo",nullable = false)
     private String logo;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
-    private EntityStatus status;
+    private EntityStatus status = EntityStatus.ACTIVE;
 
     @ManyToOne(cascade = CascadeType.DETACH)
     private Seller seller;

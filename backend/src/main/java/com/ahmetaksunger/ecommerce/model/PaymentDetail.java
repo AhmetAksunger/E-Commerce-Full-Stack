@@ -1,10 +1,7 @@
 package com.ahmetaksunger.ecommerce.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @Table(name = "payment_details")
@@ -30,8 +27,9 @@ public class PaymentDetail {
     @Column(name = "expiration_date", nullable = false)
     private String expirationDate;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
-    private EntityStatus status;
+    private EntityStatus status = EntityStatus.ACTIVE;
 
     @ManyToOne()
     private User user;

@@ -1,10 +1,7 @@
 package com.ahmetaksunger.ecommerce.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @Table(name = "addresses")
@@ -29,8 +26,10 @@ public class Address extends BaseEntity {
     private Country country;
     @Column(name = "zip_code", nullable = true)
     private String zipCode;
+
+    @Builder.Default
     @Enumerated(EnumType.STRING)
-    private EntityStatus status;
+    private EntityStatus status = EntityStatus.ACTIVE;
 
     @ManyToOne()
     private User user;
