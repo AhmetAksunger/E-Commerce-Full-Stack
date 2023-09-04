@@ -1,5 +1,5 @@
 package com.ahmetaksunger.ecommerce.model;
 
-public enum CartStatus {
+public enum EntityStatus {
     ACTIVE,INACTIVE
 }

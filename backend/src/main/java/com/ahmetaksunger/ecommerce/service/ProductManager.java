@@ -12,17 +12,15 @@ import com.ahmetaksunger.ecommerce.mapper.MapperService;
 import com.ahmetaksunger.ecommerce.model.*;
 import com.ahmetaksunger.ecommerce.repository.ProductRepository;
 import com.ahmetaksunger.ecommerce.service.rules.ProductRules;
-import com.ahmetaksunger.ecommerce.spesification.ProductSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -52,7 +50,8 @@ public class ProductManager implements ProductService {
         Product product = productRepository.findById(productId).orElseThrow(() -> new ProductNotFoundException());
 
         //Rules
-        productRules.checkIfCanUpdate(product, loggedInUser);
+        productRules.checkIfCanUpdate(product, loggedInUser)
+                .checkIfProductActive(product);
 
         List<Category> dbCategories = product.getCategories();
         List<Category> categoriesToBeAdded = categoryService.getCategoriesByIds(categoryIds);
@@ -71,7 +70,8 @@ public class ProductManager implements ProductService {
         Product product = productRepository.findById(productId).orElseThrow(() -> new ProductNotFoundException());
 
         //Rules
-        productRules.checkIfCanUpdate(product, loggedInUser);
+        productRules.checkIfCanUpdate(product, loggedInUser)
+                .checkIfProductActive(product);
 
         List<Category> dbCategories = product.getCategories();
         List<Category> categoriesToBeRemoved = categoryService.getCategoriesByIds(categoryIds);
@@ -86,13 +86,12 @@ public class ProductManager implements ProductService {
 
     /**
      * Retrieves paginated list of products based on the specified filters.
-     *
      */
     @Override
     public Page<ProductVM> getProducts(ProductListRequest listRequest) {
 
         //Rules
-        productRules.checkIfSortParamIsValid(listRequest.getSorting().getSort());
+        productRules.checkIfSortParamIsValid(Optional.ofNullable(listRequest.getSorting()));
 
 
         return productRepository.findAll(listRequest.toSpecification(), listRequest.toPageable())
@@ -154,7 +153,7 @@ public class ProductManager implements ProductService {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 
-        return productRepository.findBySellerId(sellerId, pageable)
+        return productRepository.findActiveProductsBySellerId(sellerId, pageable)
                 .map(product -> {
                     GetProductByIdResponse response = mapperService.forResponse().map(product, GetProductByIdResponse.class);
                     var orderCount = productRepository.getOrderCountByProductId(product.getId());
@@ -179,7 +178,8 @@ public class ProductManager implements ProductService {
         Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
 
         //Rules
-        productRules.checkIfCanUpdate(product, loggedInUser);
+        productRules.checkIfCanUpdate(product, loggedInUser)
+                .checkIfProductActive(product);
 
         if (updateProductRequest.getName() != null) {
             product.setName(updateProductRequest.getName());
@@ -201,14 +201,14 @@ public class ProductManager implements ProductService {
     }
 
     /**
-     * Retrieves the top ten most ordered products from the {@link ProductRepository#getTop10MostOrderedProducts()}
+     * Retrieves the top ten most ordered products from the {@link ProductRepository#getTop10MostOrderedActiveProducts()} ()}
      * Maps them to a list of {@link ProductVM}, and returns.
      *
      * @return {@link List<ProductVM>}
      */
     @Override
     public List<ProductVM> getTop10MostOrderedProducts() {
-        List<ProductOrderInfo> productOrderInfos = productRepository.getTop10MostOrderedProducts();
+        List<ProductOrderInfo> productOrderInfos = productRepository.getTop10MostOrderedActiveProducts();
 
         return productOrderInfos.stream()
                 .map(productVMConverter::convert).collect(Collectors.toList());

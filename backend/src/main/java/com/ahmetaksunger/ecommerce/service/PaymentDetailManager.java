@@ -4,6 +4,7 @@ import com.ahmetaksunger.ecommerce.dto.request.payment.CreatePaymentDetailReques
 import com.ahmetaksunger.ecommerce.dto.response.PaymentDetailVM;
 import com.ahmetaksunger.ecommerce.exception.NotFoundException.PaymentDetailNotFoundException;
 import com.ahmetaksunger.ecommerce.mapper.MapperService;
+import com.ahmetaksunger.ecommerce.model.EntityStatus;
 import com.ahmetaksunger.ecommerce.model.PaymentDetail;
 import com.ahmetaksunger.ecommerce.model.User;
 import com.ahmetaksunger.ecommerce.repository.PaymentDetailRepository;
@@ -33,11 +34,15 @@ public class PaymentDetailManager implements PaymentDetailService {
 
     @Override
     public void delete(long paymentDetailId, User user) {
-        // Rules
-        paymentDetailRules.checkIfCanDelete(paymentDetailRepository.findById(paymentDetailId).orElseThrow(PaymentDetailNotFoundException::new),
-                user);
 
-        paymentDetailRepository.deleteById(paymentDetailId);
+        PaymentDetail paymentDetail = paymentDetailRepository
+                .findById(paymentDetailId).orElseThrow(PaymentDetailNotFoundException::new);
+
+        // Rules
+        paymentDetailRules.checkIfCanDelete(paymentDetail, user);
+
+        paymentDetail.setStatus(EntityStatus.INACTIVE);
+        paymentDetailRepository.save(paymentDetail);
     }
 
     @Override
@@ -45,7 +50,7 @@ public class PaymentDetailManager implements PaymentDetailService {
         //Rules
         BaseRules.checkIfIdsNotMatch(userId, loggedInUser);
 
-        List<PaymentDetail> paymentDetails = paymentDetailRepository.getByUserId(userId);
+        List<PaymentDetail> paymentDetails = paymentDetailRepository.getActivePaymentDetailsByUserId(userId);
 
         return paymentDetails.stream()
                 .map(paymentDetail -> mapperService.forResponse()
