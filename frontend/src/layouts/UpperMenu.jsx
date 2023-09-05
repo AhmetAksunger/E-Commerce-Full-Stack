@@ -3,12 +3,15 @@ import { Button, Dropdown, Input, Label, Menu } from "semantic-ui-react";
 import { directionOptions, sortOptions } from "../utils/constants";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { addProductFilters, resetProductFilters } from "../store/actions/filterActions";
+import {
+  addProductFilters,
+  resetProductFilters,
+} from "../store/actions/filterActions";
 import { Link } from "react-router-dom/cjs/react-router-dom.min";
+import CategoryEditor from "../utils/CategoryEditor";
 
 const UpperMenu = ({ categories }) => {
-
-  categories = [];
+  const categoryEditor = new CategoryEditor(categories, 6);
 
   const dispatch = useDispatch();
 
@@ -17,24 +20,22 @@ const UpperMenu = ({ categories }) => {
     categoryIds: [],
     minPrice: "",
     maxPrice: "",
-    sort:null,
-    direction:null
+    sort: null,
+    direction: null,
   });
 
   const [categoryOptions, setCategoryOptions] = useState([]);
+  const [visibleCategories, setVisibleCategories] = useState([]);
+  const [remainingCategories, setRemainingCategories] = useState([]);
   const [priceFilterError, setPriceFilterError] = useState(false);
 
   /**
    * mapping categories to category options
    */
   useEffect(() => {
-    const cOptions = categories.map((category, idx) => ({
-      key: category.id,
-      text: category.name,
-      value: category.id,
-    }));
-
-    setCategoryOptions(cOptions);
+    setCategoryOptions(categoryEditor.categoryOptionsCreator());
+    setVisibleCategories(categoryEditor.categorySlicer().firstList);
+    setRemainingCategories(categoryEditor.categorySlicer().remainingList);
   }, [categories]);
 
   useEffect(() => {
@@ -49,30 +50,33 @@ const UpperMenu = ({ categories }) => {
 
   const onClickResetFilters = () => {
     dispatch(resetProductFilters());
-    setFilters({    
+    setFilters({
       search: "",
       categoryIds: [],
       minPrice: "",
       maxPrice: "",
-      sort:"name",
-      direction:"ASC"
+      sort: "name",
+      direction: "ASC",
     });
-  }
+  };
 
   return (
     <Menu fluid>
-      {categories.map((category, idx) => (
-        <Menu.Item as={Link} to={`/cateogry/${category.id}`}>
-          <Dropdown text={category.name} simple>
-            <Dropdown.Menu>
-              <Dropdown.Item
-                text="Description"
-                description={category.description}
-              />
-            </Dropdown.Menu>
-          </Dropdown>
+      {visibleCategories.map((category, idx) => (
+        <Menu.Item as={Link} to={`/category/${category.id}`}>
+          {category.name}
         </Menu.Item>
       ))}
+      <Menu.Item>
+        <Dropdown text="All Categories" style={{color:"teal"}}>
+          <Dropdown.Menu>
+            <Dropdown.Header>All Categories</Dropdown.Header>
+            {remainingCategories.map((category,idx) => (
+              <Dropdown.Item as={Link} to={`/category/${category.id}`}>{category.name}</Dropdown.Item>
+            ))}
+          </Dropdown.Menu>
+        </Dropdown>
+      </Menu.Item>
       <Menu.Item position="right">
         <Dropdown
           text="Filter & Sort"
