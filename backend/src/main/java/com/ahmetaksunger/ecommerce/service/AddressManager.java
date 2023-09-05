@@ -41,7 +41,7 @@ public class AddressManager implements AddressService{
 	@Override
 	public AddressVM update(long addressId, UpdateAddressRequest updateAddressRequest, User user) {
 		
-		Address address = addressRepository.findById(addressId).orElseThrow(()-> new AddressNotFoundException());
+		Address address = addressRepository.findById(addressId).orElseThrow(AddressNotFoundException::new);
 
         //Rules
         addressRules.checkIfCanUpdate(address, user);

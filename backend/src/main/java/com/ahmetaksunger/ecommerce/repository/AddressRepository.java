@@ -1,8 +1,6 @@
 package com.ahmetaksunger.ecommerce.repository;
 
 import com.ahmetaksunger.ecommerce.model.Address;
-import com.ahmetaksunger.ecommerce.model.Customer;
-import com.ahmetaksunger.ecommerce.model.Seller;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
