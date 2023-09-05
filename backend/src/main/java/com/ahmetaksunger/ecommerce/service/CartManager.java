@@ -2,7 +2,7 @@ package com.ahmetaksunger.ecommerce.service;
 
 import com.ahmetaksunger.ecommerce.dto.converter.CartVMConverter;
 import com.ahmetaksunger.ecommerce.dto.response.CartVM;
-import com.ahmetaksunger.ecommerce.exception.NotFoundException.CartNotFoundException;
+import com.ahmetaksunger.ecommerce.exception.notfound.CartNotFoundException;
 import com.ahmetaksunger.ecommerce.model.Cart;
 import com.ahmetaksunger.ecommerce.model.EntityStatus;
 import com.ahmetaksunger.ecommerce.model.Customer;

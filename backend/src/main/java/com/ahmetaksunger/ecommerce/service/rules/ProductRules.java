@@ -2,10 +2,10 @@ package com.ahmetaksunger.ecommerce.service.rules;
 
 import com.ahmetaksunger.ecommerce.exception.InvalidProductException;
 import com.ahmetaksunger.ecommerce.exception.InvalidRequestParamException;
-import com.ahmetaksunger.ecommerce.exception.NotAllowedException.EntityOwnershipException;
-import com.ahmetaksunger.ecommerce.exception.NotAllowedException.ProductDeletionNotAllowedException;
-import com.ahmetaksunger.ecommerce.exception.NotAllowedException.ProductUpdateNotAllowedException;
-import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
+import com.ahmetaksunger.ecommerce.exception.notallowed.EntityOwnershipException;
+import com.ahmetaksunger.ecommerce.exception.notallowed.ProductDeletionNotAllowedException;
+import com.ahmetaksunger.ecommerce.exception.notallowed.ProductUpdateNotAllowedException;
+import com.ahmetaksunger.ecommerce.exception.notallowed.UnauthorizedException;
 import com.ahmetaksunger.ecommerce.model.EntityStatus;
 import com.ahmetaksunger.ecommerce.model.Product;
 import com.ahmetaksunger.ecommerce.model.User;

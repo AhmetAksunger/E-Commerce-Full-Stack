@@ -1,6 +1,6 @@
 package com.ahmetaksunger.ecommerce.service.rules;
 
-import com.ahmetaksunger.ecommerce.exception.NotAllowedException.AccountDeletionNotAllowedException;
+import com.ahmetaksunger.ecommerce.exception.notallowed.AccountDeletionNotAllowedException;
 import com.ahmetaksunger.ecommerce.model.User;
 import org.springframework.stereotype.Component;
 

@@ -7,7 +7,7 @@ import com.ahmetaksunger.ecommerce.dto.request.product.UpdateProductRequest;
 import com.ahmetaksunger.ecommerce.dto.response.GetProductByIdResponse;
 import com.ahmetaksunger.ecommerce.dto.response.ProductOrderInfo;
 import com.ahmetaksunger.ecommerce.dto.response.ProductVM;
-import com.ahmetaksunger.ecommerce.exception.NotFoundException.ProductNotFoundException;
+import com.ahmetaksunger.ecommerce.exception.notfound.ProductNotFoundException;
 import com.ahmetaksunger.ecommerce.mapper.MapperService;
 import com.ahmetaksunger.ecommerce.model.*;
 import com.ahmetaksunger.ecommerce.repository.ProductRepository;

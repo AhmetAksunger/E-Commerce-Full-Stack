@@ -7,7 +7,7 @@ import com.ahmetaksunger.ecommerce.dto.request.authentication.RegisterSellerRequ
 import com.ahmetaksunger.ecommerce.dto.response.AuthenticationResponse;
 import com.ahmetaksunger.ecommerce.dto.response.CustomerAuthenticationResponse;
 import com.ahmetaksunger.ecommerce.dto.response.SellerAuthenticationResponse;
-import com.ahmetaksunger.ecommerce.exception.NotFoundException.CartNotFoundException;
+import com.ahmetaksunger.ecommerce.exception.notfound.CartNotFoundException;
 import com.ahmetaksunger.ecommerce.mapper.MapperService;
 import com.ahmetaksunger.ecommerce.model.*;
 import com.ahmetaksunger.ecommerce.repository.CartRepository;

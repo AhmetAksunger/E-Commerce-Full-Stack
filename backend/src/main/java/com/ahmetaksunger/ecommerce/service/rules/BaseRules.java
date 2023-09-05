@@ -1,9 +1,7 @@
 package com.ahmetaksunger.ecommerce.service.rules;
 
-import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
-import com.ahmetaksunger.ecommerce.model.Order;
+import com.ahmetaksunger.ecommerce.exception.notallowed.UnauthorizedException;
 import com.ahmetaksunger.ecommerce.model.User;
-import lombok.SneakyThrows;
 
 public abstract class BaseRules<T> {
 

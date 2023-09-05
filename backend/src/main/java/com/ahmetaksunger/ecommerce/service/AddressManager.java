@@ -3,7 +3,7 @@ package com.ahmetaksunger.ecommerce.service;
 import java.util.List;
 import java.util.Locale;
 
-import com.ahmetaksunger.ecommerce.exception.NotFoundException.AddressNotFoundException;
+import com.ahmetaksunger.ecommerce.exception.notfound.AddressNotFoundException;
 import com.ahmetaksunger.ecommerce.model.EntityStatus;
 import com.ahmetaksunger.ecommerce.service.rules.BaseRules;
 import org.springframework.stereotype.Service;

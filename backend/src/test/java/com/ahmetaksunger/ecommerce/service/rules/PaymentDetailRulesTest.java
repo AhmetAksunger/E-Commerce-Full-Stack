@@ -1,7 +1,7 @@
 package com.ahmetaksunger.ecommerce.service.rules;
 
-import com.ahmetaksunger.ecommerce.exception.NotAllowedException.PaymentDetailDeletionNotAllowedException;
-import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
+import com.ahmetaksunger.ecommerce.exception.notallowed.PaymentDetailDeletionNotAllowedException;
+import com.ahmetaksunger.ecommerce.exception.notallowed.UnauthorizedException;
 import com.ahmetaksunger.ecommerce.model.PaymentDetail;
 import com.ahmetaksunger.ecommerce.model.User;
 import org.junit.jupiter.api.Assertions;

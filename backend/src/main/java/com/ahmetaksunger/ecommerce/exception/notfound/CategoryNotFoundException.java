@@ -1,4 +1,4 @@
-package com.ahmetaksunger.ecommerce.exception.NotFoundException;
+package com.ahmetaksunger.ecommerce.exception.notfound;
 
 import com.ahmetaksunger.ecommerce.exception.ExceptionMessages;
 

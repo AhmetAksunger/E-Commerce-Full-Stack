@@ -1,6 +1,6 @@
 package com.ahmetaksunger.ecommerce.dto.request.authentication;
 
-import com.ahmetaksunger.ecommerce.exception.customValidation.UniqueEmail;
+import com.ahmetaksunger.ecommerce.exception.validation.UniqueEmail;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

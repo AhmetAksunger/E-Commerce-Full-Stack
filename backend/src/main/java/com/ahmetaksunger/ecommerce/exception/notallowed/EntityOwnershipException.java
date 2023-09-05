@@ -1,4 +1,4 @@
-package com.ahmetaksunger.ecommerce.exception.NotAllowedException;
+package com.ahmetaksunger.ecommerce.exception.notallowed;
 
 import com.ahmetaksunger.ecommerce.exception.ExceptionMessages;
 

@@ -2,10 +2,10 @@ package com.ahmetaksunger.ecommerce.service.rules;
 
 import com.ahmetaksunger.ecommerce.exception.InsufficientProductQuantityException;
 import com.ahmetaksunger.ecommerce.exception.InvalidCartException;
-import com.ahmetaksunger.ecommerce.exception.NotAllowedException.CartDeletionNotAllowedException;
-import com.ahmetaksunger.ecommerce.exception.NotAllowedException.CartUpdateNotAllowedException;
-import com.ahmetaksunger.ecommerce.exception.NotAllowedException.EntityOwnershipException;
-import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
+import com.ahmetaksunger.ecommerce.exception.notallowed.CartDeletionNotAllowedException;
+import com.ahmetaksunger.ecommerce.exception.notallowed.CartUpdateNotAllowedException;
+import com.ahmetaksunger.ecommerce.exception.notallowed.EntityOwnershipException;
+import com.ahmetaksunger.ecommerce.exception.notallowed.UnauthorizedException;
 import com.ahmetaksunger.ecommerce.model.Cart;
 import com.ahmetaksunger.ecommerce.model.EntityStatus;
 import com.ahmetaksunger.ecommerce.model.Product;

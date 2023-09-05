@@ -1,7 +1,6 @@
-package com.ahmetaksunger.ecommerce.exception.NotAllowedException;
+package com.ahmetaksunger.ecommerce.exception.notallowed;
 
 import com.ahmetaksunger.ecommerce.exception.ExceptionMessages;
-import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
 
 public class PaymentDetailDeletionNotAllowedException extends UnauthorizedException {
     public PaymentDetailDeletionNotAllowedException() {

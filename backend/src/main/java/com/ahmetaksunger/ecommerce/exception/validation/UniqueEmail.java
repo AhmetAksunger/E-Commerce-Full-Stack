@@ -1,4 +1,4 @@
-package com.ahmetaksunger.ecommerce.exception.customValidation;
+package com.ahmetaksunger.ecommerce.exception.validation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

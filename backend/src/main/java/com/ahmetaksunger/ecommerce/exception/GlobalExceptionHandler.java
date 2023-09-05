@@ -1,8 +1,8 @@
 package com.ahmetaksunger.ecommerce.exception;
 
 import com.ahmetaksunger.ecommerce.dto.response.ProductVM;
-import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
-import com.ahmetaksunger.ecommerce.exception.NotFoundException.NotFoundException;
+import com.ahmetaksunger.ecommerce.exception.notallowed.UnauthorizedException;
+import com.ahmetaksunger.ecommerce.exception.notfound.NotFoundException;
 import com.ahmetaksunger.ecommerce.mapper.MapperService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
