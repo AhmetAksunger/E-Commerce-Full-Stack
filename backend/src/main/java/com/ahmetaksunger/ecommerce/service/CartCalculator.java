@@ -8,6 +8,8 @@ import java.math.RoundingMode;
 
 public class CartCalculator {
 
+    private CartCalculator(){}
+
     public static BigDecimal calculateTotal(Cart cart){
         BigDecimal total = cart.getCartItems()
                 .stream()

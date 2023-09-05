@@ -31,6 +31,7 @@ public class InitialDataConfig {
     private final CartItemRepository cartItemRepository;
     private final CartRepository cartRepository;
     private final OrderRepository orderRepository;
+    private static final String USER_PASSWORD = "test123";
 
     /**
      * Creates specified amount of {@link Customer}s.
@@ -50,7 +51,7 @@ public class InitialDataConfig {
 
             final Customer customer = Customer.builder()
                     .email(faker.internet().emailAddress())
-                    .password(passwordEncoder.encode("test123"))
+                    .password(passwordEncoder.encode(USER_PASSWORD))
                     .userType(UserType.CUSTOMER)
                     .fullName(faker.name().fullName())
                     .phoneNumber(phoneNumber)
@@ -83,7 +84,6 @@ public class InitialDataConfig {
 
             paymentDetailRepository.save(paymentDetail);
 
-            List<CartItem> cartItems = new ArrayList<CartItem>();
             List<Product> products = productRepository.findAll();
             for (int j = 0; j < 5; j++) {
                 var product = products.get(faker.number().numberBetween(0, products.size() - 1));
@@ -145,7 +145,7 @@ public class InitialDataConfig {
 
             final Seller seller = Seller.builder()
                     .email(faker.internet().emailAddress())
-                    .password(passwordEncoder.encode("test123"))
+                    .password(passwordEncoder.encode(USER_PASSWORD))
                     .userType(UserType.SELLER)
                     .companyName(faker.company().name())
                     .contactNumber(contactNumber)
@@ -195,7 +195,7 @@ public class InitialDataConfig {
                 // Creating Default Admin User
                 final User defaultAdminUserEntity = User.builder()
                         .email("admin@gmail.com")
-                        .password(passwordEncoder.encode("test123"))
+                        .password(passwordEncoder.encode(USER_PASSWORD))
                         .userType(UserType.ADMIN)
                         .build();
 

@@ -3,7 +3,7 @@ package com.ahmetaksunger.ecommerce.service;
 import com.ahmetaksunger.ecommerce.dto.request.category.CreateCategoryRequest;
 import com.ahmetaksunger.ecommerce.dto.request.category.UpdateCategoryRequest;
 import com.ahmetaksunger.ecommerce.dto.response.CategoryVM;
-import com.ahmetaksunger.ecommerce.exception.NotFoundException.CategoryNotFoundException;
+import com.ahmetaksunger.ecommerce.exception.notfound.CategoryNotFoundException;
 import com.ahmetaksunger.ecommerce.mapper.MapperService;
 import com.ahmetaksunger.ecommerce.model.Category;
 import com.ahmetaksunger.ecommerce.repository.CategoryRepository;
@@ -29,7 +29,7 @@ public class CategoryManager implements CategoryService {
     @Override
     public CategoryVM update(long categoryId, UpdateCategoryRequest updateCategoryRequest) {
 
-        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new CategoryNotFoundException());
+        Category category = categoryRepository.findById(categoryId).orElseThrow(CategoryNotFoundException::new);
 
         if (updateCategoryRequest.getName() != null) {
             category.setName(updateCategoryRequest.getName());

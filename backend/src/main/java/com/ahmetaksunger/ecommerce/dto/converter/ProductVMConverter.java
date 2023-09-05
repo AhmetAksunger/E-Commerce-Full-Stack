@@ -10,8 +10,6 @@ import com.ahmetaksunger.ecommerce.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.stream.Collectors;
-
 @Component
 @RequiredArgsConstructor
 public class ProductVMConverter {
@@ -34,7 +32,7 @@ public class ProductVMConverter {
                 .createdAt(from.getCreatedAt())
                 .updatedAt(from.getUpdatedAt())
                 .seller(mapperService.forResponse().map(from.getSeller(), SellerVM.class))
-                .categories(from.getCategories().stream().map(category -> mapperService.forResponse().map(category, CategoryVM.class)).collect(Collectors.toList()))
+                .categories(from.getCategories().stream().map(category -> mapperService.forResponse().map(category, CategoryVM.class)).toList())
                 .build();
 
     }
@@ -52,7 +50,7 @@ public class ProductVMConverter {
                 .createdAt(from.getProduct().getCreatedAt())
                 .updatedAt(from.getProduct().getUpdatedAt())
                 .seller(mapperService.forResponse().map(from.getProduct().getSeller(), SellerVM.class))
-                .categories(from.getProduct().getCategories().stream().map(category -> mapperService.forResponse().map(category, CategoryVM.class)).collect(Collectors.toList()))
+                .categories(from.getProduct().getCategories().stream().map(category -> mapperService.forResponse().map(category, CategoryVM.class)).toList())
                 .build();
     }
 }

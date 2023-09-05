@@ -12,6 +12,8 @@ import java.math.BigDecimal;
 
 public class PaymentTransactionFactory {
 
+    private PaymentTransactionFactory(){}
+
     /**
      * Returns a new instance of {@link PaymentTransaction} based on the specified {@link TransactionType}
      *

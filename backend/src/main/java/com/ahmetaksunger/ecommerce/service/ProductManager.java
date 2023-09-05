@@ -7,7 +7,7 @@ import com.ahmetaksunger.ecommerce.dto.request.product.UpdateProductRequest;
 import com.ahmetaksunger.ecommerce.dto.response.GetProductByIdResponse;
 import com.ahmetaksunger.ecommerce.dto.response.ProductOrderInfo;
 import com.ahmetaksunger.ecommerce.dto.response.ProductVM;
-import com.ahmetaksunger.ecommerce.exception.NotFoundException.ProductNotFoundException;
+import com.ahmetaksunger.ecommerce.exception.notfound.ProductNotFoundException;
 import com.ahmetaksunger.ecommerce.mapper.MapperService;
 import com.ahmetaksunger.ecommerce.model.*;
 import com.ahmetaksunger.ecommerce.repository.ProductRepository;
@@ -47,7 +47,7 @@ public class ProductManager implements ProductService {
     @Override
     public ProductVM addCategoriesByIdsToProduct(long productId, List<Long> categoryIds, User loggedInUser) {
 
-        Product product = productRepository.findById(productId).orElseThrow(() -> new ProductNotFoundException());
+        Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
 
         //Rules
         productRules.checkIfCanUpdate(product, loggedInUser)
@@ -67,7 +67,7 @@ public class ProductManager implements ProductService {
     @Override
     public ProductVM removeCategoriesByIdsFromProduct(long productId, List<Long> categoryIds, User loggedInUser) {
 
-        Product product = productRepository.findById(productId).orElseThrow(() -> new ProductNotFoundException());
+        Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
 
         //Rules
         productRules.checkIfCanUpdate(product, loggedInUser)
@@ -211,7 +211,7 @@ public class ProductManager implements ProductService {
         List<ProductOrderInfo> productOrderInfos = productRepository.getTop10MostOrderedActiveProducts();
 
         return productOrderInfos.stream()
-                .map(productVMConverter::convert).collect(Collectors.toList());
+                .map(productVMConverter::convert).toList();
     }
 
 }

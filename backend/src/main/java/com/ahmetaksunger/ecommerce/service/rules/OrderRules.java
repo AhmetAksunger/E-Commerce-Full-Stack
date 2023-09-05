@@ -2,8 +2,8 @@ package com.ahmetaksunger.ecommerce.service.rules;
 
 import com.ahmetaksunger.ecommerce.exception.CartIsEmptyException;
 import com.ahmetaksunger.ecommerce.exception.InsufficientProductQuantityException;
-import com.ahmetaksunger.ecommerce.exception.NotAllowedException.EntityOwnershipException;
-import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
+import com.ahmetaksunger.ecommerce.exception.notallowed.EntityOwnershipException;
+import com.ahmetaksunger.ecommerce.exception.notallowed.UnauthorizedException;
 import com.ahmetaksunger.ecommerce.model.*;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;

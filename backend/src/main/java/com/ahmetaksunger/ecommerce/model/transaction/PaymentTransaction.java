@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 
 @Entity
@@ -21,6 +22,10 @@ import java.math.BigDecimal;
 @SuperBuilder
 @NoArgsConstructor
 public class PaymentTransaction extends BaseEntity {
+
+    @Serial
+    private static final long serialVersionUID = -8101522232709045911L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)

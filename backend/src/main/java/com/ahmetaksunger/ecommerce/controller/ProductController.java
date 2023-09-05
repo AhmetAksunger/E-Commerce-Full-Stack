@@ -4,7 +4,6 @@ import com.ahmetaksunger.ecommerce.dto.request.product.CreateProductRequest;
 import com.ahmetaksunger.ecommerce.dto.request.product.ProductListRequest;
 import com.ahmetaksunger.ecommerce.dto.request.product.UpdateProductRequest;
 import com.ahmetaksunger.ecommerce.dto.response.GetProductByIdResponse;
-import com.ahmetaksunger.ecommerce.dto.response.ProductOrderInfoDto;
 import com.ahmetaksunger.ecommerce.dto.response.ProductVM;
 import com.ahmetaksunger.ecommerce.model.User;
 import com.ahmetaksunger.ecommerce.security.CurrentUser;
@@ -20,7 +19,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 

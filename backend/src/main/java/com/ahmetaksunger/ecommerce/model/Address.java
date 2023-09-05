@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serial;
+
 @Table(name = "addresses")
 @Entity
 @Getter
@@ -12,6 +14,9 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @SuperBuilder
 public class Address extends BaseEntity {
+
+    @Serial
+    private static final long serialVersionUID = -9004635114860038567L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

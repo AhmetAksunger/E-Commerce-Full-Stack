@@ -7,7 +7,7 @@ import com.ahmetaksunger.ecommerce.dto.request.authentication.RegisterSellerRequ
 import com.ahmetaksunger.ecommerce.dto.response.AuthenticationResponse;
 import com.ahmetaksunger.ecommerce.dto.response.CustomerAuthenticationResponse;
 import com.ahmetaksunger.ecommerce.dto.response.SellerAuthenticationResponse;
-import com.ahmetaksunger.ecommerce.exception.NotFoundException.CartNotFoundException;
+import com.ahmetaksunger.ecommerce.exception.notfound.CartNotFoundException;
 import com.ahmetaksunger.ecommerce.mapper.MapperService;
 import com.ahmetaksunger.ecommerce.model.*;
 import com.ahmetaksunger.ecommerce.repository.CartRepository;
@@ -64,12 +64,12 @@ public class AuthenticationImpl implements AuthenticationService {
     @Override
     public AuthenticationResponse register(RegisterRequest registerRequest) {
 
-        if (registerRequest instanceof RegisterCustomerRequest) {
-            return this.registerCustomer((RegisterCustomerRequest) registerRequest);
+        if (registerRequest instanceof RegisterCustomerRequest registerCustomerRequest) {
+            return this.registerCustomer(registerCustomerRequest);
         }
 
-        if (registerRequest instanceof RegisterSellerRequest) {
-            return this.registerSeller((RegisterSellerRequest) registerRequest);
+        if (registerRequest instanceof RegisterSellerRequest registerSellerRequest) {
+            return this.registerSeller(registerSellerRequest);
         }
         return AuthenticationResponse.builder()
                 .build();

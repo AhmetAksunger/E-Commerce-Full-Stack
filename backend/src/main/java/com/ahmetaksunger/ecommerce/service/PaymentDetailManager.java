@@ -2,7 +2,7 @@ package com.ahmetaksunger.ecommerce.service;
 
 import com.ahmetaksunger.ecommerce.dto.request.payment.CreatePaymentDetailRequest;
 import com.ahmetaksunger.ecommerce.dto.response.PaymentDetailVM;
-import com.ahmetaksunger.ecommerce.exception.NotFoundException.PaymentDetailNotFoundException;
+import com.ahmetaksunger.ecommerce.exception.notfound.PaymentDetailNotFoundException;
 import com.ahmetaksunger.ecommerce.mapper.MapperService;
 import com.ahmetaksunger.ecommerce.model.EntityStatus;
 import com.ahmetaksunger.ecommerce.model.PaymentDetail;

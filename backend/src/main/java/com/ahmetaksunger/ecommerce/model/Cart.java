@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serial;
 import java.util.List;
 
 @Entity
@@ -14,6 +15,9 @@ import java.util.List;
 @Setter
 @SuperBuilder
 public class Cart extends BaseEntity {
+
+    @Serial
+    private static final long serialVersionUID = -263123030617429095L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

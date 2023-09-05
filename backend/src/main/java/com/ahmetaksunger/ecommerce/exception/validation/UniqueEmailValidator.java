@@ -1,4 +1,4 @@
-package com.ahmetaksunger.ecommerce.exception.customValidation;
+package com.ahmetaksunger.ecommerce.exception.validation;
 
 import com.ahmetaksunger.ecommerce.repository.UserRepository;
 import jakarta.validation.ConstraintValidator;
@@ -13,9 +13,6 @@ public class UniqueEmailValidator implements ConstraintValidator<UniqueEmail, St
     private final UserRepository userRepository;
     @Override
     public boolean isValid(String email, ConstraintValidatorContext context) {
-        if(userRepository.existsByEmail(email)){
-            return false;
-        }
-        return true;
+        return !userRepository.existsByEmail(email);
     }
 }

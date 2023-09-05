@@ -1,7 +1,7 @@
 package com.ahmetaksunger.ecommerce.controller;
 
-import com.ahmetaksunger.ecommerce.dto.request.cartItem.CreateCartItemRequest;
-import com.ahmetaksunger.ecommerce.dto.request.cartItem.UpdateCartItemRequest;
+import com.ahmetaksunger.ecommerce.dto.request.cartitem.CreateCartItemRequest;
+import com.ahmetaksunger.ecommerce.dto.request.cartitem.UpdateCartItemRequest;
 import com.ahmetaksunger.ecommerce.dto.response.CartVM;
 import com.ahmetaksunger.ecommerce.model.User;
 import com.ahmetaksunger.ecommerce.security.CurrentUser;

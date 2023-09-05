@@ -1,13 +1,12 @@
 package com.ahmetaksunger.ecommerce.service;
 
 import com.ahmetaksunger.ecommerce.dto.converter.CartVMConverter;
-import com.ahmetaksunger.ecommerce.dto.request.cartItem.CreateCartItemRequest;
-import com.ahmetaksunger.ecommerce.dto.request.cartItem.UpdateCartItemRequest;
+import com.ahmetaksunger.ecommerce.dto.request.cartitem.CreateCartItemRequest;
+import com.ahmetaksunger.ecommerce.dto.request.cartitem.UpdateCartItemRequest;
 import com.ahmetaksunger.ecommerce.dto.response.CartVM;
-import com.ahmetaksunger.ecommerce.exception.NotAllowedException.CartDeletionNotAllowedException;
-import com.ahmetaksunger.ecommerce.exception.NotFoundException.CartItemNotFound;
-import com.ahmetaksunger.ecommerce.exception.NotFoundException.CartNotFoundException;
-import com.ahmetaksunger.ecommerce.exception.NotFoundException.ProductNotFoundException;
+import com.ahmetaksunger.ecommerce.exception.notfound.CartItemNotFound;
+import com.ahmetaksunger.ecommerce.exception.notfound.CartNotFoundException;
+import com.ahmetaksunger.ecommerce.exception.notfound.ProductNotFoundException;
 import com.ahmetaksunger.ecommerce.model.Cart;
 import com.ahmetaksunger.ecommerce.model.CartItem;
 import com.ahmetaksunger.ecommerce.model.Product;
@@ -15,7 +14,6 @@ import com.ahmetaksunger.ecommerce.model.User;
 import com.ahmetaksunger.ecommerce.repository.CartItemRepository;
 import com.ahmetaksunger.ecommerce.repository.CartRepository;
 import com.ahmetaksunger.ecommerce.repository.ProductRepository;
-import com.ahmetaksunger.ecommerce.service.rules.BaseRules;
 import com.ahmetaksunger.ecommerce.service.rules.CartRules;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

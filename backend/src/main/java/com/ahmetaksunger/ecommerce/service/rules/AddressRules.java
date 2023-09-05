@@ -1,9 +1,9 @@
 package com.ahmetaksunger.ecommerce.service.rules;
 
-import com.ahmetaksunger.ecommerce.exception.NotAllowedException.AddressDeletionNotAllowedException;
-import com.ahmetaksunger.ecommerce.exception.NotAllowedException.AddressUpdateNotAllowedException;
-import com.ahmetaksunger.ecommerce.exception.NotAllowedException.EntityOwnershipException;
-import com.ahmetaksunger.ecommerce.exception.NotAllowedException.UnauthorizedException;
+import com.ahmetaksunger.ecommerce.exception.notallowed.AddressDeletionNotAllowedException;
+import com.ahmetaksunger.ecommerce.exception.notallowed.AddressUpdateNotAllowedException;
+import com.ahmetaksunger.ecommerce.exception.notallowed.EntityOwnershipException;
+import com.ahmetaksunger.ecommerce.exception.notallowed.UnauthorizedException;
 import com.ahmetaksunger.ecommerce.model.Address;
 import com.ahmetaksunger.ecommerce.model.User;
 import lombok.RequiredArgsConstructor;

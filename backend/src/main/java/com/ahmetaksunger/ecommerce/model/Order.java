@@ -1,11 +1,14 @@
 package com.ahmetaksunger.ecommerce.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serial;
 import java.math.BigDecimal;
-import java.util.Date;
 
 @Table(name = "orders")
 @Entity
@@ -14,6 +17,9 @@ import java.util.Date;
 @NoArgsConstructor
 @SuperBuilder
 public class Order extends BaseEntity{
+
+    @Serial
+    private static final long serialVersionUID = -4367702537737015032L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

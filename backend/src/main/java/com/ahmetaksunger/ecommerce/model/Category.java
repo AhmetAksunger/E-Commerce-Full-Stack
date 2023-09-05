@@ -6,12 +6,17 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serial;
+
 @Entity
 @Table(name = "categories")
 @Getter @Setter
 @SuperBuilder
 @NoArgsConstructor
 public class Category extends BaseEntity{
+
+    @Serial
+    private static final long serialVersionUID = -1857151839022954536L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
