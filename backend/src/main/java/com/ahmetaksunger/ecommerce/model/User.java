@@ -1,5 +1,6 @@
 package com.ahmetaksunger.ecommerce.model;
 
+import java.io.Serial;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -20,6 +21,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Table(name = "users")
 @SuperBuilder
 public class User extends BaseEntity implements UserDetails {
+
+    @Serial
+    private static final long serialVersionUID = 843675875996341745L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

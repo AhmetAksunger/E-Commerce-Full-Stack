@@ -4,13 +4,11 @@ import com.ahmetaksunger.ecommerce.dto.request.product.CreateProductRequest;
 import com.ahmetaksunger.ecommerce.dto.request.product.ProductListRequest;
 import com.ahmetaksunger.ecommerce.dto.request.product.UpdateProductRequest;
 import com.ahmetaksunger.ecommerce.dto.response.GetProductByIdResponse;
-import com.ahmetaksunger.ecommerce.dto.response.ProductOrderInfoDto;
 import com.ahmetaksunger.ecommerce.dto.response.ProductVM;
 import com.ahmetaksunger.ecommerce.model.Cart;
 import com.ahmetaksunger.ecommerce.model.User;
 import org.springframework.data.domain.Page;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 public interface ProductService {

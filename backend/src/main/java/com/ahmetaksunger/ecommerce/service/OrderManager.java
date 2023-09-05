@@ -90,7 +90,7 @@ public class OrderManager implements OrderService {
             throw exception;
         }
         orderRules.checkInsufficientStock(cart)
-                .checkIfCartIsEmpty(cart); // TODO: Optimistic - Pessimistic lock
+                .checkIfCartIsEmpty(cart);
         cartRules.checkIfCartActive(cart);
         // END OF RULES
 

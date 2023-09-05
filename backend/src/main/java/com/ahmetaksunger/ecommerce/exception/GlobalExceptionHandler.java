@@ -31,8 +31,7 @@ public class GlobalExceptionHandler {
 
         HashMap<String, String> messages = new HashMap<>();
 
-        if (exception instanceof MethodArgumentNotValidException) {
-            MethodArgumentNotValidException ex = (MethodArgumentNotValidException) exception;
+        if (exception instanceof MethodArgumentNotValidException ex) {
             for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
                 messages.put(fieldError.getField(), fieldError.getDefaultMessage());
             }

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serial;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -16,6 +17,9 @@ import java.util.List;
 @NoArgsConstructor
 @SuperBuilder
 public class Seller extends User {
+
+    @Serial
+    private static final long serialVersionUID = -7965593974208448787L;
 
     @Column(name = "company_name", nullable = false)
     private String companyName;

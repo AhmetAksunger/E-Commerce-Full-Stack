@@ -1,8 +1,8 @@
 package com.ahmetaksunger.ecommerce.service;
 
 import com.ahmetaksunger.ecommerce.dto.converter.CartVMConverter;
-import com.ahmetaksunger.ecommerce.dto.request.cartItem.CreateCartItemRequest;
-import com.ahmetaksunger.ecommerce.dto.request.cartItem.UpdateCartItemRequest;
+import com.ahmetaksunger.ecommerce.dto.request.cartitem.CreateCartItemRequest;
+import com.ahmetaksunger.ecommerce.dto.request.cartitem.UpdateCartItemRequest;
 import com.ahmetaksunger.ecommerce.dto.response.CartVM;
 import com.ahmetaksunger.ecommerce.exception.notfound.CartItemNotFound;
 import com.ahmetaksunger.ecommerce.exception.notfound.CartNotFoundException;

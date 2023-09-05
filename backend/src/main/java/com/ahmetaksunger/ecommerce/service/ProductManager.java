@@ -47,7 +47,7 @@ public class ProductManager implements ProductService {
     @Override
     public ProductVM addCategoriesByIdsToProduct(long productId, List<Long> categoryIds, User loggedInUser) {
 
-        Product product = productRepository.findById(productId).orElseThrow(() -> new ProductNotFoundException());
+        Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
 
         //Rules
         productRules.checkIfCanUpdate(product, loggedInUser)
@@ -67,7 +67,7 @@ public class ProductManager implements ProductService {
     @Override
     public ProductVM removeCategoriesByIdsFromProduct(long productId, List<Long> categoryIds, User loggedInUser) {
 
-        Product product = productRepository.findById(productId).orElseThrow(() -> new ProductNotFoundException());
+        Product product = productRepository.findById(productId).orElseThrow(ProductNotFoundException::new);
 
         //Rules
         productRules.checkIfCanUpdate(product, loggedInUser)
@@ -211,7 +211,7 @@ public class ProductManager implements ProductService {
         List<ProductOrderInfo> productOrderInfos = productRepository.getTop10MostOrderedActiveProducts();
 
         return productOrderInfos.stream()
-                .map(productVMConverter::convert).collect(Collectors.toList());
+                .map(productVMConverter::convert).toList();
     }
 
 }

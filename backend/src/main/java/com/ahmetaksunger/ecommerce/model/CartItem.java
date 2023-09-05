@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serial;
+
 @Table(name = "cart_items")
 @Entity
 @AllArgsConstructor
@@ -11,6 +13,9 @@ import lombok.experimental.SuperBuilder;
 @Getter @Setter
 @SuperBuilder
 public class CartItem extends BaseEntity{
+
+    @Serial
+    private static final long serialVersionUID = 67218930675073768L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

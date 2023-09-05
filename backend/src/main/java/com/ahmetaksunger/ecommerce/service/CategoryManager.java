@@ -29,7 +29,7 @@ public class CategoryManager implements CategoryService {
     @Override
     public CategoryVM update(long categoryId, UpdateCategoryRequest updateCategoryRequest) {
 
-        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new CategoryNotFoundException());
+        Category category = categoryRepository.findById(categoryId).orElseThrow(CategoryNotFoundException::new);
 
         if (updateCategoryRequest.getName() != null) {
             category.setName(updateCategoryRequest.getName());

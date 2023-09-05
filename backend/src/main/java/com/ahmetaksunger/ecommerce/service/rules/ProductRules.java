@@ -64,12 +64,13 @@ public class ProductRules extends BaseRules<Product> {
     }
 
     /**
+     * @deprecated There's no longer usage of this method
      * Checks if the given order parameter is valid
      *
      * @param order THe given order param
      * @see ProductRules#validOrderParams
      */
-    @Deprecated
+    @Deprecated(since = "v1")
     public ProductRules checkIfOrderParamIsValid(String order) {
         if (!this.validOrderParams.contains(order)) {
             throw new InvalidRequestParamException("Invalid order parameter.", this.validOrderParams);

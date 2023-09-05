@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serial;
 import java.util.List;
 
 @Table(name = "customers")
@@ -13,6 +14,9 @@ import java.util.List;
 @NoArgsConstructor
 @SuperBuilder
 public class Customer extends User{
+
+    @Serial
+    private static final long serialVersionUID = 1612862304596667831L;
 
     @Column(name = "full_name",nullable = false)
     private String fullName;

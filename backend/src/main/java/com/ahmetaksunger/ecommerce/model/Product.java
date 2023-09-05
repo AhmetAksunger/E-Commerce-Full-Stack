@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.io.Serial;
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -15,6 +15,9 @@ import java.util.List;
 @NoArgsConstructor
 @SuperBuilder
 public class Product extends BaseEntity{
+
+    @Serial
+    private static final long serialVersionUID = 1714468052410224921L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

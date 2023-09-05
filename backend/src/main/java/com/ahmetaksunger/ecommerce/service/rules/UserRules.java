@@ -11,6 +11,6 @@ public class UserRules {
         if(userIdToBeDeleted != user.getId()){
             throw new AccountDeletionNotAllowedException();
         }
-    };
+    }
 
 }

@@ -1,11 +1,9 @@
 package com.ahmetaksunger.ecommerce.spesification;
 
 
-import com.ahmetaksunger.ecommerce.model.Category;
 import com.ahmetaksunger.ecommerce.model.EntityStatus;
 import com.ahmetaksunger.ecommerce.model.Product;
 import jakarta.persistence.criteria.Expression;
-import jakarta.persistence.criteria.Join;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
@@ -13,6 +11,8 @@ import java.util.List;
 
 public class ProductSpecification {
 
+    private ProductSpecification() {
+    }
 
     /**
      * Creates a specification that filters products based on the search keyword.
@@ -21,7 +21,7 @@ public class ProductSpecification {
      * @param searchTerm
      * @return Specification
      */
-    public static Specification<Product> searchByKeyword(String searchTerm){
+    public static Specification<Product> searchByKeyword(String searchTerm) {
         return (root, query, criteriaBuilder) -> {
 
             var categoryJoin = root.join("categories");
@@ -34,9 +34,9 @@ public class ProductSpecification {
 
             var searchTermLower = searchTerm.toLowerCase();
             return criteriaBuilder.or(
-                    criteriaBuilder.like(productName,"%" + searchTermLower + "%"),
-                    criteriaBuilder.like(categoryName,"%" + searchTermLower + "%"),
-                    criteriaBuilder.like(companyName,"%" + searchTermLower + "%")
+                    criteriaBuilder.like(productName, "%" + searchTermLower + "%"),
+                    criteriaBuilder.like(categoryName, "%" + searchTermLower + "%"),
+                    criteriaBuilder.like(companyName, "%" + searchTermLower + "%")
             );
         };
     }
@@ -48,9 +48,9 @@ public class ProductSpecification {
      * @param price The minimum price value.
      * @return Specification
      */
-    public static Specification<Product> withPriceGreaterThanOrEqualTo(BigDecimal price){
+    public static Specification<Product> withPriceGreaterThanOrEqualTo(BigDecimal price) {
         return (root, query, criteriaBuilder) ->
-                criteriaBuilder.greaterThanOrEqualTo(root.get("price"),price);
+                criteriaBuilder.greaterThanOrEqualTo(root.get("price"), price);
     }
 
     /**
@@ -60,9 +60,9 @@ public class ProductSpecification {
      * @param price The maximum price value.
      * @return Specification
      */
-    public static Specification<Product> withPriceLessThanOrEqualTo(BigDecimal price){
+    public static Specification<Product> withPriceLessThanOrEqualTo(BigDecimal price) {
         return (root, query, criteriaBuilder) ->
-                criteriaBuilder.lessThanOrEqualTo(root.get("price"),price);
+                criteriaBuilder.lessThanOrEqualTo(root.get("price"), price);
     }
 
     /**
@@ -71,7 +71,7 @@ public class ProductSpecification {
      * @param categoryIds The category ids
      * @return the specification
      */
-    public static Specification<Product> withCategoryIds(List<Long> categoryIds){
+    public static Specification<Product> withCategoryIds(List<Long> categoryIds) {
         return (root, query, criteriaBuilder) ->
                 root.join("categories").get("id").in(categoryIds);
     }
@@ -81,7 +81,7 @@ public class ProductSpecification {
      *
      * @return the specification
      */
-    public static Specification<Product> withActiveStatus(){
+    public static Specification<Product> withActiveStatus() {
         return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("status"), EntityStatus.ACTIVE);
     }
 }
