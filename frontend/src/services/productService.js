@@ -10,14 +10,31 @@ export default class ProductService {
    * @param {number} size - Amount of elements on each page
    */
   getProducts(jwt, filters, page=0, size=9) {
+
     const config = {
-      params: {...filters,page,size},
       headers: {
         Authorization: `Bearer ${jwt}`,
-      },
+      }
     };
 
-    return axios.get("/api/v1/products",config);
+    const payload = {
+      pagination:{
+        page,
+        size
+      },
+      filter:{
+        search: filters.search,
+        categoryIds: filters.categoryIds,
+        minPrice: filters.minPrice,
+        maxPrice: filters.maxPrice
+      },
+      sorting:{
+        sort:filters.sort,
+        direction:filters.direction
+      }
+    }
+
+    return axios.post("/api/v1/products/get",payload,config);
   }
 
   /**

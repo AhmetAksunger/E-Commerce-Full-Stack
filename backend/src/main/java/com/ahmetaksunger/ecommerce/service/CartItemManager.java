@@ -40,8 +40,8 @@ public class CartItemManager implements CartItemService {
         Product product = productRepository.findById(createCartItemRequest.getProductId()).orElseThrow(ProductNotFoundException::new);
 
         //Rules
-        BaseRules.checkIfIdsNotMatch(createCartItemRequest.getCartId(), loggedInUser);
         cartRules
+                .verifyEntityBelongsToUser(cart,loggedInUser)
                 .checkIfQuantityIsValid(createCartItemRequest.getQuantity(), product)
                 .checkIfCartActive(cart);
 

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, Dropdown, Input, Label, Menu } from "semantic-ui-react";
-import { orderOptions, sortOptions } from "../utils/constants";
+import { directionOptions, sortOptions } from "../utils/constants";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { addProductFilters, resetProductFilters } from "../store/actions/filterActions";
@@ -8,15 +8,17 @@ import { Link } from "react-router-dom/cjs/react-router-dom.min";
 
 const UpperMenu = ({ categories }) => {
 
+  categories = [];
+
   const dispatch = useDispatch();
 
   const [filters, setFilters] = useState({
-    sort: "",
-    order: "",
     search: "",
-    categoryIds: "",
+    categoryIds: [],
     minPrice: "",
     maxPrice: "",
+    sort:null,
+    direction:null
   });
 
   const [categoryOptions, setCategoryOptions] = useState([]);
@@ -48,12 +50,12 @@ const UpperMenu = ({ categories }) => {
   const onClickResetFilters = () => {
     dispatch(resetProductFilters());
     setFilters({    
-      sort: "",
-      order: "",
-      searc: "",
-      categoryIds: "",
+      search: "",
+      categoryIds: [],
       minPrice: "",
       maxPrice: "",
+      sort:"name",
+      direction:"ASC"
     });
   }
 
@@ -84,32 +86,32 @@ const UpperMenu = ({ categories }) => {
             <Dropdown.Header icon="tags" content="Filter and Sort" />
             <Dropdown.Item>
               <Dropdown
-                placeholder="Order"
-                pointing="left"
-                selection
-                fluid
-                options={orderOptions}
-                value={filters.order}
-                onChange={(event, data) =>
-                  setFilters((prevFilters) => ({
-                    ...prevFilters,
-                    order: data.value,
-                  }))
-                }
-              />
-            </Dropdown.Item>
-            <Dropdown.Item>
-              <Dropdown
                 placeholder="Sort"
                 pointing="left"
-                fluid
                 selection
+                fluid
                 options={sortOptions}
                 value={filters.sort}
                 onChange={(event, data) =>
                   setFilters((prevFilters) => ({
                     ...prevFilters,
                     sort: data.value,
+                  }))
+                }
+              />
+            </Dropdown.Item>
+            <Dropdown.Item>
+              <Dropdown
+                placeholder="Direction"
+                pointing="left"
+                fluid
+                selection
+                options={directionOptions}
+                value={filters.direction}
+                onChange={(event, data) =>
+                  setFilters((prevFilters) => ({
+                    ...prevFilters,
+                    direction: data.value,
                   }))
                 }
               />

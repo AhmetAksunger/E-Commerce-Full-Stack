@@ -1,8 +1,8 @@
 export const initialFilters = {
-    sort: "",
-    order: "",
     search: "",
-    categoryIds: "",
+    categoryIds: [],
     minPrice: "",
     maxPrice: "",
+    sort:"name",
+    direction:"ASC"
 }

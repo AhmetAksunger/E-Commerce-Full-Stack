@@ -1,7 +1,7 @@
 export const CUSTOMER = "CUSTOMER";
 export const SELLER = "SELLER";
 
-export const orderOptions = [
+export const sortOptions = [
   { key: "name", text: "Name", value: "name", icon: "sort alphabet down" },
   {
     key: "price",
@@ -23,9 +23,9 @@ export const orderOptions = [
   },
 ];
 
-export const sortOptions = [
-  { key: "asc", text: "Ascending", value: "asc", icon: "sort up" },
-  { key: "desc", text: "Descending", value: "desc", icon: "sort down" },
+export const directionOptions = [
+  { key: "asc", text: "Ascending", value: "ASC", icon: "sort up" },
+  { key: "desc", text: "Descending", value: "DESC", icon: "sort down" },
 ];
 
 export const defaultProduct = {
