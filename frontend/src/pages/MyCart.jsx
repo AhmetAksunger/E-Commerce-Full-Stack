@@ -14,6 +14,7 @@ import {
   Label,
   Segment,
 } from "semantic-ui-react";
+import CartEmpty from "../utils/CartEmpty";
 
 const MyCart = () => {
   const { jwt, id: userId, cartId } = useSelector((state) => state.auth);
@@ -85,6 +86,13 @@ const MyCart = () => {
       .deleteCartItem(jwt, cartItemId)
       .then((response) => setCart(response.data.response));
   };
+
+  if(cart.cartItems.length === 0){
+    return(
+      <CartEmpty />
+    )
+  }
+
   return (
     <Grid>
       <Header as="h2" textAlign="left">
