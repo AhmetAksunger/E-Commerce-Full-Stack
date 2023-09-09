@@ -9,6 +9,7 @@ import com.ahmetaksunger.ecommerce.model.User;
 import com.ahmetaksunger.ecommerce.security.CurrentUser;
 import com.ahmetaksunger.ecommerce.service.ProductManager;
 import com.ahmetaksunger.ecommerce.service.ProductService;
+import com.ahmetaksunger.ecommerce.util.ECommerceResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -64,9 +65,9 @@ public class ProductController {
     @PostMapping("/get")
     @PreAuthorize("hasAnyAuthority('SELLER','CUSTOMER')")
 
-    public ResponseEntity<Page<ProductVM>> getProducts(@RequestBody @Valid ProductListRequest listRequest){
+    public ECommerceResponse<Page<ProductVM>> getProducts(@RequestBody @Valid ProductListRequest listRequest){
 
-        return ResponseEntity.ok(productService.getProducts(listRequest));
+        return ECommerceResponse.successOf(productService.getProducts(listRequest));
     }
 
     @DeleteMapping("/{productId}")

@@ -5,10 +5,9 @@ import com.ahmetaksunger.ecommerce.dto.response.PaymentDetailVM;
 import com.ahmetaksunger.ecommerce.model.User;
 import com.ahmetaksunger.ecommerce.security.CurrentUser;
 import com.ahmetaksunger.ecommerce.service.PaymentDetailService;
+import com.ahmetaksunger.ecommerce.util.ECommerceResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -25,19 +24,20 @@ public class PaymentDetailController {
     private final PaymentDetailService paymentDetailService;
 
     @PostMapping
-    public ResponseEntity<PaymentDetailVM> createPaymentDetail(@RequestBody @Validated CreatePaymentDetailRequest createPaymentDetailRequest, @CurrentUser User user){
-        return new ResponseEntity<>(paymentDetailService.create(createPaymentDetailRequest,user), HttpStatus.CREATED);
+    public ECommerceResponse<PaymentDetailVM> createPaymentDetail(@RequestBody @Validated CreatePaymentDetailRequest createPaymentDetailRequest, @CurrentUser User user){
+        return ECommerceResponse.createdOf(paymentDetailService.create(createPaymentDetailRequest,user));
     }
 
     @DeleteMapping("/{paymentDetailId}")
-    public void deletePaymentDetail(@PathVariable long paymentDetailId, @CurrentUser User user){
+    public ECommerceResponse<Void> deletePaymentDetail(@PathVariable long paymentDetailId, @CurrentUser User user){
         paymentDetailService.delete(paymentDetailId,user);
+        return ECommerceResponse.SUCCESS;
     }
 
     @GetMapping()
-    public ResponseEntity<List<PaymentDetailVM>> getPaymentDetailsByUserId(@RequestParam(name = "userId",required = true) long userId,
+    public ECommerceResponse<List<PaymentDetailVM>> getPaymentDetailsByUserId(@RequestParam(name = "userId",required = true) long userId,
                                                          @CurrentUser User loggedInUser){
-        return ResponseEntity.ok(paymentDetailService.getPaymentDetailsByUserId(userId,loggedInUser));
+        return ECommerceResponse.successOf(paymentDetailService.getPaymentDetailsByUserId(userId,loggedInUser));
     }
 
 }

@@ -1,5 +1,6 @@
 package com.ahmetaksunger.ecommerce.util;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,6 +18,7 @@ public class ECommerceResponse<T> {
         this.isSuccess = httpStatus.is2xxSuccessful();
     }
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private T response;
 
     private HttpStatus httpStatus;
@@ -25,6 +27,11 @@ public class ECommerceResponse<T> {
     private Long time = System.currentTimeMillis();
 
     private Boolean isSuccess;
+
+    public static final ECommerceResponse<Void> SUCCESS = ECommerceResponse.<Void>builder()
+            .isSuccess(true)
+            .httpStatus(HttpStatus.OK)
+            .build();
 
     public static <T> ECommerceResponse<T> successOf(T response) {
         return ECommerceResponse.<T>builder()
@@ -49,5 +56,4 @@ public class ECommerceResponse<T> {
                 .httpStatus(HttpStatus.BAD_REQUEST)
                 .build();
     }
-
 }

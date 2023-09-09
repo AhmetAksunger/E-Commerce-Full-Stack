@@ -4,10 +4,9 @@ import com.ahmetaksunger.ecommerce.dto.request.category.CreateCategoryRequest;
 import com.ahmetaksunger.ecommerce.dto.request.category.UpdateCategoryRequest;
 import com.ahmetaksunger.ecommerce.dto.response.CategoryVM;
 import com.ahmetaksunger.ecommerce.service.CategoryService;
+import com.ahmetaksunger.ecommerce.util.ECommerceResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -24,21 +23,21 @@ public class CategoryController {
 
     @PostMapping()
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public ResponseEntity<CategoryVM> createCategory(@RequestBody @Validated CreateCategoryRequest createCategoryRequest){
-        return new ResponseEntity<>(categoryService.create(createCategoryRequest), HttpStatus.CREATED);
+    public ECommerceResponse<CategoryVM> createCategory(@RequestBody @Validated CreateCategoryRequest createCategoryRequest){
+        return ECommerceResponse.createdOf(categoryService.create(createCategoryRequest));
     }
 
     @PutMapping("/{categoryId}")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public ResponseEntity<CategoryVM> updateCategory(@RequestBody @Validated UpdateCategoryRequest updateCategoryRequest,
+    public ECommerceResponse<CategoryVM> updateCategory(@RequestBody @Validated UpdateCategoryRequest updateCategoryRequest,
                                                      @PathVariable long categoryId){
-        return ResponseEntity.ok(categoryService.update(categoryId,updateCategoryRequest));
+        return ECommerceResponse.successOf(categoryService.update(categoryId,updateCategoryRequest));
     }
 
     @GetMapping()
     @PreAuthorize("hasAnyAuthority('CUSTOMER','SELLER','ADMIN')")
-    public ResponseEntity<List<CategoryVM>> getAllCategories(){
-        return ResponseEntity.ok(categoryService.getAllCategories());
+    public ECommerceResponse<List<CategoryVM>> getAllCategories(){
+        return ECommerceResponse.successOf(categoryService.getAllCategories());
     }
 
 }

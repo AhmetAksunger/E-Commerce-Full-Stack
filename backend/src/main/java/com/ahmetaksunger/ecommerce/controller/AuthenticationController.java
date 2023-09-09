@@ -5,11 +5,13 @@ import com.ahmetaksunger.ecommerce.dto.request.authentication.RegisterCustomerRe
 import com.ahmetaksunger.ecommerce.dto.request.authentication.RegisterSellerRequest;
 import com.ahmetaksunger.ecommerce.dto.response.AuthenticationResponse;
 import com.ahmetaksunger.ecommerce.service.AuthenticationService;
+import com.ahmetaksunger.ecommerce.util.ECommerceResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -19,19 +21,19 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody @Validated AuthenticationRequest request){
-        return ResponseEntity.ok(authenticationService.authenticate(request));
+    public ECommerceResponse<AuthenticationResponse> authenticate(@RequestBody @Validated AuthenticationRequest request){
+        return ECommerceResponse.successOf(authenticationService.authenticate(request));
     }
 
 
     @PostMapping("/register/customer")
-    public ResponseEntity<AuthenticationResponse> registerCustomer(@RequestBody @Validated RegisterCustomerRequest request){
-        return new ResponseEntity<>(authenticationService.register(request), HttpStatus.CREATED);
+    public ECommerceResponse<AuthenticationResponse> registerCustomer(@RequestBody @Validated RegisterCustomerRequest request){
+        return ECommerceResponse.createdOf(authenticationService.register(request));
     }
 
     @PostMapping("/register/seller")
-    public ResponseEntity<AuthenticationResponse> registerSeller(@RequestBody @Validated RegisterSellerRequest request){
-        return new ResponseEntity<>(authenticationService.register(request),HttpStatus.CREATED);
+    public ECommerceResponse<AuthenticationResponse> registerSeller(@RequestBody @Validated RegisterSellerRequest request){
+        return ECommerceResponse.createdOf(authenticationService.register(request));
     }
 
 }

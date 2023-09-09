@@ -5,10 +5,10 @@ import com.ahmetaksunger.ecommerce.dto.response.WithdrawSuccessResponse;
 import com.ahmetaksunger.ecommerce.model.User;
 import com.ahmetaksunger.ecommerce.security.CurrentUser;
 import com.ahmetaksunger.ecommerce.service.SellerService;
+import com.ahmetaksunger.ecommerce.util.ECommerceResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,8 +24,8 @@ public class SellerController {
     private final SellerService sellerService;
 
     @PostMapping("/withdraw")
-    public ResponseEntity<WithdrawSuccessResponse> withdraw(@RequestBody @Valid WithdrawRevenueRequest withdrawRevenueRequest,
-                                                            @CurrentUser User loggedInUser) {
-        return ResponseEntity.ok(sellerService.withdraw(withdrawRevenueRequest, loggedInUser));
+    public ECommerceResponse<WithdrawSuccessResponse> withdraw(@RequestBody @Valid WithdrawRevenueRequest withdrawRevenueRequest,
+                                                               @CurrentUser User loggedInUser) {
+        return ECommerceResponse.successOf(sellerService.withdraw(withdrawRevenueRequest, loggedInUser));
     }
 }
