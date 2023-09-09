@@ -1,6 +1,6 @@
 import React from 'react';
 import Lottie from 'lottie-react';
-import animationData from '../assets/animation_ll3wdp4c.json'
+import animationData from '../assets/NotFound.json'
 const NotFound = () => {
     return (
         <Lottie animationData={animationData}/>

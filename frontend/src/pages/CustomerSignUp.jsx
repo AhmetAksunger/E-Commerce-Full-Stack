@@ -14,7 +14,7 @@ const CustomerSignUp = () => {
     let authService = new AuthenticationService();
     try {
       const response = await authService.registerCustomer(creds);
-      dispatch(loginSuccess(response.data));
+      dispatch(loginSuccess(response.data.response));
     } catch (error) {
       
     }
