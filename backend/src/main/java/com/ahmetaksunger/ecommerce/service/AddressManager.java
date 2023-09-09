@@ -1,24 +1,22 @@
 package com.ahmetaksunger.ecommerce.service;
 
-import java.util.List;
-import java.util.Locale;
-
-import com.ahmetaksunger.ecommerce.exception.notfound.AddressNotFoundException;
-import com.ahmetaksunger.ecommerce.model.EntityStatus;
-import com.ahmetaksunger.ecommerce.service.rules.BaseRules;
-import org.springframework.stereotype.Service;
-
 import com.ahmetaksunger.ecommerce.dto.request.address.CreateAddressRequest;
 import com.ahmetaksunger.ecommerce.dto.request.address.UpdateAddressRequest;
 import com.ahmetaksunger.ecommerce.dto.response.AddressVM;
+import com.ahmetaksunger.ecommerce.exception.notfound.AddressNotFoundException;
 import com.ahmetaksunger.ecommerce.mapper.MapperService;
 import com.ahmetaksunger.ecommerce.model.Address;
 import com.ahmetaksunger.ecommerce.model.Country;
+import com.ahmetaksunger.ecommerce.model.EntityStatus;
 import com.ahmetaksunger.ecommerce.model.User;
 import com.ahmetaksunger.ecommerce.repository.AddressRepository;
 import com.ahmetaksunger.ecommerce.service.rules.AddressRules;
-
+import com.ahmetaksunger.ecommerce.service.rules.BaseRules;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor

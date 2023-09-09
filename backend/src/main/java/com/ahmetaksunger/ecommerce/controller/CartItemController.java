@@ -6,11 +6,10 @@ import com.ahmetaksunger.ecommerce.dto.response.CartVM;
 import com.ahmetaksunger.ecommerce.model.User;
 import com.ahmetaksunger.ecommerce.security.CurrentUser;
 import com.ahmetaksunger.ecommerce.service.CartItemService;
+import com.ahmetaksunger.ecommerce.util.ECommerceResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,16 +23,15 @@ public class CartItemController {
     private final CartItemService cartItemService;
 
     @PostMapping
-    public ResponseEntity<CartVM> createCartItem(@RequestBody @Valid CreateCartItemRequest createCartItemRequest,
-                                                 @CurrentUser User loggedInUser) {
+    public ECommerceResponse<CartVM> createCartItem(@RequestBody @Valid CreateCartItemRequest createCartItemRequest,
+                                                    @CurrentUser User loggedInUser) {
 
-        return new ResponseEntity<>(cartItemService.create(createCartItemRequest,loggedInUser),
-                HttpStatus.CREATED);
+        return ECommerceResponse.createdOf(cartItemService.create(createCartItemRequest,loggedInUser));
     }
 
     @DeleteMapping("/{cartItemId}")
-    public ResponseEntity<CartVM> deleteCartItem(@PathVariable long cartItemId, @CurrentUser User loggedInUser) {
-        return ResponseEntity.ok(cartItemService.delete(cartItemId, loggedInUser));
+    public ECommerceResponse<CartVM> deleteCartItem(@PathVariable long cartItemId, @CurrentUser User loggedInUser) {
+        return ECommerceResponse.successOf(cartItemService.delete(cartItemId, loggedInUser));
     }
 
     /**
@@ -43,8 +41,9 @@ public class CartItemController {
      * @param loggedInUser the logged-in user
      */
     @DeleteMapping("/cart/{cartId}/clear")
-    public void clearCart(@PathVariable Long cartId, @CurrentUser User loggedInUser) {
+    public ECommerceResponse<Void> clearCart(@PathVariable Long cartId, @CurrentUser User loggedInUser) {
         cartItemService.deleteAllByCartId(cartId, loggedInUser);
+        return ECommerceResponse.SUCCESS;
     }
 
     /**
@@ -56,9 +55,9 @@ public class CartItemController {
      * @return Response Entity of CartVM
      */
     @PutMapping("/{cartItemId}")
-    public ResponseEntity<CartVM> updateCartItem(@PathVariable Long cartItemId,
+    public ECommerceResponse<CartVM> updateCartItem(@PathVariable Long cartItemId,
                                                  @RequestBody @Valid UpdateCartItemRequest updateCartItemRequest,
                                                  @CurrentUser User loggedInUser) {
-        return ResponseEntity.ok(cartItemService.update(cartItemId, updateCartItemRequest, loggedInUser));
+        return ECommerceResponse.successOf(cartItemService.update(cartItemId, updateCartItemRequest, loggedInUser));
     }
 }

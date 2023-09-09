@@ -4,8 +4,8 @@ import com.ahmetaksunger.ecommerce.dto.converter.CartVMConverter;
 import com.ahmetaksunger.ecommerce.dto.response.CartVM;
 import com.ahmetaksunger.ecommerce.exception.notfound.CartNotFoundException;
 import com.ahmetaksunger.ecommerce.model.Cart;
-import com.ahmetaksunger.ecommerce.model.EntityStatus;
 import com.ahmetaksunger.ecommerce.model.Customer;
+import com.ahmetaksunger.ecommerce.model.EntityStatus;
 import com.ahmetaksunger.ecommerce.model.User;
 import com.ahmetaksunger.ecommerce.repository.CartRepository;
 import com.ahmetaksunger.ecommerce.service.rules.BaseRules;
@@ -31,6 +31,10 @@ public class CartManager implements CartService {
         return cartRepository.save(cart);
     }
 
+    /**
+     * @deprecated  There's no need for this method anymore.
+     */
+    @Deprecated(forRemoval = true,since = "v1")
     @Override
     public void delete(long cartId, User loggedInUser) {
 

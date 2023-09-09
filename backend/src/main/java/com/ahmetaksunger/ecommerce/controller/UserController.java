@@ -3,6 +3,7 @@ package com.ahmetaksunger.ecommerce.controller;
 import com.ahmetaksunger.ecommerce.model.User;
 import com.ahmetaksunger.ecommerce.security.CurrentUser;
 import com.ahmetaksunger.ecommerce.service.UserService;
+import com.ahmetaksunger.ecommerce.util.ECommerceResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,7 +22,8 @@ public class UserController {
     private final UserService userService;
 
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable long id, @CurrentUser User loggedInUser){
+    public ECommerceResponse<Void> deleteUser(@PathVariable long id, @CurrentUser User loggedInUser){
         userService.delete(id,loggedInUser);
+        return ECommerceResponse.SUCCESS;
     }
 }
