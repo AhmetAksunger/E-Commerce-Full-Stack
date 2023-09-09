@@ -33,27 +33,27 @@ public class ProductController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('SELLER')")
-    public ResponseEntity<ProductVM> createProduct(@RequestBody @Validated CreateProductRequest createProductRequest,
+    public ECommerceResponse<ProductVM> createProduct(@RequestBody @Validated CreateProductRequest createProductRequest,
                                                    @CurrentUser User loggedInUser){
-        return new ResponseEntity<>(productService.create(createProductRequest,loggedInUser), HttpStatus.CREATED);
+        return ECommerceResponse.createdOf(productService.create(createProductRequest,loggedInUser));
     }
 
     @PostMapping("/{productId}/categories")
     @PreAuthorize("hasAuthority('SELLER')")
-    public ResponseEntity<ProductVM> addCategoriesByIdsToProduct(@PathVariable long productId,
+    public ECommerceResponse<ProductVM> addCategoriesByIdsToProduct(@PathVariable long productId,
                                                                  @RequestParam(name = "categoryIds",required = true)
                                                                  List<Long> categoryIds,
                                                                  @CurrentUser User loggedInUser){
-        return ResponseEntity.ok(productService.addCategoriesByIdsToProduct(productId,categoryIds,loggedInUser));
+        return ECommerceResponse.successOf(productService.addCategoriesByIdsToProduct(productId,categoryIds,loggedInUser));
     }
 
     @DeleteMapping("/{productId}/categories")
     @PreAuthorize("hasAuthority('SELLER')")
-    public ResponseEntity<ProductVM> removeCategoriesByIdsFromProduct(@PathVariable long productId,
+    public ECommerceResponse<ProductVM> removeCategoriesByIdsFromProduct(@PathVariable long productId,
                                                                       @RequestParam(name = "categoryIds",required = true)
                                                                       List<Long> categoryIds,
                                                                       @CurrentUser User loggedInUser){
-        return ResponseEntity.ok(productService.removeCategoriesByIdsFromProduct(productId,categoryIds,loggedInUser));
+        return ECommerceResponse.successOf(productService.removeCategoriesByIdsFromProduct(productId,categoryIds,loggedInUser));
     }
 
 
@@ -72,8 +72,9 @@ public class ProductController {
 
     @DeleteMapping("/{productId}")
     @PreAuthorize("hasAnyAuthority('SELLER')")
-    public void deleteProduct(@PathVariable long productId, @CurrentUser User loggedInUser){
+    public ECommerceResponse<Void> deleteProduct(@PathVariable long productId, @CurrentUser User loggedInUser){
         productService.delete(productId,loggedInUser);
+        return ECommerceResponse.SUCCESS;
     }
 
     /**
@@ -87,8 +88,8 @@ public class ProductController {
      */
     @GetMapping("/{productId}")
     @PreAuthorize("hasAnyAuthority('SELLER','CUSTOMER')")
-    public ResponseEntity<GetProductByIdResponse> getProductById(@PathVariable Long productId){
-        return ResponseEntity.ok(productService.getProductById(productId));
+    public ECommerceResponse<GetProductByIdResponse> getProductById(@PathVariable Long productId){
+        return ECommerceResponse.successOf(productService.getProductById(productId));
     }
 
     /**
@@ -102,12 +103,12 @@ public class ProductController {
      */
     @GetMapping("/seller/{sellerId}")
     @PreAuthorize("hasAnyAuthority('SELLER','CUSTOMER')")
-    public ResponseEntity<Page<GetProductByIdResponse>> getProductsBySellerId(@PathVariable Long sellerId,
+    public ECommerceResponse<Page<GetProductByIdResponse>> getProductsBySellerId(@PathVariable Long sellerId,
                                                                               @RequestParam(name = "page",defaultValue = "0")
                                                                  Integer page,
                                                                               @RequestParam(name = "size",defaultValue = "5")
                                                                  Integer size){
-        return ResponseEntity.ok(productService.getProductsBySellerId(sellerId,page,size));
+        return ECommerceResponse.successOf(productService.getProductsBySellerId(sellerId,page,size));
     }
 
     /**
@@ -121,10 +122,10 @@ public class ProductController {
      */
     @PutMapping("/{productId}")
     @PreAuthorize("hasAnyAuthority('SELLER')")
-    public ResponseEntity<ProductVM> updateProduct(@PathVariable Long productId,
+    public ECommerceResponse<ProductVM> updateProduct(@PathVariable Long productId,
                                                    @RequestBody UpdateProductRequest updateProductRequest,
                                                    @CurrentUser User loggedInUser){
-        return ResponseEntity.ok(productService.updateProduct(productId,updateProductRequest,loggedInUser));
+        return ECommerceResponse.successOf(productService.updateProduct(productId,updateProductRequest,loggedInUser));
     }
 
     /**
@@ -134,8 +135,8 @@ public class ProductController {
      */
     @GetMapping("/most-ordered")
     @PreAuthorize("hasAuthority('CUSTOMER')")
-    public ResponseEntity<List<ProductVM>> getMostOrderedProducts(){
-        return ResponseEntity.ok(productService.getTop10MostOrderedProducts());
+    public ECommerceResponse<List<ProductVM>> getMostOrderedProducts(){
+        return ECommerceResponse.successOf(productService.getTop10MostOrderedProducts());
     }
 
 }

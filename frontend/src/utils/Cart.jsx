@@ -18,7 +18,7 @@ const Cart = () => {
     let cartService = new CartService();
     cartService
       .getCartByUserId(jwt, userId)
-      .then((response) => setCart(response.data));
+      .then((response) => setCart(response.data.response));
   };
 
   return (

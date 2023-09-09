@@ -19,7 +19,7 @@ const Login = () => {
     let authService = new AuthenticationService();
     try {
       const response = await authService.authenticate(creds);
-      dispatch(loginSuccess(response.data));
+      dispatch(loginSuccess(response.data.response));
       history.push("/");
     } catch (error) {
       setIsUnauthorized(true);
