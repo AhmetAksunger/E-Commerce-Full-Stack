@@ -32,13 +32,13 @@ const MyCart = () => {
   const getCartByUserId = () => {
     cartService
       .getCartByUserId(jwt, userId)
-      .then((response) => setCart(response.data));
+      .then((response) => setCart(response.data.response));
   };
 
   const updateCartItem = (cartItemId, quantity) => {
     cartService
       .updateCartItem(jwt, cartItemId, quantity)
-      .then((response) => setCart(response.data))
+      .then((response) => setCart(response.data.response))
       .catch((error) => {
         if (error.response.data.productsWithInsufficientStock) {
           setIsMaxQuantity((previousState) => [...previousState, cartItemId]);
@@ -83,7 +83,7 @@ const MyCart = () => {
   const deleteCartItem = (cartItemId) => {
     cartService
       .deleteCartItem(jwt, cartItemId)
-      .then((response) => setCart(response.data));
+      .then((response) => setCart(response.data.response));
   };
   return (
     <Grid>

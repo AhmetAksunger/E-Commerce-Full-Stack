@@ -4,7 +4,6 @@ import CategoryService from "../services/categoryService";
 import { useSelector } from "react-redux";
 import ProductList from "../utils/ProductList";
 import UpperMenu from "../layouts/UpperMenu";
-import { act } from "react-dom/test-utils";
 
 const Home = () => {
   
@@ -31,7 +30,7 @@ const Home = () => {
   const getProducts = (filterParams = filters,page,size) => {
     let productService = new ProductService();
     productService.getProducts(jwt,filterParams,page,size)
-    .then((response) => setProducts(response.data))
+    .then((response) => setProducts(response.data.response))
     .catch((error) => console.log(error));
   }
 
@@ -39,7 +38,7 @@ const Home = () => {
     let categoryService = new CategoryService();
     categoryService
       .getCategories(jwt)
-      .then((response) => setCategories(response.data))
+      .then((response) => setCategories(response.data.response))
       .catch((error) => console.log(error));
   };
 

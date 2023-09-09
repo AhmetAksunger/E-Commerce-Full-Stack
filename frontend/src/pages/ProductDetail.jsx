@@ -34,7 +34,7 @@ const ProductDetail = () => {
     let productService = new ProductService();
     productService
       .getProductById(jwt, productId)
-      .then((response) => setProduct(response.data));
+      .then((response) => setProduct(response.data.response));
   };
 
   const onClickAddToCart = () => {
